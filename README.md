@@ -1,4 +1,4 @@
-# Multiplayer Quantum Hawk-Dove Game Theory
+# Entangled Equilibria
 
 *Extending quantum Nash equilibria to N-player financial trading networks via entanglement topology*
 
@@ -174,8 +174,8 @@ This layer computes equilibria and produces all result figures:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/quantum-hawk-dove
-cd quantum-hawk-dove
+git clone https://github.com/YOUR_USERNAME/entangled-equilibria
+cd entangled-equilibria
 
 # Create virtual environment
 python -m venv venv
@@ -242,11 +242,11 @@ DeFi protocols are N-player Hawk-Dove games where front-running (miner extractab
 This project is licensed under the MIT License.
 
 ```bibtex
-@misc{quantum-hawk-dove-2025,
-  title        = {Multiplayer Quantum Hawk-Dove Game Theory: Entanglement Topology and Nash Equilibria in N-Player Financial Markets},
+@misc{entangled-equilibria-2025,
+  title        = {Entangled Equilibria: Entanglement Topology and Nash Equilibria in N-Player Financial Markets},
   author       = {Prithvi Raghu and Aasa Singh Bhui},
   year         = {2026},
   note         = {Undergraduate research project, VIT Chennai. arXiv preprint forthcoming.},
-  url          = {https://github.com/YOUR_USERNAME/quantum-hawk-dove}
+  url          = {https://github.com/YOUR_USERNAME/entangled-equilibria}
 }
 ```
