@@ -1,13 +1,12 @@
 """Month-1 two-player EWL Hawk-Dove circuit.
 
-Circuit sequence for N=2:
-  |00> --[J(gamma)]-- [U(s0) x U(s1)] --[J_dag(gamma)]-- Statevector
+Thin wrapper around build_ewl_circuit(2, ...) so that the Month-1 public
+interface (run_two_player) is unchanged while the implementation is shared
+with the general N-player path.
 
-Returns exact probabilities via Qiskit Statevector (no sampling, no randomness).
-
-Interface contract (producer side):
+Interface contract (unchanged from Month 1):
   run_two_player returns NDArray[float64] of shape (4,) = (2**2,).
-  probs[i] = P(measuring |i>). Bit ordering: Qiskit little-endian (see config.py).
+  probs[i] = P(measuring |i>). Bit ordering: Qiskit little-endian.
   sum(result) == 1.0.
 """
 
@@ -15,11 +14,9 @@ from __future__ import annotations
 
 import numpy as np
 import numpy.typing as npt
-from qiskit.circuit import QuantumCircuit
-from qiskit.circuit.library import UnitaryGate
-from qiskit.quantum_info import Statevector
 
-from circuits.ewl import U, make_J_dag_gate, make_J_gate, StrategyParams
+from circuits.ewl import StrategyParams
+from circuits.n_player import build_ewl_circuit
 from config import GAMMA
 
 
@@ -34,14 +31,9 @@ def run_two_player(
     s0: (theta, alpha, beta) for player 0 (qubit 0).
     s1: (theta, alpha, beta) for player 1 (qubit 1).
     gamma: entanglement parameter. Must equal pi/2 for the Nash equilibrium
-           property to hold — see GAMMA guard in config.py.
+           property to hold -- see GAMMA guard in config.py.
 
     Returns shape (4,) = (2**2,). probs[i] = P(measuring basis state |i>).
     Bit ordering: player j is Hawk iff (i >> j) & 1 == 1 (Qiskit little-endian).
     """
-    qc = QuantumCircuit(2)
-    qc.append(make_J_gate(gamma), [0, 1])
-    qc.append(UnitaryGate(U(*s0)), [0])
-    qc.append(UnitaryGate(U(*s1)), [1])
-    qc.append(make_J_dag_gate(gamma), [0, 1])
-    return np.asarray(Statevector(qc).probabilities(), dtype=np.float64)
+    return build_ewl_circuit(2, [s0, s1], gamma=gamma)
