@@ -1,7 +1,7 @@
 # Design Spec: Entangled Equilibria — Scaffold + Month-1 Two-Player EWL Validation
 
 **Date:** 2026-06-08
-**Author:** Prithvi Raghu (circuits layer) + Claude
+**Author:** Prithvi Raghu (circuits layer) + Aasa Singh Bhui
 **Status:** Approved — ready for implementation plan
 
 ---
