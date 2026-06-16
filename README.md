@@ -207,9 +207,9 @@ python scripts/n3_advantage.py
 
 | Result | Status | Notes |
 |---|---|---|
-| 2-player EWL validation | 🔄 In Progress | Reproducing Khan et al. (2025) baseline |
-| N=3 GHZ quantum advantage | ⏳ Pending | Month 2 |
-| Full topology × N heatmap | ⏳ Pending | Month 3 |
+| 2-player EWL validation | ✅ Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
+| N=3 GHZ quantum advantage | ✅ Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
+| Full topology × N heatmap | 🔄 In Progress | Month 3 |
 | Noise robustness surface | ⏳ Pending | Month 4 |
 | IBM hardware validation | ⏳ Pending | Month 5 (optional) |
 | arXiv preprint | ⏳ Pending | Month 6 |
