@@ -184,17 +184,22 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 # Install dependencies
 pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
 
-# Run the 2-player validation (Month 1 checkpoint)
-python src/validation/two_player_ewl.py
+# Validate Month 1 (2-player EWL) — the real validation is the test suite
+pytest tests/ -v
+# Expected: 21 passed
 
-# Run the full topology sweep (Month 3)
-python src/analysis/topology_sweep.py --n_min 2 --n_max 6
+# Run the Month 2 result (N=3 quantum advantage)
+python scripts/n3_advantage.py
+# Expected: advantage = 1.0, (Q₃,Q₃,Q₃) is the unique pure Nash equilibrium
 
-# Run the noise analysis (Month 4)
-python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
+# Month 3 — topology sweep (not yet implemented)
+# python src/analysis/topology_sweep.py --n_min 2 --n_max 6
+
+# Month 4 — noise analysis (not yet implemented)
+# python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
 ```
 
-> **Note:** Scripts are placeholders until each month's work is complete. The repo will be updated as the project progresses.
+> **Note:** Month 3/4 commands are commented out until those scripts exist. The repo is updated as the project progresses.
 
 ---
 
