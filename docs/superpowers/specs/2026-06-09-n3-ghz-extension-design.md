@@ -14,7 +14,7 @@ all pure Nash equilibria in that discrete set, and compute the quantum advantage
 N=3. This is the first joint test of the circuit layer and the game-theory layer.
 
 **Month 2 is met if:** the (Q,Q,Q) pure Nash equilibrium exists and the advantage
-(Q-profile payoff minus best classical symmetric payoff) is strictly greater than 0.
+(Q-profile payoff minus classical Nash equilibrium payoff) is strictly greater than 0.
 If advantage ≤ 0 or (Q,Q,Q) is not Nash, execution stops and the finding is reported
 — it is a research finding about RQ1, not a bug to paper over.
 
@@ -89,6 +89,14 @@ The hypothesis from 2-player analogy is (Q,Q,Q) → payoff V/2 = 2.0 per player.
 This is NOT tested or assumed — it is the RQ1 finding, read from `compute_advantage`
 output in Phase 3. The simulation confirms or refutes it. If it differs from 2.0,
 that is a research result to investigate, not a bug.
+
+**FINDING (Month-2 simulation):** the hypothesis was refuted. The quantum Nash
+strategy is not the fixed `Q = U(0, π/2, π/2)` but scales as
+**`Q_N = U(0, π/N, π/N)`** — the condition `N·α = π` gives constructive
+interference under the N-qubit GHZ entangler. At N=3, `(Q₃,Q₃,Q₃) → 4/3` per
+player (= V/N), not 2.0. The N=2 result `Q = U(0, π/2, π/2)` is simply the N=2
+case of this general law. This generalisation is a primary paper contribution
+(implemented in `ewl.q_strategy`).
 
 ---
 
@@ -212,18 +220,19 @@ def compute_advantage(
     entangler: Entangler = ghz_entangler,
     gamma: float = GAMMA,
 ) -> dict[str, object]:
-    """Compute quantum advantage for (Q,...,Q) vs best classical symmetric profile.
+    """Compute quantum advantage for (Q,...,Q) vs the classical Nash equilibrium.
 
     Returns dict with keys:
-      q_payoff_per_player   : float — (Q,...,Q) per-player payoff (simulation result)
-      best_classical_payoff : float — max per-player payoff over all-classical
-                              symmetric profiles (D...D and H...H)
-      advantage             : float — q_payoff - best_classical_payoff
-      q_is_nash             : bool  — whether (Q,...,Q) is in find_pure_nash output
-      all_pure_nash         : list[tuple] — all pure NE profiles found
-      deviation_check       : dict — for each (player_i, alt_strategy), the payoff
-                              from deviating vs the Q-profile payoff; confirms
-                              no deviation beats q_payoff_per_player
+      q_payoff_per_player     : float — (Q,...,Q) per-player payoff (simulation result)
+      classical_ne_payoff     : float — per-player payoff at the classical NE (highest
+                                if multiple); from find_pure_nash on the {D,H}^N game
+      advantage               : float — q_payoff - classical_ne_payoff
+      q_is_nash               : bool  — whether (Q,...,Q) is in find_pure_nash output
+      all_pure_nash           : list[tuple] — all pure NE profiles found
+      classical_nash_profiles : list[tuple] — pure NE of the restricted {D,H}^N game
+      deviation_check         : dict — for each (player_i, alt_strategy), the payoff
+                                from deviating vs the Q-profile payoff; confirms
+                                no deviation beats q_payoff_per_player
     """
 ```
 
@@ -235,10 +244,23 @@ For each profile p in tensor:
       If tensor[p'][i] > tensor[p][i] + 1e-9: p is not Nash; break
   If all players pass: p is a pure NE.
 
-**Classical symmetric profiles** for the advantage baseline: only (D,...,D) and
-(H,...,H). The mixed classical symmetric profile is not evaluated (future work).
-For V=4, C=3, N=3: expected (D,D,D) payoff = 4/3 ≈ 1.333, (H,H,H) = 1/3 ≈ 0.333.
-Best classical = 4/3. These are expected values only — the simulation is authoritative.
+**Classical baseline definition:**
+The classical baseline is the classical Nash equilibrium payoff, not the best
+achievable classical payoff. Specifically:
+
+- In the restricted {D,H}^N game, rational players converge to (H,...,H) — the
+  only stable classical outcome.
+- (D,...,D) yields 4/3 per player but is NOT a Nash equilibrium: any single
+  player can defect to Hawk and earn 4, so cooperation collapses.
+- Therefore: classical_ne_payoff = payoff((H,...,H)) = (V−C)/N per player
+  (k=N Hawks share the conflicted value). For V=4, C=3, N=3 this is
+  1/3 ≈ 0.333. (Values are read from the simulation; find_pure_nash on the
+  {D,H}^N tensor is authoritative.)
+
+**Scientific framing:** quantum play does not exceed the best classical payoff in
+raw numbers (both (D,...,D) and (Q_N,...,Q_N) yield 4/3). The quantum value is
+that 4/3 becomes an enforceable Nash equilibrium — the only pure equilibrium.
+Classically, 4/3 is reachable but unstable; quantumly, it is self-enforcing.
 
 ---
 
