@@ -209,6 +209,15 @@ python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
 | IBM hardware validation | ⏳ Pending | Month 5 (optional) |
 | arXiv preprint | ⏳ Pending | Month 6 |
 
+### Month 2 — N=3 Quantum Advantage ✅
+
+- Quantum strategy generalises: **Q_N = U(0, π/N, π/N)** (not fixed U(0, π/2, π/2))
+- (Q₃, Q₃, Q₃) payoff: **4/3 per player** — unique pure Nash equilibrium
+- Classical NE payoff: **1/3 per player** (all-Hawk tragedy)
+- Quantum advantage: **1.0 per player** (NE-vs-NE framing)
+- Scientific claim: quantum makes cooperation (4/3) the *only* equilibrium.
+  Classical cooperation is achievable but unstable; quantum cooperation is self-enforcing.
+
 ---
 
 ## 10. Real-World Applications
