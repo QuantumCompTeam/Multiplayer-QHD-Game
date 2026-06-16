@@ -4,6 +4,10 @@ SCOPE: Pure-strategy enumeration over a finite discrete strategy set (default
 {D, H, Q}).  This is NOT continuous / mixed-strategy Nash analysis over all of
 SU(2); that is explicitly future work per the README.
 
+NASHPY: not used here. Nashpy is built for 2-player normal-form games; the N>=2
+path uses direct best-response enumeration (see find_pure_nash). Nashpy remains a
+pinned dependency, reserved for future 2-player cross-validation (spec §2.3).
+
 The "Q" label in strategy_names refers to q_strategy(N) = U(0, pi/N, pi/N),
 the N-appropriate quantum Nash strategy, NOT the fixed U(0, pi/2, pi/2) which
 is only valid at N=2.  See ewl.q_strategy for the derivation.

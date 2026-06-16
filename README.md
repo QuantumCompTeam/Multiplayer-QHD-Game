@@ -149,7 +149,7 @@ This layer computes equilibria and produces all result figures:
 | Qiskit | Quantum circuit construction and statevector simulation | Already used in QAE project |
 | Qiskit Aer | Noise model simulation (depolarizing channel) | Month 4 noise sweep |
 | TKET (Quantinuum) | Circuit compilation to IBM heavy-hex topology | Optional; used for hardware gate count analysis |
-| Nashpy | N-player Nash equilibrium computation | `pip install nashpy` |
+| Nashpy | Reserved for 2-player cross-validation; not used in the N≥3 path, which uses direct best-response enumeration (spec §2.3) | `pip install nashpy` |
 | NetworkX | Entanglement topology graph definition → auto circuit generation | Ring/star/FC graph → Rxx gates |
 | NumPy / SciPy | Payoff tensor construction, matrix operations | Standard |
 | Matplotlib | 2D heatmaps and 3D surface plots | Key result figures |
