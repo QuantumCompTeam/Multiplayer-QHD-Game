@@ -149,7 +149,7 @@ This layer computes equilibria and produces all result figures:
 | Qiskit | Quantum circuit construction and statevector simulation | Already used in QAE project |
 | Qiskit Aer | Noise model simulation (depolarizing channel) | Month 4 noise sweep |
 | TKET (Quantinuum) | Circuit compilation to IBM heavy-hex topology | Optional; used for hardware gate count analysis |
-| Nashpy | N-player Nash equilibrium computation | `pip install nashpy` |
+| Nashpy | Reserved for 2-player cross-validation; not used in the N≥3 path, which uses direct best-response enumeration (spec §2.3) | `pip install nashpy` |
 | NetworkX | Entanglement topology graph definition → auto circuit generation | Ring/star/FC graph → Rxx gates |
 | NumPy / SciPy | Payoff tensor construction, matrix operations | Standard |
 | Matplotlib | 2D heatmaps and 3D surface plots | Key result figures |
@@ -184,17 +184,22 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 # Install dependencies
 pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
 
-# Run the 2-player validation (Month 1 checkpoint)
-python src/validation/two_player_ewl.py
+# Validate Month 1 (2-player EWL) — the real validation is the test suite
+pytest tests/ -v
+# Expected: 21 passed
 
-# Run the full topology sweep (Month 3)
-python src/analysis/topology_sweep.py --n_min 2 --n_max 6
+# Run the Month 2 result (N=3 quantum advantage)
+python scripts/n3_advantage.py
+# Expected: advantage = 1.0, (Q₃,Q₃,Q₃) is the unique pure Nash equilibrium
 
-# Run the noise analysis (Month 4)
-python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
+# Month 3 — topology sweep (not yet implemented)
+# python src/analysis/topology_sweep.py --n_min 2 --n_max 6
+
+# Month 4 — noise analysis (not yet implemented)
+# python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
 ```
 
-> **Note:** Scripts are placeholders until each month's work is complete. The repo will be updated as the project progresses.
+> **Note:** Month 3/4 commands are commented out until those scripts exist. The repo is updated as the project progresses.
 
 ---
 
@@ -202,12 +207,21 @@ python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
 
 | Result | Status | Notes |
 |---|---|---|
-| 2-player EWL validation | 🔄 In Progress | Reproducing Khan et al. (2025) baseline |
-| N=3 GHZ quantum advantage | ⏳ Pending | Month 2 |
-| Full topology × N heatmap | ⏳ Pending | Month 3 |
+| 2-player EWL validation | ✅ Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
+| N=3 GHZ quantum advantage | ✅ Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
+| Full topology × N heatmap | 🔄 In Progress | Month 3 |
 | Noise robustness surface | ⏳ Pending | Month 4 |
 | IBM hardware validation | ⏳ Pending | Month 5 (optional) |
 | arXiv preprint | ⏳ Pending | Month 6 |
+
+### Month 2 — N=3 Quantum Advantage ✅
+
+- Quantum strategy generalises: **Q_N = U(0, π/N, π/N)** (not fixed U(0, π/2, π/2))
+- (Q₃, Q₃, Q₃) payoff: **4/3 per player** — unique pure Nash equilibrium
+- Classical NE payoff: **1/3 per player** (all-Hawk tragedy)
+- Quantum advantage: **1.0 per player** (NE-vs-NE framing)
+- Scientific claim: quantum makes cooperation (4/3) the *only* equilibrium.
+  Classical cooperation is achievable but unstable; quantum cooperation is self-enforcing.
 
 ---
 

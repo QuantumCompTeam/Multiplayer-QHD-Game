@@ -4,6 +4,10 @@ SCOPE: Pure-strategy enumeration over a finite discrete strategy set (default
 {D, H, Q}).  This is NOT continuous / mixed-strategy Nash analysis over all of
 SU(2); that is explicitly future work per the README.
 
+NASHPY: not used here. Nashpy is built for 2-player normal-form games; the N>=2
+path uses direct best-response enumeration (see find_pure_nash). Nashpy remains a
+pinned dependency, reserved for future 2-player cross-validation (spec §2.3).
+
 The "Q" label in strategy_names refers to q_strategy(N) = U(0, pi/N, pi/N),
 the N-appropriate quantum Nash strategy, NOT the fixed U(0, pi/2, pi/2) which
 is only valid at N=2.  See ewl.q_strategy for the derivation.
@@ -151,6 +155,21 @@ def compute_advantage(
     tensor = build_payoff_tensor(N, strategy_names, V, C, entangler, gamma)
     all_nash = find_pure_nash(tensor, N, strategy_names)
 
+    # SYMMETRY PRECONDITION: this function collapses tensor[p][0] to a single
+    # per-player payoff, which assumes all players receive equal payoffs under p.
+    # True for the GHZ entangler + symmetric strategy profiles. For asymmetric
+    # topologies (star hub vs spoke, weighted ring) player payoffs differ, so the
+    # collapse would silently misreport. Assert symmetry on every profile we
+    # collapse before reading [0].
+    # Month-3 TODO: replace [0] collapse with per-player reporting for non-symmetric topologies.
+    def _assert_symmetric(profile: tuple[str, ...]) -> None:
+        pay = tensor[profile]
+        assert np.allclose(pay, pay[0], atol=1e-8), (
+            f"compute_advantage: payoffs for {profile} are not symmetric across "
+            f"players ({pay}). This function assumes a GHZ-symmetric topology; for "
+            "star/ring topologies use per-player payoff reporting (Month 3)."
+        )
+
     # Classical NE: enumerate NE in the restricted classical-only game {D,H}^N.
     classical_names = [s for s in strategy_names if s != "Q"]
     classical_tensor = {
@@ -160,6 +179,8 @@ def compute_advantage(
 
     if classical_nash_profiles:
         # Player 0 payoff is representative for symmetric profiles under GHZ.
+        for p in classical_nash_profiles:
+            _assert_symmetric(p)
         classical_ne_payoff = max(
             float(tensor[p][0]) for p in classical_nash_profiles
         )
@@ -168,6 +189,7 @@ def compute_advantage(
 
     q_profile = tuple("Q" for _ in range(N))
     # Symmetric profile + symmetric GHZ entangler => all players get equal payoff.
+    _assert_symmetric(q_profile)
     q_payoff_per_player = float(tensor[q_profile][0])
     advantage = q_payoff_per_player - classical_ne_payoff
     q_is_nash = q_profile in all_nash
