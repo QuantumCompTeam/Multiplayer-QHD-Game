@@ -127,6 +127,44 @@ def _summary_table(results: list[CellResult]) -> list[str]:
     return rows
 
 
+def _gamma_findings(results: list[CellResult]) -> list[str]:
+    """Entanglement-threshold findings, only when gamma is swept.
+
+    For each (topology, N) series, the smallest swept gamma at which advantage turns
+    positive and at which (Q,...,Q) first becomes a pure Nash equilibrium. "never in
+    range" is itself a finding (the quantum equilibrium needs more entanglement than
+    the sweep covers).
+    """
+    ok = [r for r in results if r.status == STATUS_OK and r.advantage is not None]
+    if len({r.cell.gamma for r in ok}) <= 1:
+        return []  # gamma not swept — nothing to threshold
+
+    groups: dict[tuple[str, int], list[CellResult]] = {}
+    for r in ok:
+        groups.setdefault((r.cell.topology, r.cell.N), []).append(r)
+
+    lines = [
+        "",
+        "**Entanglement (γ) thresholds** — smallest swept γ at which each series gains "
+        "advantage / becomes a pure Nash equilibrium (the discovery: how much "
+        "entanglement the quantum equilibrium needs):",
+    ]
+    for (topo, N), rs in sorted(groups.items()):
+        rs.sort(key=lambda r: r.cell.gamma)
+        adv_pos = next((r for r in rs if r.advantage is not None and r.advantage > 1e-9), None)
+        nash = next((r for r in rs if r.q_is_nash), None)
+        adv_txt = (
+            f"advantage>0 from γ={adv_pos.cell.gamma_label}"
+            if adv_pos else "advantage never > 0 in range"
+        )
+        nash_txt = (
+            f"(Q,…,Q) Nash from γ={nash.cell.gamma_label}"
+            if nash else "(Q,…,Q) never Nash in range"
+        )
+        lines.append(f"  - {topo}, N={N}: {adv_txt}; {nash_txt}")
+    return lines
+
+
 def _findings(results: list[CellResult], summary: SweepSummary) -> list[str]:
     lines = ["## Findings", ""]
     lines.append(
@@ -157,6 +195,9 @@ def _findings(results: list[CellResult], summary: SweepSummary) -> list[str]:
         lines.append("**Cells where (Q,...,Q) is NOT Nash (RQ1 finding):**")
         for r in summary.non_nash_cells:
             lines.append(f"  - N={r.cell.N}, {r.cell.topology}, gamma={r.cell.gamma_label}")
+
+    # Entanglement-threshold findings (only present when gamma is swept).
+    lines += _gamma_findings(results)
 
     # Make skipped coverage explicit so gaps never read as "covered".
     skipped = [r for r in results if r.status != STATUS_OK]
