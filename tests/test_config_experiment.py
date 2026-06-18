@@ -57,8 +57,11 @@ def _slug(name: str) -> str:
 
 
 @pytest.fixture(scope="module")
-def configured_run():
+def configured_run(topology_folder):
     """Run the feasible config.yaml cells ONCE and write a persistent results folder.
+
+    Depends on `topology_folder` so a standalone run of this file still produces the
+    shared results/topology/ folder (topology images are no longer written per-run).
 
     Returns (results_by_cell_id, run_dir). Shared across the per-cell tests so each
     cell is computed only once. Writes results/<name>/<UTC-ts>/ exactly like

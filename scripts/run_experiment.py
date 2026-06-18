@@ -76,6 +76,22 @@ def main() -> int:
         },
     )
 
+    # Topology diagrams live in a single shared results/topology/ folder (not in
+    # each run folder). Refresh it from the config's topologies × N values.
+    if "plots" in config.formats:
+        from experiment.topology_registry import canonical
+        from experiment.topology_viz import write_topology_folder
+        from circuits.topology_graphs import KNOWN_TOPOLOGIES
+
+        topos = sorted(
+            {canonical(c.topology) for c in config.cells} & set(KNOWN_TOPOLOGIES)
+        )
+        ns = sorted({c.N for c in config.cells})
+        if topos and ns:
+            topo_dir = results_io.RESULTS_ROOT / "topology"
+            write_topology_folder(topos, ns, topo_dir)
+            print(f"Topology diagrams: {topo_dir}")
+
     summary = summarize(results)
     print(
         f"Done. {summary.ok}/{summary.total} cells ran "

@@ -90,7 +90,16 @@ def draw_topology_graph(name: str, N: int, *, ax: Any = None) -> Any:
     ax.set_title(f"{name} · N={N}\n{graph.graph['label']}", fontsize=9)
     ax.set_aspect("equal")
     ax.set_axis_off()
-    ax.margins(0.18)
+    # Explicit SQUARE limits centred on the node cloud — keeps colinear layouts
+    # (e.g. star at N=2/3: hub + opposite spokes all on one line) from collapsing to
+    # a thin strip, and leaves room for the global topologies' shaded circle (r≈1.32).
+    xs = [p[0] for p in pos.values()]
+    ys = [p[1] for p in pos.values()]
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    half = max((max(xs) - min(xs)) / 2, (max(ys) - min(ys)) / 2, 1.0) * 1.3
+    half = max(half, 1.45)
+    ax.set_xlim(cx - half, cx + half)
+    ax.set_ylim(cy - half, cy + half)
     return ax.figure
 
 
@@ -120,38 +129,32 @@ def draw_circuit(
         return "text", str(qc.draw(output="text"))
 
 
-def write_topology_figures(
+def write_topology_folder(
     topologies: list[str], n_values: list[int], out_dir: str | Path
 ) -> dict[str, list[str]]:
-    """Write topology-graph and circuit figures for a sweep.
+    """Write INDIVIDUAL topology-graph + EWL-circuit images into a shared folder.
 
-    For each topology: one figure with a subplot per N (e.g. ring C2..C6 in one
-    PNG). For each distinct N: one EWL circuit diagram (topology-independent).
-    Returns {"graphs": [filenames], "circuits": [filenames]}.
+    One `<topology>_N{n}_graph.png` per (topology, N) and one `ewl_circuit_N{n}.png`
+    per N (text `.txt` fallback if the matplotlib circuit drawer is unavailable).
+    Deterministic filenames make this overwrite-safe across runs and N-sets, so it
+    suits a single shared `results/topology/` folder. Returns
+    {"graphs": [filenames], "circuits": [filenames]}.
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     ns = sorted(set(n_values))
     written: dict[str, list[str]] = {"graphs": [], "circuits": []}
 
-    # Reflow the per-N panels into a column-capped grid so each stays readable
-    # (a single row of 7+ panels squishes them to unreadable thumbnails).
-    ncols = min(4, len(ns))
-    nrows = math.ceil(len(ns) / ncols)
     for name in topologies:
-        fig, axes = plt.subplots(
-            nrows, ncols, figsize=(3.4 * ncols, 3.4 * nrows), squeeze=False
-        )
-        axes_flat = axes.flatten()
-        for ax, n in zip(axes_flat, ns):
-            draw_topology_graph(name, n, ax=ax)
-        for ax in axes_flat[len(ns):]:  # hide unused trailing cells
-            ax.set_axis_off()
-        fig.tight_layout()
-        fname = f"{name}_graph.png"
-        fig.savefig(out_dir / fname, dpi=120)
-        plt.close(fig)
-        written["graphs"].append(fname)
+        for n in ns:
+            fig = draw_topology_graph(name, n)
+            fig.tight_layout()
+            fname = f"{name}_N{n}_graph.png"
+            # No bbox_inches="tight": the square axes define the saved area, so
+            # colinear layouts aren't cropped to a thin strip.
+            fig.savefig(out_dir / fname, dpi=120)
+            plt.close(fig)
+            written["graphs"].append(fname)
 
     for n in ns:
         kind, obj = draw_circuit(n)
