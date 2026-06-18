@@ -18,6 +18,8 @@ without changing this function's signature.
 
 from __future__ import annotations
 
+from functools import lru_cache
+
 import numpy as np
 import numpy.typing as npt
 from qiskit.circuit import QuantumCircuit
@@ -27,6 +29,25 @@ from qiskit.quantum_info import Statevector
 from circuits.ewl import U, StrategyParams
 from circuits.topologies import Entangler, ghz_entangler
 from config import GAMMA
+
+
+@lru_cache(maxsize=None)
+def _entangler_gates(
+    entangler: Entangler, N: int, gamma: float
+) -> tuple[UnitaryGate, UnitaryGate]:
+    """Return cached (J, J_dag) UnitaryGates for a given (entangler, N, gamma).
+
+    The entangler matrix depends only on (entangler, N, gamma) and is identical
+    across every strategy profile in a sweep cell, so building it -- and the two
+    UnitaryGate wrappers -- once and reusing them avoids recomputing the
+    2^N x 2^N unitary on each of the 3^N profiles. Keyed on the entangler
+    function object (the module-level ghz_entangler / ring_entangler / ... are
+    identity-stable and hashable) plus N and gamma.
+    """
+    j_mat = entangler(N, gamma)
+    j_gate = UnitaryGate(j_mat, label="J")
+    j_dag_gate = UnitaryGate(j_mat.conj().T, label="Jdag")
+    return j_gate, j_dag_gate
 
 
 def build_ewl_qc(
@@ -46,9 +67,7 @@ def build_ewl_qc(
     at a given N -- the topology STRUCTURE lives in the entanglement graph, not
     this diagram. See build_ewl_circuit for the parameter contract.
     """
-    j_mat = entangler(N, gamma)
-    j_gate = UnitaryGate(j_mat, label="J")
-    j_dag_gate = UnitaryGate(j_mat.conj().T, label="Jdag")
+    j_gate, j_dag_gate = _entangler_gates(entangler, N, gamma)
 
     qc = QuantumCircuit(N)
     qc.append(j_gate, list(range(N)))

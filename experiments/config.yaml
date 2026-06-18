@@ -15,7 +15,7 @@ experiment:
   description: "Quantum advantage across N and entanglement topologies (RQ1/RQ2)"
 
 sweep:
-  N: [2, 3, 4, 5, 6]
+  N: [2, 3, 4, 5, 6, 7, 8, 9, 10]
   topologies: ["ghz", "ring", "star", "fully-connected", "w"]
   strategy_names: ["D", "H", "Q"]
 

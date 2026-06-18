@@ -30,7 +30,7 @@ pairwise entangler reduces to J_matrix(gamma) at N=2 (single edge).
 from __future__ import annotations
 
 import math
-from functools import reduce
+from functools import lru_cache, reduce
 from typing import Callable, TypeAlias
 
 import networkx as nx
@@ -64,14 +64,15 @@ def ghz_entangler(N: int, gamma: float = GAMMA) -> npt.NDArray[np.complex128]:
     (H+CNOT circuit) which does NOT reduce to J_matrix at N=2.
     """
     dim = 2 ** N
-    x_n = np.zeros((dim, dim), dtype=np.complex128)
-    for i in range(dim):
-        x_n[i, dim - 1 - i] = 1.0
+    # X^(x)N has 1s on the anti-diagonal (X^(x)N |i> = |dim-1-i>); fliplr of the
+    # identity builds it directly without a Python loop over 2^N rows.
+    x_n = np.fliplr(np.eye(dim, dtype=np.complex128))
     c = math.cos(gamma / 2)
     s = math.sin(gamma / 2)
     return c * np.eye(dim, dtype=np.complex128) + 1j * s * x_n
 
 
+@lru_cache(maxsize=None)
 def _pauli_xx(i: int, j: int, N: int) -> npt.NDArray[np.complex128]:
     """N-qubit operator with Pauli-X on qubits i and j, identity elsewhere.
 
@@ -79,6 +80,11 @@ def _pauli_xx(i: int, j: int, N: int) -> npt.NDArray[np.complex128]:
     index, so the full operator is the Kronecker product with qubit N-1 as the
     leftmost (most-significant) factor.  At N=2 with (i, j) = (0, 1) this yields
     X (x) X, matching J_matrix's XX block exactly.
+
+    Memoised on (i, j, N): fully_connected_entangler builds N(N-1)/2 of these per
+    construction, so caching avoids rebuilding identical 2^N Kronecker products.
+    Callers treat the result as read-only (every use multiplies it into a fresh
+    array), so the shared cached instance is safe.
     """
     ops = [_I2] * N
     ops[i] = _X

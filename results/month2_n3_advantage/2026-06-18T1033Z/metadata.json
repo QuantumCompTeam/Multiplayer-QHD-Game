@@ -1,0 +1,21 @@
+{
+  "experiment": "month2_n3_advantage",
+  "created_utc": "2026-06-18T10:33:26.613014+00:00",
+  "git": {
+    "commit": "8e516844b3dc4efc6ec9a47612adaf5588a1175b",
+    "dirty": true
+  },
+  "python": "3.14.5 (main, May 10 2026, 18:26:20) [GCC 16.1.1 20260430]",
+  "params": {
+    "N": 3,
+    "V": 4.0,
+    "C": 3.0,
+    "GAMMA": 1.5707963267948966,
+    "entangler": "ghz_entangler",
+    "strategy_set": [
+      "D",
+      "H",
+      "Q"
+    ]
+  }
+}

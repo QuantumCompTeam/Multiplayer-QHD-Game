@@ -92,17 +92,20 @@ def find_pure_nash(
     """
     nash_profiles: list[tuple[str, ...]] = []
     for profile in tensor:
+        own_payoffs = tensor[profile]  # hoisted out of the player/alt loops
+        deviation = list(profile)  # reused scratch buffer, restored after each player
         is_nash = True
         for player in range(N):
+            own = own_payoffs[player]
             for alt in strategy_names:
                 if alt == profile[player]:
                     continue
-                deviation = list(profile)
                 deviation[player] = alt
                 dev_payoff = tensor[tuple(deviation)][player]
-                if dev_payoff > tensor[profile][player] + 1e-9:
+                if dev_payoff > own + 1e-9:
                     is_nash = False
                     break
+            deviation[player] = profile[player]  # restore for the next player
             if not is_nash:
                 break
         if is_nash:
