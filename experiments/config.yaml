@@ -22,7 +22,7 @@ sweep:
 game:
   V: 100
   C: 70
-  gamma: "pi/2"          # number, or an expression of pi like "pi/2", "pi/4"
+  gamma: "2*pi"          # number, or an expression of pi like "pi/2", "pi/4"
 
 output:
   # "plots" also emits qubit-topology diagrams + EWL circuits into

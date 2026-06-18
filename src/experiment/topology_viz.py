@@ -134,11 +134,19 @@ def write_topology_figures(
     ns = sorted(set(n_values))
     written: dict[str, list[str]] = {"graphs": [], "circuits": []}
 
+    # Reflow the per-N panels into a column-capped grid so each stays readable
+    # (a single row of 7+ panels squishes them to unreadable thumbnails).
+    ncols = min(4, len(ns))
+    nrows = math.ceil(len(ns) / ncols)
     for name in topologies:
-        fig, axes = plt.subplots(1, len(ns), figsize=(3.2 * len(ns), 3.4))
-        axes_list = axes if len(ns) > 1 else [axes]
-        for ax, n in zip(axes_list, ns):
+        fig, axes = plt.subplots(
+            nrows, ncols, figsize=(3.4 * ncols, 3.4 * nrows), squeeze=False
+        )
+        axes_flat = axes.flatten()
+        for ax, n in zip(axes_flat, ns):
             draw_topology_graph(name, n, ax=ax)
+        for ax in axes_flat[len(ns):]:  # hide unused trailing cells
+            ax.set_axis_off()
         fig.tight_layout()
         fname = f"{name}_graph.png"
         fig.savefig(out_dir / fname, dpi=120)

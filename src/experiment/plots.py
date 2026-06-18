@@ -22,6 +22,26 @@ import numpy as np  # noqa: E402
 
 from experiment.sweep import STATUS_OK, CellResult  # noqa: E402
 
+# Cycled so coincident series (topologies whose advantage is identical) stay
+# distinguishable — the alternating dash/marker pattern reveals the overlap.
+_LINESTYLES = ["-", "--", "-.", ":"]
+_MARKERS = ["o", "s", "^", "D", "v", "P", "X"]
+
+
+def _style(i: int) -> dict:
+    return {
+        "linestyle": _LINESTYLES[i % len(_LINESTYLES)],
+        "marker": _MARKERS[i % len(_MARKERS)],
+        "alpha": 0.8,
+        "markersize": 6,
+        "zorder": 3 + i,  # later series sit on top, but alpha keeps earlier ones visible
+    }
+
+
+def _legend_outside(ax) -> None:
+    """Place the legend to the right of the axes so many series never overprint it."""
+    ax.legend(fontsize=8, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0)
+
 
 def _secondary_label(r: CellResult, vary: dict[str, bool]) -> str:
     """Append any swept secondary params (gamma/V/C) that vary, to disambiguate."""
@@ -51,19 +71,19 @@ def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> s
         series.setdefault(key, []).append((r.cell.N, float(r.advantage)))  # type: ignore[arg-type]
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
-    for label, pts in sorted(series.items()):
+    for i, (label, pts) in enumerate(sorted(series.items())):
         pts.sort()
         xs = [p[0] for p in pts]
         ys = [p[1] for p in pts]
-        ax.plot(xs, ys, marker="o", label=label)
-    ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--")
+        ax.plot(xs, ys, label=label, **_style(i))
+    ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
     ax.set_xlabel("N (players)")
     ax.set_ylabel("quantum advantage (QNE − CNE)")
     ax.set_title("Quantum advantage vs N")
-    ax.legend(fontsize=8)
+    _legend_outside(ax)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(out, dpi=120)
+    fig.savefig(out, dpi=120, bbox_inches="tight")
     plt.close(fig)
     return out.name
 
@@ -126,32 +146,35 @@ def _advantage_vs_gamma(ok: list[CellResult], vary: dict[str, bool], out: Path) 
         )
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
-    for label, pts in sorted(series.items()):
+    for i, (label, pts) in enumerate(sorted(series.items())):
         pts.sort()
         xs = [p[0] for p in pts]
         ys = [p[1] for p in pts]
-        (line,) = ax.plot(xs, ys, linestyle="-", label=label)
+        style = _style(i)
+        marker = style.pop("marker")
+        (line,) = ax.plot(xs, ys, label=label, **style)
         color = line.get_color()
         # Filled marker where (Q,..,Q) is a pure Nash equilibrium, hollow where not.
         for x, y, is_nash in pts:
             ax.plot(
-                x, y, marker="o", color=color,
+                x, y, marker=marker, color=color, alpha=0.8, zorder=style["zorder"],
                 markerfacecolor=color if is_nash else "white",
                 markeredgecolor=color,
             )
-    ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--")
+    ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
     # x ticks in units of pi for readability.
     xmax = max(r.cell.gamma for r in ok)
     n_ticks = 4
     ticks = [xmax * k / n_ticks for k in range(n_ticks + 1)]
     ax.set_xticks(ticks, [f"{t / math.pi:.2f}π" for t in ticks])
+    ax.set_xlim(left=0.0)  # start the γ axis at the origin (no-entanglement baseline)
     ax.set_xlabel("entanglement γ (radians)")
     ax.set_ylabel("quantum advantage (QNE − CNE)")
     ax.set_title("Quantum advantage vs entanglement γ\n(filled = (Q,..,Q) is Nash)")
-    ax.legend(fontsize=8)
+    _legend_outside(ax)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(out, dpi=120)
+    fig.savefig(out, dpi=120, bbox_inches="tight")
     plt.close(fig)
     return out.name
 
@@ -211,7 +234,11 @@ def write_plots(results: list[CellResult], plots_dir: str | Path) -> list[str]:
 
     written: list[str] = []
     vary = _varying(results)
-    written.append(_advantage_vs_n(ok, vary, plots_dir / "advantage_vs_N.png"))
+    # Advantage-vs-N is only meaningful when N actually varies; a single-N sweep
+    # (e.g. the γ sweep) would otherwise stack every point on one x with an
+    # exploded legend.
+    if vary["N"]:
+        written.append(_advantage_vs_n(ok, vary, plots_dir / "advantage_vs_N.png"))
     heatmap = _topology_heatmap(ok, plots_dir / "topology_heatmap.png")
     if heatmap:
         written.append(heatmap)

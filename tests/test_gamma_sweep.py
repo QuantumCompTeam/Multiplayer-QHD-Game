@@ -60,10 +60,9 @@ PER_CELL_PROFILE_BUDGET = 10_000
 
 
 def _gamma_values() -> list[float]:
-    """GAMMA_STEPS γ points across the config-derived bounds."""
-    if _GAMMA_LOWER <= 0.0:
-        # 0 → upper, skipping the trivial γ=0 (no entanglement): k = 1..STEPS.
-        return [_GAMMA_UPPER * k / GAMMA_STEPS for k in range(1, GAMMA_STEPS + 1)]
+    """GAMMA_STEPS γ points from the lower bound (0 when config.gamma is a single
+    value) up to and including the upper bound — so the sweep starts at γ=0 (the
+    no-entanglement baseline; J = identity) and the plots begin at the origin."""
     span = _GAMMA_UPPER - _GAMMA_LOWER
     return [_GAMMA_LOWER + span * k / (GAMMA_STEPS - 1) for k in range(GAMMA_STEPS)]
 
