@@ -92,17 +92,20 @@ def find_pure_nash(
     """
     nash_profiles: list[tuple[str, ...]] = []
     for profile in tensor:
+        own_payoffs = tensor[profile]  # hoisted out of the player/alt loops
+        deviation = list(profile)  # reused scratch buffer, restored after each player
         is_nash = True
         for player in range(N):
+            own = own_payoffs[player]
             for alt in strategy_names:
                 if alt == profile[player]:
                     continue
-                deviation = list(profile)
                 deviation[player] = alt
                 dev_payoff = tensor[tuple(deviation)][player]
-                if dev_payoff > tensor[profile][player] + 1e-9:
+                if dev_payoff > own + 1e-9:
                     is_nash = False
                     break
+            deviation[player] = profile[player]  # restore for the next player
             if not is_nash:
                 break
         if is_nash:
@@ -142,10 +145,31 @@ def compute_advantage(
     If advantage <= 0 or q_is_nash is False, this is a finding about RQ1 --
     do not treat it as a bug.
 
+    Per-player reporting: payoffs are reported per player so that asymmetric
+    topologies (e.g. star: hub vs spoke) are handled correctly.  The scalar
+    keys are the mean over players; for symmetric topologies (GHZ, ring,
+    fully-connected) the mean equals every player's payoff, so the scalars are
+    identical to the pre-Month-3 values (backward compatible).  The `symmetric`
+    flag reports whether the (Q,...,Q) profile and the selected classical NE
+    are symmetric across players.
+
+    Classical NE selection when multiple exist: the profile with the highest
+    mean per-player payoff (most conservative advantage estimate).
+
+    If no classical NE are found: classical_ne_payoff is NaN; flag and investigate.
+
+    The (Q,...,Q) payoff is a SIMULATION RESULT, not an assumed value.
+    If advantage <= 0 or q_is_nash is False, this is a finding about RQ1 --
+    do not treat it as a bug.
+
     Returns dict with keys:
-      q_payoff_per_player     float  -- per-player payoff at (Q,...,Q)
-      classical_ne_payoff     float  -- best (highest) classical pure NE payoff
-      advantage               float  -- q_payoff - classical_ne_payoff
+      q_payoff_per_player     float  -- mean per-player payoff at (Q,...,Q)
+      q_payoff_vector         list   -- shape (N,) per-player payoff at (Q,...,Q)
+      classical_ne_payoff     float  -- mean per-player payoff at the best classical NE
+      classical_ne_payoff_vector list-- shape (N,) per-player payoff at that NE
+      advantage               float  -- mean q_payoff - mean classical_ne_payoff
+      advantage_vector        list   -- shape (N,) per-player advantage
+      symmetric               bool   -- whether reported profiles are player-symmetric
       q_is_nash               bool   -- whether (Q,...,Q) is a pure NE
       all_pure_nash           list   -- all pure NE in strategy_names^N
       classical_nash_profiles list   -- pure NE of the restricted classical game
@@ -155,20 +179,8 @@ def compute_advantage(
     tensor = build_payoff_tensor(N, strategy_names, V, C, entangler, gamma)
     all_nash = find_pure_nash(tensor, N, strategy_names)
 
-    # SYMMETRY PRECONDITION: this function collapses tensor[p][0] to a single
-    # per-player payoff, which assumes all players receive equal payoffs under p.
-    # True for the GHZ entangler + symmetric strategy profiles. For asymmetric
-    # topologies (star hub vs spoke, weighted ring) player payoffs differ, so the
-    # collapse would silently misreport. Assert symmetry on every profile we
-    # collapse before reading [0].
-    # Month-3 TODO: replace [0] collapse with per-player reporting for non-symmetric topologies.
-    def _assert_symmetric(profile: tuple[str, ...]) -> None:
-        pay = tensor[profile]
-        assert np.allclose(pay, pay[0], atol=1e-8), (
-            f"compute_advantage: payoffs for {profile} are not symmetric across "
-            f"players ({pay}). This function assumes a GHZ-symmetric topology; for "
-            "star/ring topologies use per-player payoff reporting (Month 3)."
-        )
+    def _is_symmetric(vec: npt.NDArray[np.float64]) -> bool:
+        return bool(np.allclose(vec, vec[0], atol=1e-8))
 
     # Classical NE: enumerate NE in the restricted classical-only game {D,H}^N.
     classical_names = [s for s in strategy_names if s != "Q"]
@@ -178,21 +190,25 @@ def compute_advantage(
     classical_nash_profiles = find_pure_nash(classical_tensor, N, classical_names)
 
     if classical_nash_profiles:
-        # Player 0 payoff is representative for symmetric profiles under GHZ.
-        for p in classical_nash_profiles:
-            _assert_symmetric(p)
-        classical_ne_payoff = max(
-            float(tensor[p][0]) for p in classical_nash_profiles
+        # Pick the classical NE with the highest mean per-player payoff.
+        best_classical = max(
+            classical_nash_profiles, key=lambda p: float(np.mean(tensor[p]))
         )
+        classical_ne_vector = np.asarray(tensor[best_classical], dtype=np.float64)
+        classical_ne_payoff = float(np.mean(classical_ne_vector))
     else:
+        classical_ne_vector = np.full(N, np.nan, dtype=np.float64)
         classical_ne_payoff = float("nan")
 
     q_profile = tuple("Q" for _ in range(N))
-    # Symmetric profile + symmetric GHZ entangler => all players get equal payoff.
-    _assert_symmetric(q_profile)
-    q_payoff_per_player = float(tensor[q_profile][0])
+    q_payoff_vector = np.asarray(tensor[q_profile], dtype=np.float64)
+    q_payoff_per_player = float(np.mean(q_payoff_vector))
+    advantage_vector = q_payoff_vector - classical_ne_vector
     advantage = q_payoff_per_player - classical_ne_payoff
     q_is_nash = q_profile in all_nash
+    symmetric = _is_symmetric(q_payoff_vector) and (
+        not classical_nash_profiles or _is_symmetric(classical_ne_vector)
+    )
 
     deviation_check: dict[tuple[int, str], dict[str, Any]] = {}
     for player in range(N):
@@ -202,16 +218,21 @@ def compute_advantage(
             dev_profile = list(q_profile)
             dev_profile[player] = alt
             dev_payoff = float(tensor[tuple(dev_profile)][player])
+            q_player_payoff = float(q_payoff_vector[player])
             deviation_check[(player, alt)] = {
                 "deviation_payoff": dev_payoff,
-                "q_payoff": q_payoff_per_player,
-                "q_dominates": dev_payoff <= q_payoff_per_player + 1e-9,
+                "q_payoff": q_player_payoff,
+                "q_dominates": dev_payoff <= q_player_payoff + 1e-9,
             }
 
     return {
         "q_payoff_per_player": q_payoff_per_player,
+        "q_payoff_vector": [float(x) for x in q_payoff_vector],
         "classical_ne_payoff": classical_ne_payoff,
+        "classical_ne_payoff_vector": [float(x) for x in classical_ne_vector],
         "advantage": advantage,
+        "advantage_vector": [float(x) for x in advantage_vector],
+        "symmetric": symmetric,
         "q_is_nash": q_is_nash,
         "all_pure_nash": all_nash,
         "classical_nash_profiles": classical_nash_profiles,

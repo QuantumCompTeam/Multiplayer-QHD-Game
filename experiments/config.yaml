@@ -1,0 +1,31 @@
+# Experiment configuration — the ONLY file you normally edit.
+#
+# Tweak the values below, then run from the repo root:
+#   PYTHONPATH=src python scripts/run_experiment.py
+#
+# Any field under `sweep` that is a LIST becomes a sweep axis. Any field under
+# `game` may also be a list to sweep it (e.g. gamma: ["pi/2", "pi/4"]). The run
+# evaluates the full cartesian product of all list-valued fields. `strategy_names`
+# is the strategy SET used in every cell (not a sweep axis).
+#
+# Output goes to results/<experiment-name>/<UTC-timestamp>/ (report.md + data + plots).
+
+experiment:
+  name: "n-scaling-advantage"
+  description: "Quantum advantage across N and entanglement topologies (RQ1/RQ2)"
+
+sweep:
+  N: [2, 3, 4, 5, 6, 7]
+  topologies: ["ghz", "ring", "star", "fully-connected", "w"]
+  strategy_names: ["D", "H", "Q"]
+
+game:
+  V: 4.0
+  C: 3.0
+  gamma: "pi/2"          # number, or an expression of pi like "pi/2", "pi/4"
+
+output:
+  # "plots" also emits qubit-topology diagrams + EWL circuits into
+  # plots/topologies/ and embeds them in report.md (see scripts/draw_topology.py
+  # to draw a single topology on demand).
+  formats: ["md", "json", "csv", "plots"]
