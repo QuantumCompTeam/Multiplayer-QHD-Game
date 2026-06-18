@@ -184,22 +184,53 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 # Install dependencies
 pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
 
-# Validate Month 1 (2-player EWL) — the real validation is the test suite
+# Validate the codebase — the real validation is the test suite
 pytest tests/ -v
-# Expected: 21 passed
+# Expected: all tests pass
 
 # Run the Month 2 result (N=3 quantum advantage)
 python scripts/n3_advantage.py
 # Expected: advantage = 1.0, (Q₃,Q₃,Q₃) is the unique pure Nash equilibrium
 
-# Month 3 — topology sweep (not yet implemented)
-# python src/analysis/topology_sweep.py --n_min 2 --n_max 6
-
 # Month 4 — noise analysis (not yet implemented)
 # python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
 ```
 
-> **Note:** Month 3/4 commands are commented out until those scripts exist. The repo is updated as the project progresses.
+> **Note:** Month 4 commands are commented out until those scripts exist. The repo is updated as the project progresses.
+
+### 8.1 Configurable Experiment Harness (tweak → run → read)
+
+For exploratory runs you don't have to edit any Python. Tweak one config file,
+run one command, and read a self-contained report.
+
+1. **Tweak** `experiments/config.yaml` — set the players `N`, the entanglement
+   `topologies` (`ghz`, `ring`, `star`, `fully-connected`, `w`), the game
+   parameters `V`/`C`/`gamma`, and which `output` formats to write. Any field
+   given as a *list* becomes a sweep axis; the run evaluates the full cartesian
+   product (e.g. `gamma: ["pi/2", "pi/4"]` sweeps entanglement strength).
+
+2. **Run**:
+   ```bash
+   PYTHONPATH=src python scripts/run_experiment.py
+   # or point at a different config:
+   PYTHONPATH=src python scripts/run_experiment.py --config experiments/config.yaml
+   ```
+
+3. **Read** the timestamped run under `results/<name>/<UTC-timestamp>/`:
+   - `report.md` — human-readable summary table, an auto-generated **Findings**
+     section, and per-cell deviation tables (with per-player vectors for
+     asymmetric topologies like star).
+   - `results.json` / `results.csv` — machine-readable results.
+   - `plots/advantage_vs_N.png`, `plots/topology_heatmap.png`.
+   - `config.snapshot.yaml` + `metadata.json` — exact parameters and git
+     provenance for reproducibility.
+
+   A non-positive advantage or a non-Nash `(Q,...,Q)` is reported as a **finding,
+   not a bug** — the harness surfaces it rather than hiding it.
+
+> This harness generalizes `scripts/n3_advantage.py` (one fixed N=3 GHZ run) and
+> `scripts/topology_sweep.py` (a fixed topology × N matrix) into a single
+> parameter-driven entry point with a readable report.
 
 ---
 
