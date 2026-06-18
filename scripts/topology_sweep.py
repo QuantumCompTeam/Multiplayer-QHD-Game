@@ -7,18 +7,23 @@ reports, for each cell:
   - whether ANY pure Nash equilibrium exists in {D,H,Q}^N
 
 For asymmetric topologies (star) the advantage is the mean over players; the
-per-player breakdown is available from compute_advantage's *_vector keys.
+per-player breakdown is saved to per_player.json.
+
+All artifacts (CSV matrices, per-player JSON, heatmap, metadata) are written to
+results/month3_topology_sweep/<UTC-timestamp>/.
 
 Run from repo root:
   PYTHONPATH=src python scripts/topology_sweep.py
-  PYTHONPATH=src python scripts/topology_sweep.py --heatmap   # also write PNG
 """
 
+import csv
+import json
 import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+import results_io  # noqa: E402
 from circuits.topologies import (  # noqa: E402
     fully_connected_entangler,
     ghz_entangler,
@@ -26,6 +31,7 @@ from circuits.topologies import (  # noqa: E402
     star_entangler,
     w_entangler,
 )
+from config import C as DEFAULT_C, GAMMA, V as DEFAULT_V  # noqa: E402
 from game.nash import compute_advantage  # noqa: E402
 
 TOPOLOGIES = [
@@ -71,7 +77,37 @@ def print_matrix(results: dict, title: str, fmt) -> None:
         print(f"  {name:>5} | {row}")
 
 
-def maybe_heatmap(results: dict, path: str = "topology_advantage_heatmap.png") -> None:
+def _write_matrix_csv(path, results: dict, fmt) -> None:
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["topology"] + [f"N={N}" for N in N_VALUES])
+        for name, _ in TOPOLOGIES:
+            w.writerow([name] + [fmt(results[(name, N)]) for N in N_VALUES])
+
+
+def _write_per_player_json(path, results: dict) -> None:
+    out: dict = {}
+    for name, _ in TOPOLOGIES:
+        out[name] = {}
+        for N in N_VALUES:
+            r = results[(name, N)]
+            out[name][str(N)] = {
+                "advantage": r["advantage"],
+                "q_payoff_vector": r["q_payoff_vector"],
+                "classical_ne_payoff_vector": r["classical_ne_payoff_vector"],
+                "advantage_vector": r["advantage_vector"],
+                "symmetric": r["symmetric"],
+                "q_is_nash": r["q_is_nash"],
+                "all_pure_nash": [list(p) for p in r["all_pure_nash"]],
+                "classical_nash_profiles": [
+                    list(p) for p in r["classical_nash_profiles"]
+                ],
+            }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, indent=2)
+
+
+def write_heatmap(results: dict, path) -> None:
     try:
         import matplotlib
 
@@ -94,9 +130,10 @@ def maybe_heatmap(results: dict, path: str = "topology_advantage_heatmap.png") -
         fig.colorbar(im, ax=ax, label="advantage")
         fig.tight_layout()
         fig.savefig(path, dpi=120)
-        print(f"\nHeatmap written to {path}")
+        plt.close(fig)
+        print(f"  heatmap.png written")
     except Exception as e:  # noqa: BLE001
-        print(f"\n[heatmap skipped: {e}]")
+        print(f"  [heatmap skipped: {e}]")
 
 
 def main() -> None:
@@ -114,8 +151,24 @@ def main() -> None:
         _fmt_nash,
     )
 
-    if "--heatmap" in sys.argv:
-        maybe_heatmap(results)
+    run_dir = results_io.new_run_dir("month3_topology_sweep")
+    _write_matrix_csv(run_dir / "advantage_matrix.csv", results, _fmt_advantage)
+    _write_matrix_csv(run_dir / "equilibrium_matrix.csv", results, _fmt_nash)
+    _write_per_player_json(run_dir / "per_player.json", results)
+    write_heatmap(results, run_dir / "heatmap.png")
+    results_io.write_metadata(
+        run_dir,
+        "month3_topology_sweep",
+        params={
+            "N_values": N_VALUES,
+            "topologies": [name for name, _ in TOPOLOGIES],
+            "V": DEFAULT_V,
+            "C": DEFAULT_C,
+            "GAMMA": GAMMA,
+            "strategy_set": ["D", "H", "Q"],
+        },
+    )
+    print(f"\nResults written to {run_dir}")
 
 
 if __name__ == "__main__":
