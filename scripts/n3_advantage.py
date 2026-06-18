@@ -23,6 +23,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+import cpu_limit  # noqa: E402,F401  (caps BLAS threads; MUST precede numpy import)
 import results_io
 from config import C as DEFAULT_C, GAMMA, V as DEFAULT_V
 from game.nash import compute_advantage

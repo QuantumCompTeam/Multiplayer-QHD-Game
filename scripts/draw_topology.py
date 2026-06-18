@@ -18,6 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+import cpu_limit  # noqa: E402,F401  (caps BLAS threads; MUST precede numpy import)
+
 import matplotlib.pyplot as plt  # noqa: E402
 
 import results_io  # noqa: E402
