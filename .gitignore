@@ -42,3 +42,10 @@ htmlcov/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Results
+results/
+
+
+# independent files and info
+audit-report-20260616-1834.md

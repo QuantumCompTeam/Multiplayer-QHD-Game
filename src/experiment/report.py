@@ -127,6 +127,44 @@ def _summary_table(results: list[CellResult]) -> list[str]:
     return rows
 
 
+def _gamma_findings(results: list[CellResult]) -> list[str]:
+    """Entanglement-threshold findings, only when gamma is swept.
+
+    For each (topology, N) series, the smallest swept gamma at which advantage turns
+    positive and at which (Q,...,Q) first becomes a pure Nash equilibrium. "never in
+    range" is itself a finding (the quantum equilibrium needs more entanglement than
+    the sweep covers).
+    """
+    ok = [r for r in results if r.status == STATUS_OK and r.advantage is not None]
+    if len({r.cell.gamma for r in ok}) <= 1:
+        return []  # gamma not swept — nothing to threshold
+
+    groups: dict[tuple[str, int], list[CellResult]] = {}
+    for r in ok:
+        groups.setdefault((r.cell.topology, r.cell.N), []).append(r)
+
+    lines = [
+        "",
+        "**Entanglement (γ) thresholds** — smallest swept γ at which each series gains "
+        "advantage / becomes a pure Nash equilibrium (the discovery: how much "
+        "entanglement the quantum equilibrium needs):",
+    ]
+    for (topo, N), rs in sorted(groups.items()):
+        rs.sort(key=lambda r: r.cell.gamma)
+        adv_pos = next((r for r in rs if r.advantage is not None and r.advantage > 1e-9), None)
+        nash = next((r for r in rs if r.q_is_nash), None)
+        adv_txt = (
+            f"advantage>0 from γ={adv_pos.cell.gamma_label}"
+            if adv_pos else "advantage never > 0 in range"
+        )
+        nash_txt = (
+            f"(Q,…,Q) Nash from γ={nash.cell.gamma_label}"
+            if nash else "(Q,…,Q) never Nash in range"
+        )
+        lines.append(f"  - {topo}, N={N}: {adv_txt}; {nash_txt}")
+    return lines
+
+
 def _findings(results: list[CellResult], summary: SweepSummary) -> list[str]:
     lines = ["## Findings", ""]
     lines.append(
@@ -157,6 +195,9 @@ def _findings(results: list[CellResult], summary: SweepSummary) -> list[str]:
         lines.append("**Cells where (Q,...,Q) is NOT Nash (RQ1 finding):**")
         for r in summary.non_nash_cells:
             lines.append(f"  - N={r.cell.N}, {r.cell.topology}, gamma={r.cell.gamma_label}")
+
+    # Entanglement-threshold findings (only present when gamma is swept).
+    lines += _gamma_findings(results)
 
     # Make skipped coverage explicit so gaps never read as "covered".
     skipped = [r for r in results if r.status != STATUS_OK]
@@ -225,43 +266,11 @@ def _cell_detail(r: CellResult) -> list[str]:
     return lines
 
 
-def _topology_section(topo_figs: dict[str, list[str]]) -> list[str]:
-    """Markdown section embedding the topology-graph and EWL-circuit diagrams."""
-    if not topo_figs or not (topo_figs.get("graphs") or topo_figs.get("circuits")):
-        return []
-    lines = ["## Entanglement topologies", ""]
-    if topo_figs.get("graphs"):
-        lines += [
-            "Topology graphs — nodes = qubits/players, edges = entangling pairs. "
-            "GHZ and W are global N-body entanglers (no pairwise edges), shown with "
-            "a shaded region so they are not confused with fully-connected.",
-            "",
-        ]
-        for fname in topo_figs["graphs"]:
-            lines.append(f"![{fname}](plots/topologies/{fname})")
-        lines.append("")
-    if topo_figs.get("circuits"):
-        lines += [
-            "EWL circuit (J · per-player U · J†). The entangler J is a single boxed "
-            "unitary, so the circuit shape is identical for every topology at a given "
-            "N — the topology *structure* lives in the graphs above, not here.",
-            "",
-        ]
-        for fname in topo_figs["circuits"]:
-            if fname.endswith(".png"):
-                lines.append(f"![{fname}](plots/topologies/{fname})")
-            else:
-                lines.append(f"- [{fname}](plots/topologies/{fname}) (text fallback)")
-        lines.append("")
-    return lines
-
-
 def _render_markdown(
     config: ExperimentConfig,
     results: list[CellResult],
     timestamp: str,
     plot_files: list[str],
-    topo_figs: dict[str, list[str]],
 ) -> str:
     summary = summarize(results)
     lines = [
@@ -290,8 +299,6 @@ def _render_markdown(
         for pf in plot_files:
             lines.append(f"![{pf}](plots/{pf})")
         lines.append("")
-
-    lines += _topology_section(topo_figs)
 
     lines.append("## Per-cell detail")
     lines.append("")
@@ -355,30 +362,17 @@ def write_outputs(
                 writer.writerow(_cell_record(r))
 
     plot_files: list[str] = []
-    topo_figs: dict[str, list[str]] = {}
     if "plots" in config.formats:
         # Imported lazily so md/json/csv-only runs don't require matplotlib.
+        # Topology diagrams are NOT written here — they live in the shared
+        # results/topology/ folder (see topology_viz.write_topology_folder),
+        # not in each run's folder.
         from experiment.plots import write_plots
-        from experiment.topology_registry import canonical
-        from experiment.topology_viz import write_topology_figures
-        from circuits.topology_graphs import KNOWN_TOPOLOGIES
 
         plot_files = write_plots(results, run_dir / "plots")
 
-        # Draw the topologies/N present in the sweep (independent of run success),
-        # filtered to those we know how to draw.
-        topos = sorted(
-            {canonical(c.topology) for c in config.cells}
-            & set(KNOWN_TOPOLOGIES)
-        )
-        ns = sorted({c.N for c in config.cells})
-        if topos and ns:
-            topo_figs = write_topology_figures(
-                topos, ns, run_dir / "plots" / "topologies"
-            )
-
     if "md" in config.formats:
-        md = _render_markdown(config, results, timestamp, plot_files, topo_figs)
+        md = _render_markdown(config, results, timestamp, plot_files)
         (run_dir / "report.md").write_text(md)
 
     return run_dir
