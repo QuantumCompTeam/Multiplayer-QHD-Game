@@ -25,4 +25,7 @@ game:
   gamma: "pi/2"          # number, or an expression of pi like "pi/2", "pi/4"
 
 output:
+  # "plots" also emits qubit-topology diagrams + EWL circuits into
+  # plots/topologies/ and embeds them in report.md (see scripts/draw_topology.py
+  # to draw a single topology on demand).
   formats: ["md", "json", "csv", "plots"]

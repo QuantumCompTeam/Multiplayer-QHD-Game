@@ -29,6 +29,35 @@ from circuits.topologies import Entangler, ghz_entangler
 from config import GAMMA
 
 
+def build_ewl_qc(
+    N: int,
+    strategies: list[StrategyParams],
+    *,
+    entangler: Entangler = ghz_entangler,
+    gamma: float = GAMMA,
+) -> QuantumCircuit:
+    """Construct the N-player EWL circuit (J · per-player U · J†), no measurement.
+
+    Separated from build_ewl_circuit so the circuit can be drawn (see
+    experiment.topology_viz.draw_circuit) without re-deriving the protocol.
+
+    The entangler J is a single boxed UnitaryGate spanning all N qubits, so the
+    drawn circuit shows the protocol shape, which is the same for every topology
+    at a given N -- the topology STRUCTURE lives in the entanglement graph, not
+    this diagram. See build_ewl_circuit for the parameter contract.
+    """
+    j_mat = entangler(N, gamma)
+    j_gate = UnitaryGate(j_mat, label="J")
+    j_dag_gate = UnitaryGate(j_mat.conj().T, label="Jdag")
+
+    qc = QuantumCircuit(N)
+    qc.append(j_gate, list(range(N)))
+    for qubit, params in enumerate(strategies):
+        qc.append(UnitaryGate(U(*params), label="U"), [qubit])
+    qc.append(j_dag_gate, list(range(N)))
+    return qc
+
+
 def build_ewl_circuit(
     N: int,
     strategies: list[StrategyParams],
@@ -50,14 +79,5 @@ def build_ewl_circuit(
     Returns shape (2**N,). probs[i] = P(measuring basis state |i>).
     Bit ordering: player j is Hawk iff (i >> j) & 1 == 1 (Qiskit little-endian).
     """
-    j_mat = entangler(N, gamma)
-    j_gate = UnitaryGate(j_mat, label="J")
-    j_dag_gate = UnitaryGate(j_mat.conj().T, label="Jdag")
-
-    qc = QuantumCircuit(N)
-    qc.append(j_gate, list(range(N)))
-    for qubit, params in enumerate(strategies):
-        qc.append(UnitaryGate(U(*params)), [qubit])
-    qc.append(j_dag_gate, list(range(N)))
-
+    qc = build_ewl_qc(N, strategies, entangler=entangler, gamma=gamma)
     return np.asarray(Statevector(qc).probabilities(), dtype=np.float64)

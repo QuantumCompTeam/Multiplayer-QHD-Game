@@ -222,6 +222,11 @@ run one command, and read a self-contained report.
      asymmetric topologies like star).
    - `results.json` / `results.csv` — machine-readable results.
    - `plots/advantage_vs_N.png`, `plots/topology_heatmap.png`.
+   - `plots/topologies/*.png` — **qubit-topology diagrams** (one per topology,
+     across the swept N) and the EWL circuit per N. Embedded under the report's
+     **Entanglement topologies** section so you can see exactly which topology
+     each result used. GHZ/W (global N-body entanglers) are drawn with a distinct
+     shaded depiction, never as a plain complete graph.
    - `config.snapshot.yaml` + `metadata.json` — exact parameters and git
      provenance for reproducibility.
 
@@ -231,6 +236,21 @@ run one command, and read a self-contained report.
 > This harness generalizes `scripts/n3_advantage.py` (one fixed N=3 GHZ run) and
 > `scripts/topology_sweep.py` (a fixed topology × N matrix) into a single
 > parameter-driven entry point with a readable report.
+
+### 8.2 Visualize a topology on demand
+
+To draw a single entanglement topology (and/or its EWL circuit) without running a
+full sweep:
+
+```bash
+PYTHONPATH=src python scripts/draw_topology.py --topology star --N 5
+PYTHONPATH=src python scripts/draw_topology.py --topology ghz --N 4 --what both
+PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/diag
+```
+
+`--topology` accepts the harness aliases (`full` → `fully-connected`, etc.),
+`--what` is `graph`, `circuit`, or `both` (default), and output defaults to a
+`results/topology_diagrams/<UTC-timestamp>/` folder.
 
 ---
 

@@ -225,11 +225,43 @@ def _cell_detail(r: CellResult) -> list[str]:
     return lines
 
 
+def _topology_section(topo_figs: dict[str, list[str]]) -> list[str]:
+    """Markdown section embedding the topology-graph and EWL-circuit diagrams."""
+    if not topo_figs or not (topo_figs.get("graphs") or topo_figs.get("circuits")):
+        return []
+    lines = ["## Entanglement topologies", ""]
+    if topo_figs.get("graphs"):
+        lines += [
+            "Topology graphs — nodes = qubits/players, edges = entangling pairs. "
+            "GHZ and W are global N-body entanglers (no pairwise edges), shown with "
+            "a shaded region so they are not confused with fully-connected.",
+            "",
+        ]
+        for fname in topo_figs["graphs"]:
+            lines.append(f"![{fname}](plots/topologies/{fname})")
+        lines.append("")
+    if topo_figs.get("circuits"):
+        lines += [
+            "EWL circuit (J · per-player U · J†). The entangler J is a single boxed "
+            "unitary, so the circuit shape is identical for every topology at a given "
+            "N — the topology *structure* lives in the graphs above, not here.",
+            "",
+        ]
+        for fname in topo_figs["circuits"]:
+            if fname.endswith(".png"):
+                lines.append(f"![{fname}](plots/topologies/{fname})")
+            else:
+                lines.append(f"- [{fname}](plots/topologies/{fname}) (text fallback)")
+        lines.append("")
+    return lines
+
+
 def _render_markdown(
     config: ExperimentConfig,
     results: list[CellResult],
     timestamp: str,
     plot_files: list[str],
+    topo_figs: dict[str, list[str]],
 ) -> str:
     summary = summarize(results)
     lines = [
@@ -258,6 +290,8 @@ def _render_markdown(
         for pf in plot_files:
             lines.append(f"![{pf}](plots/{pf})")
         lines.append("")
+
+    lines += _topology_section(topo_figs)
 
     lines.append("## Per-cell detail")
     lines.append("")
@@ -321,14 +355,30 @@ def write_outputs(
                 writer.writerow(_cell_record(r))
 
     plot_files: list[str] = []
+    topo_figs: dict[str, list[str]] = {}
     if "plots" in config.formats:
         # Imported lazily so md/json/csv-only runs don't require matplotlib.
         from experiment.plots import write_plots
+        from experiment.topology_registry import canonical
+        from experiment.topology_viz import write_topology_figures
+        from circuits.topology_graphs import KNOWN_TOPOLOGIES
 
         plot_files = write_plots(results, run_dir / "plots")
 
+        # Draw the topologies/N present in the sweep (independent of run success),
+        # filtered to those we know how to draw.
+        topos = sorted(
+            {canonical(c.topology) for c in config.cells}
+            & set(KNOWN_TOPOLOGIES)
+        )
+        ns = sorted({c.N for c in config.cells})
+        if topos and ns:
+            topo_figs = write_topology_figures(
+                topos, ns, run_dir / "plots" / "topologies"
+            )
+
     if "md" in config.formats:
-        md = _render_markdown(config, results, timestamp, plot_files)
+        md = _render_markdown(config, results, timestamp, plot_files, topo_figs)
         (run_dir / "report.md").write_text(md)
 
     return run_dir

@@ -37,6 +37,7 @@ import networkx as nx
 import numpy as np
 import numpy.typing as npt
 
+from circuits.topology_graphs import topology_graph
 from config import GAMMA
 
 # Uniform entangler contract used by build_ewl_circuit and nash.py.
@@ -137,8 +138,11 @@ def ring_entangler(N: int, gamma: float = GAMMA) -> npt.NDArray[np.complex128]:
 
     Reduces to J_matrix(gamma) at N=2 (single edge).  At N=3 the triangle
     C_3 equals K_3, so ring and fully-connected coincide.
+
+    The graph comes from topology_graph("ring", N) -- the same object used by
+    the visualization, so what is drawn is exactly what is entangled.
     """
-    return make_pairwise_entangler(nx.cycle_graph(N))(N, gamma)
+    return make_pairwise_entangler(topology_graph("ring", N))(N, gamma)
 
 
 def star_entangler(N: int, gamma: float = GAMMA) -> npt.NDArray[np.complex128]:
@@ -149,8 +153,7 @@ def star_entangler(N: int, gamma: float = GAMMA) -> npt.NDArray[np.complex128]:
     downstream analysis must use per-player reporting (see compute_advantage).
     Reduces to J_matrix(gamma) at N=2 (single edge).
     """
-    # nx.star_graph(k) has k+1 nodes (hub 0 plus k spokes); use N-1 for N nodes.
-    return make_pairwise_entangler(nx.star_graph(N - 1))(N, gamma)
+    return make_pairwise_entangler(topology_graph("star", N))(N, gamma)
 
 
 def fully_connected_entangler(
@@ -163,7 +166,7 @@ def fully_connected_entangler(
     while this uses the sum of all pairwise X_i X_j terms.  Reduces to
     J_matrix(gamma) at N=2.
     """
-    return make_pairwise_entangler(nx.complete_graph(N))(N, gamma)
+    return make_pairwise_entangler(topology_graph("fully-connected", N))(N, gamma)
 
 
 def _w_state(N: int) -> npt.NDArray[np.complex128]:
