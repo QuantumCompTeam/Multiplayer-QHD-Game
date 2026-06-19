@@ -63,7 +63,7 @@ sweep:
   # game.strategy_opt, so the advantage is no longer the GHZ strategy
   # transplanted onto a non-GHZ topology. They are SLOWER (numerical search);
   # cost grows with N — keep N <= 6. See scripts/topology_optimal_strategy.py.
-  strategy_mode: "fixed"
+  strategy_mode: "nash"
 
 game:
   # ---- [sweep axis] resource value V. Number, or a list to sweep. Default 4.0.
