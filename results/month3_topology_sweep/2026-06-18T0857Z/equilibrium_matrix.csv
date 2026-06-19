@@ -1,6 +1,0 @@
-topology,N=2,N=3,N=4,N=5,N=6
-GHZ,Q-NE,Q-NE,-,-,-
-ring,Q-NE,Q-NE,NE,NE,NE
-star,Q-NE,-,-,NE,NE
-full,Q-NE,Q-NE,-,-,-
-W,NE,NE,NE,NE,NE

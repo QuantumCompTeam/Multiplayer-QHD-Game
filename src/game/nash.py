@@ -36,13 +36,21 @@ from game.payoffs import expected_payoff
 STRATEGY_NAMES: list[str] = ["D", "H", "Q"]
 
 
-def _strategy_map(N: int) -> dict[str, StrategyParams]:
+def _strategy_map(
+    N: int, q_params: StrategyParams | None = None
+) -> dict[str, StrategyParams]:
     """Map strategy names to (theta, alpha, beta) parameter tuples for N players.
 
     "Q" is q_strategy(N) = U(0, pi/N, pi/N), the N-appropriate quantum Nash
-    strategy.  Classical strategies D and H are N-independent.
+    strategy for the GHZ entangler.  Classical strategies D and H are
+    N-independent.
+
+    `q_params` overrides what "Q" maps to.  Pass a topology-optimized gate (see
+    game.strategy_opt) to evaluate a topology-appropriate quantum strategy
+    instead of the fixed GHZ-derived one.  Default None keeps the GHZ behavior,
+    so existing callers and the discrete {D,H,Q} sweep are unchanged.
     """
-    return {"D": DOVE, "H": HAWK, "Q": q_strategy(N)}
+    return {"D": DOVE, "H": HAWK, "Q": q_params if q_params is not None else q_strategy(N)}
 
 
 def build_payoff_tensor(
@@ -52,20 +60,23 @@ def build_payoff_tensor(
     C: float = DEFAULT_C,
     entangler: Entangler = ghz_entangler,
     gamma: float = GAMMA,
+    q_params: StrategyParams | None = None,
 ) -> dict[tuple[str, ...], npt.NDArray[np.float64]]:
     """Evaluate all strategy profiles and return per-player payoffs.
 
     Iterates over all len(strategy_names)^N profiles.  For each profile,
     runs build_ewl_circuit -> expected_payoff.
 
-    "Q" in strategy_names maps to q_strategy(N) = U(0, pi/N, pi/N).
+    "Q" in strategy_names maps to q_strategy(N) = U(0, pi/N, pi/N), unless
+    `q_params` overrides it (e.g. a topology-optimized gate from
+    game.strategy_opt).
 
     Returns: dict mapping profile tuple -> shape (N,) payoff array.
     For N=3, strategy_names=["D","H","Q"]: 27 entries.
 
     Pure-strategy enumeration only.  Does not compute mixed-strategy equilibria.
     """
-    smap = _strategy_map(N)
+    smap = _strategy_map(N, q_params)
     tensor: dict[tuple[str, ...], npt.NDArray[np.float64]] = {}
     for profile in itertools.product(strategy_names, repeat=N):
         params = [smap[s] for s in profile]
@@ -120,8 +131,14 @@ def compute_advantage(
     C: float = DEFAULT_C,
     entangler: Entangler = ghz_entangler,
     gamma: float = GAMMA,
+    q_params: StrategyParams | None = None,
 ) -> dict[str, Any]:
     """Compute quantum advantage: quantum NE payoff vs classical NE payoff (RQ1).
+
+    `q_params` overrides the strategy "Q" maps to (default: the GHZ-derived
+    q_strategy(N)).  Pass a topology-optimized gate from game.strategy_opt to
+    measure the advantage of the topology's OWN best quantum strategy rather
+    than the fixed GHZ one.  Default None is byte-identical to prior behavior.
 
     Advantage is defined as:
         advantage = q_payoff_per_player - classical_ne_payoff
@@ -176,7 +193,7 @@ def compute_advantage(
       deviation_check         dict   -- per-(player, alt) unilateral deviation
                                         from (Q,...,Q): payoff and dominance flag
     """
-    tensor = build_payoff_tensor(N, strategy_names, V, C, entangler, gamma)
+    tensor = build_payoff_tensor(N, strategy_names, V, C, entangler, gamma, q_params)
     all_nash = find_pure_nash(tensor, N, strategy_names)
 
     def _is_symmetric(vec: npt.NDArray[np.float64]) -> bool:

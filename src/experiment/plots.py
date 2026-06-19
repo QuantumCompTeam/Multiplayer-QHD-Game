@@ -43,6 +43,24 @@ def _legend_outside(ax) -> None:
     ax.legend(fontsize=8, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0)
 
 
+def _smooth_curve(xs, ys, n: int = 200):
+    """Dense, shape-preserving (PCHIP) curve through (xs, ys).
+
+    PCHIP (monotone cubic) is smooth but does NOT overshoot, so sharp real features
+    (e.g. the ring's dip to 0 at N=4) stay honest rather than sprouting fake wiggles.
+    Falls back to the raw points when there are too few to interpolate (<3); xs must
+    be strictly increasing (true for the sorted, unique N / γ values in both callers).
+    """
+    xs = np.asarray(xs, dtype=float)
+    ys = np.asarray(ys, dtype=float)
+    if len(xs) < 3:
+        return xs, ys
+    from scipy.interpolate import PchipInterpolator
+
+    xq = np.linspace(xs.min(), xs.max(), n)
+    return xq, PchipInterpolator(xs, ys)(xq)
+
+
 def _secondary_label(r: CellResult, vary: dict[str, bool]) -> str:
     """Append any swept secondary params (gamma/V/C) that vary, to disambiguate."""
     parts: list[str] = []
@@ -75,7 +93,13 @@ def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> s
         pts.sort()
         xs = [p[0] for p in pts]
         ys = [p[1] for p in pts]
-        ax.plot(xs, ys, label=label, **_style(i))
+        style = _style(i)
+        marker = style.pop("marker")
+        xq, yq = _smooth_curve(xs, ys)
+        (line,) = ax.plot(xq, yq, label=label, **style)  # smooth curve, no markers
+        # Real computed points marked on the curve.
+        ax.plot(xs, ys, linestyle="none", marker=marker, color=line.get_color(),
+                alpha=0.8, markersize=6, zorder=style["zorder"])
     ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
     ax.set_xlabel("N (players)")
     ax.set_ylabel("quantum advantage (QNE − CNE)")
@@ -152,7 +176,8 @@ def _advantage_vs_gamma(ok: list[CellResult], vary: dict[str, bool], out: Path) 
         ys = [p[1] for p in pts]
         style = _style(i)
         marker = style.pop("marker")
-        (line,) = ax.plot(xs, ys, label=label, **style)
+        xq, yq = _smooth_curve(xs, ys)
+        (line,) = ax.plot(xq, yq, label=label, **style)  # smooth curve, no markers
         color = line.get_color()
         # Filled marker where (Q,..,Q) is a pure Nash equilibrium, hollow where not.
         for x, y, is_nash in pts:

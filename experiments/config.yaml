@@ -1,31 +1,94 @@
+# =============================================================================
 # Experiment configuration — the ONLY file you normally edit.
+# =============================================================================
 #
-# Tweak the values below, then run from the repo root:
-#   PYTHONPATH=src python scripts/run_experiment.py
+# Run it from the repo root with:
+#     PYTHONPATH=src python scripts/run_experiment.py
 #
-# Any field under `sweep` that is a LIST becomes a sweep axis. Any field under
-# `game` may also be a list to sweep it (e.g. gamma: ["pi/2", "pi/4"]). The run
-# evaluates the full cartesian product of all list-valued fields. `strategy_names`
-# is the strategy SET used in every cell (not a sweep axis).
+# Output goes to:  results/<experiment.name>/<UTC-timestamp>/
+#     report.md  results.json  results.csv  plots/  config.snapshot.yaml
 #
-# Output goes to results/<experiment-name>/<UTC-timestamp>/ (report.md + data + plots).
+# HOW SWEEPS WORK
+#   Any field marked "[sweep axis]" below becomes a sweep dimension when you give
+#   it a LIST. The run evaluates the FULL CARTESIAN PRODUCT of every list-valued
+#   axis. A scalar value (no brackets) is just a fixed single point on that axis.
+#   Example: N:[2,3] x topologies:["ring","ghz"] x gamma:["pi/4","pi/2"] = 8 cells.
+#   Fields marked "[constant per run]" apply to every cell and are NOT axes.
+#
+# REQUIRED keys:  sweep.N  and  sweep.topologies  (everything else has a default).
+# =============================================================================
 
 experiment:
+  # Folder name for this run's results (results/<name>/<timestamp>/). String.
   name: "n-scaling-advantage"
+  # Free-text description, copied verbatim into report.md. String.
   description: "Quantum advantage across N and entanglement topologies (RQ1/RQ2)"
 
 sweep:
+  # ---- [sweep axis] number of players = number of qubits. List of ints. -------
+  # Practical range 2..6 (the payoff/statevector code is validated there and the
+  # cost is 2^N; N>6 is slow and outside the tested contract). REQUIRED.
   N: [2, 3, 4, 5, 6]
+
+  # ---- [sweep axis] entanglement topology per cell. List of strings. REQUIRED.
+  # Valid values (aliases in parentheses):
+  #   ghz             -- global X^(x)N entangler (all-to-all GHZ state)
+  #   ring            -- pairwise on the cycle graph C_N
+  #   star            -- pairwise on a star (hub = qubit 0); ASYMMETRIC players
+  #   fully-connected -- pairwise on the complete graph K_N
+  #                      (aliases: full, fully_connected, complete)
+  #   w               -- W-state reflection entangler
   topologies: ["ghz", "ring", "star", "fully-connected", "w"]
+
+  # ---- [constant per run] the strategy SET evaluated in every cell. -----------
+  # NOT a sweep axis — it is the discrete action set, used for all cells.
+  #   D -- Dove  = U(0, 0, 0)          (classical cooperate / identity)
+  #   H -- Hawk  = U(pi, 0, 0)         (classical defect)
+  #   Q -- quantum strategy. In strategy_mode "fixed" this is the GHZ-derived
+  #        q_strategy(N) = U(0, pi/N, pi/N); in "cooperative"/"nash" it is the
+  #        topology's own optimized gate (see strategy_mode below).
+  # Q must be present for a quantum-advantage number to be computed.
+  # Default if omitted: ["D", "H", "Q"].
   strategy_names: ["D", "H", "Q"]
 
+  # ---- [constant per run] how the "Q" strategy is chosen for each cell. --------
+  # NOT a sweep axis. One of: fixed | cooperative | nash. Default: "fixed".
+  #   fixed       -- GHZ-derived q_strategy(N) = U(0, pi/N, pi/N) for EVERY
+  #                  topology (legacy behavior; fast, no optimization).
+  #   cooperative -- per-topology payoff-maximizing symmetric SU(2) gate
+  #                  (the best achievable cooperative payoff, = V/N).
+  #   nash        -- per-topology symmetric continuous Nash strategy, certified
+  #                  by a nash_gap (a genuine equilibrium may not exist).
+  # cooperative/nash compute the topology's OWN optimal quantum play via
+  # game.strategy_opt, so the advantage is no longer the GHZ strategy
+  # transplanted onto a non-GHZ topology. They are SLOWER (numerical search);
+  # cost grows with N — keep N <= 6. See scripts/topology_optimal_strategy.py.
+  strategy_mode: "fixed"
+
 game:
-  V: 100
-  C: 70
-  gamma: "2*pi"          # number, or an expression of pi like "pi/2", "pi/4"
+  # ---- [sweep axis] resource value V. Number, or a list to sweep. Default 4.0.
+  V: 1000
+  # ---- [sweep axis] conflict cost C. Number, or a list to sweep. Default 3.0.
+  # Hawk-Dove is non-trivial when C > V/2 (mutual-Hawk payoff goes negative).
+  C: 550
+  # ---- [sweep axis] entanglement strength gamma. Default "pi/2". --------------
+  # A number, or a pi-expression using only `pi`, digits, `.`, `/`, `*`
+  # (e.g. "pi/2", "pi/4", "2*pi"). gamma = pi/2 is MAXIMUM entanglement;
+  # gamma = 0 is no entanglement (the classical game).
+  gamma: "pi/2"
+
+  # --- Examples (uncomment to turn a field into a sweep axis) ------------------
+  # gamma: ["0", "pi/8", "pi/4", "3*pi/8", "pi/2"]   # entanglement sweep
+  # V: [4, 100, 1000]                                # resource-value sweep
+  # C: [3, 55, 550]                                  # conflict-cost sweep
 
 output:
-  # "plots" also emits qubit-topology diagrams + EWL circuits into
-  # plots/topologies/ and embeds them in report.md (see scripts/draw_topology.py
-  # to draw a single topology on demand).
-  formats: ["md", "json", "csv", "plots"]
+  # Which artifacts to write. Subset of: md | json | csv | plots.
+  # Default if omitted: all four.
+  #   md    -- human-readable report.md (summary table + per-cell detail)
+  #   json  -- results.json (full structured results)
+  #   csv   -- results.csv (one row per cell)
+  #   plots -- heatmaps + per-topology qubit diagrams and EWL circuits into
+  #            plots/ and plots/topologies/, embedded in report.md
+  #            (see scripts/draw_topology.py to draw a single topology on demand).
+  formats: ["md", "plots"]

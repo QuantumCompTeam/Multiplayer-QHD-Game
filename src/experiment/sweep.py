@@ -15,8 +15,9 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from experiment.config import Cell
-from experiment.topology_registry import resolve
+from experiment.topology_registry import canonical, resolve
 from game.nash import compute_advantage
+from game.strategy_opt import optimal_strategy
 
 # Cell status values, in order of "things went well" -> "did not run".
 STATUS_OK = "ok"
@@ -36,6 +37,8 @@ class CellResult:
     status: str
     result: dict[str, Any] | None = None
     message: str = ""
+    # Populated only when strategy_mode != "fixed": the topology-optimized "Q".
+    strategy: dict[str, Any] | None = None
 
     @property
     def advantage(self) -> float | None:
@@ -47,9 +50,37 @@ class CellResult:
 
 
 def run_cell(cell: Cell) -> CellResult:
-    """Evaluate a single cell, capturing all failure modes as a status."""
+    """Evaluate a single cell, capturing all failure modes as a status.
+
+    When `cell.strategy_mode` is "cooperative" or "nash", the topology's own
+    optimal symmetric gate is computed first (game.strategy_opt) and passed as
+    `q_params`, so "Q" reflects the topology's best quantum play rather than the
+    fixed GHZ-derived strategy. "fixed" (default) leaves the legacy behavior.
+    """
     try:
         entangler = resolve(cell.topology, cell.N)
+        q_params = None
+        strategy: dict[str, Any] | None = None
+        if cell.strategy_mode != "fixed":
+            opt = optimal_strategy(
+                cell.strategy_mode,
+                N=cell.N,
+                entangler=entangler,
+                gamma=cell.gamma,
+                V=cell.V,
+                C=cell.C,
+                symmetric_caveat=(canonical(cell.topology) == "star"),
+            )
+            q_params = opt.params
+            strategy = {
+                "mode": opt.mode,
+                "params": list(opt.params),
+                "payoff_per_player": opt.payoff_per_player,
+                "nash_gap": opt.nash_gap,
+                "is_nash": opt.is_nash,
+                "converged": opt.converged,
+                "symmetric_caveat": opt.symmetric_caveat,
+            }
         result = compute_advantage(
             N=cell.N,
             strategy_names=list(cell.strategy_names),
@@ -57,12 +88,13 @@ def run_cell(cell: Cell) -> CellResult:
             C=cell.C,
             entangler=entangler,
             gamma=cell.gamma,
+            q_params=q_params,
         )
     except NotImplementedError as exc:
         return CellResult(cell, STATUS_NOT_IMPLEMENTED, message=str(exc))
     except Exception as exc:  # noqa: BLE001 — record, don't crash the whole sweep
         return CellResult(cell, STATUS_ERROR, message=f"{type(exc).__name__}: {exc}")
-    return CellResult(cell, STATUS_OK, result=result)
+    return CellResult(cell, STATUS_OK, result=result, strategy=strategy)
 
 
 @dataclass

@@ -72,6 +72,12 @@ def _cell_record(r: CellResult) -> dict[str, Any]:
         "symmetric": None if r.result is None else r.result["symmetric"],
         "q_payoff_per_player": None if r.result is None else r.result["q_payoff_per_player"],
         "classical_ne_payoff": None if r.result is None else r.result["classical_ne_payoff"],
+        "strategy_mode": r.cell.strategy_mode,
+        "strategy_params": None if r.strategy is None else ",".join(
+            f"{x:.6f}" for x in r.strategy["params"]
+        ),
+        "strategy_nash_gap": None if r.strategy is None else r.strategy["nash_gap"],
+        "strategy_is_nash": None if r.strategy is None else r.strategy["is_nash"],
         "message": r.message,
     }
     return rec
@@ -94,6 +100,7 @@ def _config_snapshot(config: ExperimentConfig, timestamp: str) -> dict[str, Any]
                 "C": c.C,
                 "gamma": c.gamma,
                 "gamma_label": c.gamma_label,
+                "strategy_mode": c.strategy_mode,
             }
             for c in config.cells
         ],
@@ -227,6 +234,25 @@ def _cell_detail(r: CellResult) -> list[str]:
         f"- Player-symmetric: **{res['symmetric']}**",
         "",
     ]
+    if r.strategy is not None:
+        s = r.strategy
+        theta, alpha, beta = s["params"]
+        caveat = (
+            " _(symmetric-strategy caveat: topology is not vertex-transitive, "
+            "so this is a constrained sub-optimum)_"
+            if s["symmetric_caveat"] else ""
+        )
+        lines += [
+            f"**Topology-optimized quantum strategy ({s['mode']} mode):**{caveat}",
+            "",
+            f"- Q := U(θ={theta:.6f}, α={alpha:.6f}, β={beta:.6f})  "
+            f"(vs GHZ-fixed U(0, π/{r.cell.N}, π/{r.cell.N}))",
+            f"- Symmetric payoff/player: **{s['payoff_per_player']:.6f}**",
+            f"- Nash gap (max unilateral gain): **{s['nash_gap']:.2e}** → "
+            f"is Nash: **{s['is_nash']}**",
+            f"- Optimizer converged: **{s['converged']}**",
+            "",
+        ]
     if not res["symmetric"]:
         # For asymmetric topologies (e.g. star), the scalar means hide per-player
         # spread — show the full vectors so the asymmetry is visible.

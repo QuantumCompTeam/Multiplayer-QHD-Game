@@ -1,8 +1,15 @@
 """Load and validate experiments/config.yaml into a typed, sweep-expanded config.
 
 A "cell" is one concrete parameter combination evaluated by the sweep. The full
-cell list is the cartesian product over every list-valued sweep/game field.
-`strategy_names` is the strategy SET used in every cell, not a sweep axis.
+cell list is the cartesian product over every list-valued sweep/game field:
+`sweep.N`, `sweep.topologies`, and `game.V`, `game.C`, `game.gamma` each become a
+sweep axis when given a list (a scalar is a single fixed point). `strategy_names`
+(the discrete action set) and `strategy_mode` (fixed|cooperative|nash) are
+constant per run, not sweep axes. Required keys: `sweep.N` and `sweep.topologies`.
+
+See experiments/config.yaml itself for the per-field documentation (valid values,
+defaults, and which fields are sweep axes) — that file is the user-facing
+reference; this module is the parser/validator behind it.
 """
 
 from __future__ import annotations
@@ -19,6 +26,11 @@ import yaml
 # Output formats the harness knows how to write (see report.py / plots.py).
 VALID_FORMATS = ("md", "json", "csv", "plots")
 
+# How "Q" is chosen per cell. "fixed": the GHZ-derived q_strategy(N) (legacy,
+# default). "cooperative"/"nash": a topology-optimized gate from
+# game.strategy_opt computed per (topology, N, gamma). See sweep.run_cell.
+VALID_STRATEGY_MODES = ("fixed", "cooperative", "nash")
+
 
 @dataclass(frozen=True)
 class Cell:
@@ -31,6 +43,7 @@ class Cell:
     C: float
     gamma: float
     gamma_label: str  # original config text (e.g. "pi/2") for display
+    strategy_mode: str = "fixed"  # fixed | cooperative | nash (constant per run)
 
 
 @dataclass
@@ -92,6 +105,11 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
     n_values = _as_list(sweep["N"])
     topologies = _as_list(sweep["topologies"])
     strategy_names = tuple(sweep.get("strategy_names", ["D", "H", "Q"]))
+    strategy_mode = str(sweep.get("strategy_mode", "fixed"))
+    if strategy_mode not in VALID_STRATEGY_MODES:
+        raise ValueError(
+            f"unknown strategy_mode {strategy_mode!r}; valid: {VALID_STRATEGY_MODES}"
+        )
 
     v_values = _as_list(game.get("V", 4.0))
     c_values = _as_list(game.get("C", 3.0))
@@ -110,6 +128,7 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
                 C=float(C),
                 gamma=parse_gamma(gamma_raw),
                 gamma_label=_gamma_label(gamma_raw),
+                strategy_mode=strategy_mode,
             )
         )
     return cells

@@ -185,7 +185,7 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
 
 # Validate the codebase — the real validation is the test suite
-pytest tests/ -v
+  pytest tests/ -v
 # Expected: all tests pass
 
 # Run the Month 2 result (N=3 quantum advantage)
