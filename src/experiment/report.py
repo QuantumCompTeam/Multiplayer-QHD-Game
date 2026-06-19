@@ -72,6 +72,10 @@ def _cell_record(r: CellResult) -> dict[str, Any]:
         "symmetric": None if r.result is None else r.result["symmetric"],
         "q_payoff_per_player": None if r.result is None else r.result["q_payoff_per_player"],
         "classical_ne_payoff": None if r.result is None else r.result["classical_ne_payoff"],
+        # Per-player vectors (lengths vary with N) as JSON strings, so each cell
+        # stays one CSV row while still carrying the asymmetric (hub/leaf) split.
+        "advantage_vector": None if r.result is None else json.dumps(r.result["advantage_vector"]),
+        "q_payoff_vector": None if r.result is None else json.dumps(r.result["q_payoff_vector"]),
         "strategy_mode": r.cell.strategy_mode,
         "strategy_params": None if r.strategy is None else ",".join(
             f"{x:.6f}" for x in r.strategy["params"]

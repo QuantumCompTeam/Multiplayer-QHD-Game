@@ -46,6 +46,8 @@ Thumbs.db
 # Results
 results/
 
+# graphify removal
+graphify-out/
 
 # independent files and info
 audit-report-20260616-1834.md

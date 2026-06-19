@@ -249,6 +249,58 @@ def _gamma_topology_heatmap(ok: list[CellResult], out: Path) -> str | None:
     return out.name
 
 
+def _per_player_advantage(ok: list[CellResult], plots_dir: Path) -> list[str]:
+    """Per-player advantage bar charts for ASYMMETRIC topologies (one per topology).
+
+    Vertex-transitive topologies have a uniform per-player advantage, so the
+    scalar mean (covered by the other plots) is the whole story. For a topology
+    with any `symmetric=False` cell (today: the star, hub vs leaves) the mean
+    hides a per-player split, so we draw it explicitly: x-axis = N, with the
+    per-player `advantage_vector` shown as grouped bars. Players are grouped by
+    role — `hub` (player 0) and `leaf` (players 1..N-1, which share one value) —
+    so the chart stays readable and generalises to any orbit structure.
+
+    Returns the filenames written (one per asymmetric topology), or [] if none.
+    """
+    asym = [r for r in ok if r.result is not None and not r.result["symmetric"]]
+    if not asym:
+        return []
+
+    written: list[str] = []
+    topologies = sorted({r.cell.topology for r in asym})
+    for topo in topologies:
+        cells = sorted(
+            (r for r in asym if r.cell.topology == topo), key=lambda r: r.cell.N
+        )
+        ns = [r.cell.N for r in cells]
+        hub = [float(r.result["advantage_vector"][0]) for r in cells]
+        # Leaves share one value (star automorphism); take player 1 as the leaf.
+        leaf = [float(r.result["advantage_vector"][1]) for r in cells]
+        mean = [float(r.advantage) for r in cells]  # type: ignore[arg-type]
+
+        x = np.arange(len(ns), dtype=float)
+        w = 0.28
+        fig, ax = plt.subplots(figsize=(1.3 * len(ns) + 3, 4.5))
+        ax.bar(x - w, hub, width=w, label="hub (player 0)", color="#c44e52", alpha=0.9)
+        ax.bar(x, leaf, width=w, label="leaf (players 1..N-1)", color="#4c72b0", alpha=0.9)
+        ax.bar(x + w, mean, width=w, label="mean (per-player)", color="#55a868", alpha=0.6)
+        ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
+        ax.set_xticks(x, [str(n) for n in ns])
+        ax.set_xlabel("N (players)")
+        ax.set_ylabel("quantum advantage (QNE − CNE)")
+        ax.set_title(
+            f"Per-player advantage — {topo} (asymmetric: hub vs leaf)"
+        )
+        _legend_outside(ax)
+        ax.grid(True, axis="y", alpha=0.3)
+        fig.tight_layout()
+        out = plots_dir / f"per_player_advantage_{topo}.png"
+        fig.savefig(out, dpi=120, bbox_inches="tight")
+        plt.close(fig)
+        written.append(out.name)
+    return written
+
+
 def write_plots(results: list[CellResult], plots_dir: str | Path) -> list[str]:
     """Write available plots into plots_dir; return the filenames written."""
     plots_dir = Path(plots_dir)
@@ -267,6 +319,10 @@ def write_plots(results: list[CellResult], plots_dir: str | Path) -> list[str]:
     heatmap = _topology_heatmap(ok, plots_dir / "topology_heatmap.png")
     if heatmap:
         written.append(heatmap)
+
+    # Per-player advantage for asymmetric topologies (the scalar mean hides the
+    # hub/leaf split); only emitted when an asymmetric cell is present.
+    written += _per_player_advantage(ok, plots_dir)
 
     # Entanglement-strength views — only meaningful when gamma is swept.
     if vary["gamma"]:
