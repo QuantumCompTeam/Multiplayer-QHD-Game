@@ -34,7 +34,8 @@ shape contract and the sweep range).
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, replace
 
 import numpy as np
 import numpy.typing as npt
@@ -49,7 +50,11 @@ from game.payoffs import expected_payoff
 # Convergence / certification tolerances.
 NASH_TOL = 1e-6  # nash_gap below this certifies a symmetric Nash equilibrium
 _FIXPOINT_TOL = 1e-8  # probability-vector L2 change that counts as a fixed point
-_MAX_FIXPOINT_ITERS = 20
+_MAX_FIXPOINT_ITERS = 8  # cap: by Benjamin-Hayden a pure SU(2) Nash often does
+# not exist, so the best-response map need not converge — bound the iteration and
+# rely on the early-stop below instead of grinding a doomed loop.
+_FIXPOINT_STALL = 2  # stop if the induced-prob change fails to improve this many
+# consecutive iterations (the fixed point is cycling, not settling)
 
 
 @dataclass
@@ -160,7 +165,7 @@ def _maximize(
     any_success = False
     for s0 in starts:
         res = minimize(neg, np.asarray(s0, dtype=float), method="Nelder-Mead",
-                       options={"xatol": 1e-8, "fatol": 1e-11, "maxiter": 2000})
+                       options={"xatol": 1e-7, "fatol": 1e-10, "maxiter": 400})
         any_success = any_success or bool(res.success)
         val = -float(res.fun)
         if val > best_val:
@@ -263,30 +268,41 @@ def nash_strategy(
     *,
     seed: int = 0,
     symmetric_caveat: bool = False,
+    time_budget: float | None = None,
 ) -> StrategyOptResult:
     """Symmetric continuous Nash strategy via best-response fixed-point iteration.
 
     Hold N-1 players at the current gate U_k, globally best-respond on the
     remaining player to get U_{k+1}, and iterate.  Convergence is judged on the
     INDUCED PROBABILITY VECTORS (gauge-invariant: immune to global-phase and
-    (alpha,beta) parameter aliasing).  Several seeds are tried; the candidate
-    with the smallest certified nash_gap is returned.
+    (alpha,beta) parameter aliasing).
+
+    By Benjamin-Hayden a symmetric pure-SU(2) Nash often does NOT exist, so the
+    map frequently will not converge.  We therefore (a) cap iterations, (b)
+    early-stop when the induced-prob change stops improving (the map is cycling),
+    and (c) short-circuit as soon as a seed yields a certified Nash.  The result
+    is a best-effort symmetric strategy with an honest nash_gap; is_nash reports
+    whether a genuine equilibrium was actually reached.
+
+    `time_budget` (seconds) is a soft per-call ceiling so no single cell pegs the
+    CPU unbounded — once exceeded, remaining seeds are skipped and the best
+    candidate so far is returned (still with an honest, fully-checked gap). The
+    star (asymmetric) pays for an all-player gap check only ONCE, on the winning
+    candidate, not per seed.
     """
-    seeds = [q_strategy(N), DOVE]
-    rng = np.random.default_rng(seed)
-    seeds += [
-        (
-            float(rng.uniform(0.0, math.pi)),
-            float(rng.uniform(-math.pi, math.pi)),
-            float(rng.uniform(-math.pi, math.pi)),
-        )
-    ]
+    seeds = [q_strategy(N), DOVE]  # two anchored starts; random seeds rarely beat these
+    t_start = time.perf_counter()
+    over_budget = lambda: time_budget is not None and (time.perf_counter() - t_start) > time_budget  # noqa: E731
 
     best: StrategyOptResult | None = None
-    br_starts = _starts(seed, n_random=2)
+    br_starts = _starts(seed, n_random=1)
     for start in seeds:
+        if best is not None and over_budget():
+            break
         current = tuple(start)
         converged = False
+        best_delta = float("inf")
+        stalls = 0
         for _ in range(_MAX_FIXPOINT_ITERS):
             def br_obj(p: StrategyParams, _base: StrategyParams = current) -> float:
                 return _deviator_payoff(_base, p, 0, N, entangler, gamma, V, C)
@@ -295,19 +311,32 @@ def nash_strategy(
             cur_probs = build_ewl_circuit(N, [current] * N, entangler=entangler, gamma=gamma)
             nxt_probs = build_ewl_circuit(N, [tuple(nxt)] * N, entangler=entangler, gamma=gamma)
             current = tuple(nxt)
-            if float(np.linalg.norm(nxt_probs - cur_probs)) < _FIXPOINT_TOL:
+            delta = float(np.linalg.norm(nxt_probs - cur_probs))
+            if delta < _FIXPOINT_TOL:
                 converged = True
                 break
+            # Early-stop a non-settling (cycling) map: bail once the step size
+            # stops shrinking for a few iterations instead of grinding the cap.
+            if delta < best_delta - 1e-9:
+                best_delta = delta
+                stalls = 0
+            else:
+                stalls += 1
+                if stalls >= _FIXPOINT_STALL:
+                    break
+            if over_budget():
+                break
         payoff = _symmetric_payoff(current, N, entangler, gamma, V, C)
-        gap = nash_gap(
-            current, N, entangler, gamma, V, C, seed=seed,
-            check_all_players=symmetric_caveat,
+        # Cheap ranking gap (player 0 only); the authoritative all-player gap for
+        # asymmetric topologies is computed once below on the winner.
+        rank_gap = nash_gap(
+            current, N, entangler, gamma, V, C, seed=seed, check_all_players=False
         )
         cand = StrategyOptResult(
             params=current,
             payoff_per_player=payoff,
-            nash_gap=gap,
-            is_nash=gap <= NASH_TOL,
+            nash_gap=rank_gap,
+            is_nash=rank_gap <= NASH_TOL,
             converged=converged,
             n_starts=len(seeds),
             mode="nash",
@@ -318,8 +347,17 @@ def nash_strategy(
             best.is_nash, best.payoff_per_player
         ):
             best = cand
+        # A certified Nash is the goal — no need to try further seeds.
+        if best.is_nash:
+            break
     assert best is not None
-    return best
+    # Authoritative certificate on the winning candidate: the star needs every
+    # player position checked, but only this once (not per seed).
+    final_gap = nash_gap(
+        best.params, N, entangler, gamma, V, C, seed=seed,
+        check_all_players=symmetric_caveat,
+    )
+    return replace(best, nash_gap=final_gap, is_nash=final_gap <= NASH_TOL)
 
 
 def optimal_strategy(
@@ -332,14 +370,19 @@ def optimal_strategy(
     *,
     seed: int = 0,
     symmetric_caveat: bool = False,
+    time_budget: float | None = None,
 ) -> StrategyOptResult:
-    """Dispatch to cooperative_strategy / nash_strategy by `mode`."""
+    """Dispatch to cooperative_strategy / nash_strategy by `mode`.
+
+    `time_budget` (seconds) is honored by nash mode as a soft per-cell ceiling.
+    """
     if mode == "cooperative":
         return cooperative_strategy(
             N, entangler, gamma, V, C, seed=seed, symmetric_caveat=symmetric_caveat
         )
     if mode == "nash":
         return nash_strategy(
-            N, entangler, gamma, V, C, seed=seed, symmetric_caveat=symmetric_caveat
+            N, entangler, gamma, V, C, seed=seed,
+            symmetric_caveat=symmetric_caveat, time_budget=time_budget,
         )
     raise ValueError(f"unknown strategy mode {mode!r}; expected 'cooperative' or 'nash'")

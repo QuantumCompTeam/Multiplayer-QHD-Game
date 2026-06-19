@@ -11,13 +11,18 @@ This module adds NO game theory; compute_advantage is the single source of truth
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 from experiment.config import Cell
 from experiment.topology_registry import canonical, resolve
 from game.nash import compute_advantage
 from game.strategy_opt import optimal_strategy
+
+# Soft per-cell ceiling (seconds) for the nash optimizer, so no single cell pegs
+# the CPU unbounded. Exceeding it returns the best candidate found so far.
+NASH_TIME_BUDGET = 45.0
 
 # Cell status values, in order of "things went well" -> "did not run".
 STATUS_OK = "ok"
@@ -70,6 +75,7 @@ def run_cell(cell: Cell) -> CellResult:
                 V=cell.V,
                 C=cell.C,
                 symmetric_caveat=(canonical(cell.topology) == "star"),
+                time_budget=NASH_TIME_BUDGET,
             )
             q_params = opt.params
             strategy = {
@@ -129,6 +135,35 @@ def summarize(results: list[CellResult]) -> SweepSummary:
     )
 
 
-def run_sweep(cells: list[Cell]) -> list[CellResult]:
-    """Evaluate every cell in order and return their results."""
-    return [run_cell(cell) for cell in cells]
+def run_sweep(
+    cells: list[Cell],
+    on_event: Callable[[str, dict[str, Any]], None] | None = None,
+) -> list[CellResult]:
+    """Evaluate every cell in order and return their results.
+
+    `on_event(event, info)` is an optional progress hook called as each cell
+    starts and finishes (events "start" and "done"). It exists so a CLI can
+    stream per-cell progress — important for `strategy_mode` cooperative/nash,
+    where a single cell's optimization can take many seconds and the run would
+    otherwise look hung. Default None preserves the original silent behavior.
+    """
+    total = len(cells)
+    results: list[CellResult] = []
+    for idx, cell in enumerate(cells, start=1):
+        if on_event is not None:
+            on_event("start", {"index": idx, "total": total, "cell": cell})
+        t0 = time.perf_counter()
+        result = run_cell(cell)
+        if on_event is not None:
+            on_event(
+                "done",
+                {
+                    "index": idx,
+                    "total": total,
+                    "cell": cell,
+                    "result": result,
+                    "elapsed": time.perf_counter() - t0,
+                },
+            )
+        results.append(result)
+    return results

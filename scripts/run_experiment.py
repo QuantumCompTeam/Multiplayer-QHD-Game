@@ -54,7 +54,28 @@ def main() -> int:
         config.name = args.name
 
     print(f"Running '{config.name}': {len(config.cells)} cell(s)...")
-    results = run_sweep(config.cells)
+    modes = {c.strategy_mode for c in config.cells}
+    if modes - {"fixed"}:
+        print(
+            f"  strategy_mode {sorted(modes)} runs a per-cell SU(2) optimization "
+            f"(compute-heavy; cost grows with N and cell count) — progress below."
+        )
+
+    def _progress(event: str, info: dict) -> None:
+        c = info["cell"]
+        tag = f"[{info['index']}/{info['total']}] N={c.N} {c.topology} ({c.strategy_mode})"
+        if event == "start":
+            print(f"{tag} ...", end="", flush=True)
+        else:
+            r = info["result"]
+            extra = ""
+            if r.result is not None:
+                extra = f" advantage={r.result['advantage']:.3f}"
+                if r.strategy is not None:
+                    extra += f", nash_gap={r.strategy['nash_gap']:.2e}, is_nash={r.strategy['is_nash']}"
+            print(f"\r{tag} -> {r.status} in {info['elapsed']:.1f}s{extra}", flush=True)
+
+    results = run_sweep(config.cells, on_event=_progress)
 
     timestamp = results_io.run_timestamp()
     run_dir = results_io.new_run_dir(_slug(config.name), timestamp)
