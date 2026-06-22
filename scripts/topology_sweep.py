@@ -25,22 +25,24 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import cpu_limit  # noqa: E402,F401  (caps BLAS threads; MUST precede numpy import)
 import results_io  # noqa: E402
-from circuits.topologies import (  # noqa: E402
-    fully_connected_entangler,
-    ghz_entangler,
-    ring_entangler,
-    star_entangler,
-    w_entangler,
-)
 from config import C as DEFAULT_C, GAMMA, V as DEFAULT_V  # noqa: E402
+from experiment.topology_registry import KNOWN_TOPOLOGIES, resolve  # noqa: E402
 from game.nash import compute_advantage  # noqa: E402
 
+# Short display labels keep the printed/CSV matrix columns compact; the canonical
+# registry names (KNOWN_TOPOLOGIES) remain the single source of truth for which
+# topologies and which entanglers the sweep covers, so this script can never
+# silently drift from the rest of the pipeline.
+_DISPLAY_LABELS = {
+    "ghz": "GHZ",
+    "ring": "ring",
+    "star": "star",
+    "fully-connected": "full",
+    "w": "W",
+}
+
 TOPOLOGIES = [
-    ("GHZ", ghz_entangler),
-    ("ring", ring_entangler),
-    ("star", star_entangler),
-    ("full", fully_connected_entangler),
-    ("W", w_entangler),
+    (_DISPLAY_LABELS.get(name, name), resolve(name, 1)) for name in KNOWN_TOPOLOGIES
 ]
 N_VALUES = [2, 3, 4, 5, 6]
 
@@ -109,32 +111,35 @@ def _write_per_player_json(path, results: dict) -> None:
 
 
 def write_heatmap(results: dict, path) -> None:
+    # Only a missing plotting stack is a soft skip; a genuine plotting bug must
+    # surface rather than hide behind the same "[heatmap skipped]" path.
     try:
         import matplotlib
 
         matplotlib.use("Agg")  # no display required
         import matplotlib.pyplot as plt
         import numpy as np
-
-        data = np.array(
-            [[results[(name, N)]["advantage"] for N in N_VALUES] for name, _ in TOPOLOGIES]
-        )
-        fig, ax = plt.subplots(figsize=(7, 4))
-        im = ax.imshow(data, aspect="auto", cmap="viridis")
-        ax.set_xticks(range(len(N_VALUES)), [f"N={N}" for N in N_VALUES])
-        ax.set_yticks(range(len(TOPOLOGIES)), [name for name, _ in TOPOLOGIES])
-        ax.set_title("Quantum advantage (mean per-player) by topology x N")
-        for i in range(data.shape[0]):
-            for j in range(data.shape[1]):
-                ax.text(j, i, f"{data[i, j]:.2f}", ha="center", va="center",
-                        color="white", fontsize=8)
-        fig.colorbar(im, ax=ax, label="advantage")
-        fig.tight_layout()
-        fig.savefig(path, dpi=120)
-        plt.close(fig)
-        print(f"  heatmap.png written")
-    except Exception as e:  # noqa: BLE001
+    except ImportError as e:
         print(f"  [heatmap skipped: {e}]")
+        return
+
+    data = np.array(
+        [[results[(name, N)]["advantage"] for N in N_VALUES] for name, _ in TOPOLOGIES]
+    )
+    fig, ax = plt.subplots(figsize=(7, 4))
+    im = ax.imshow(data, aspect="auto", cmap="viridis")
+    ax.set_xticks(range(len(N_VALUES)), [f"N={N}" for N in N_VALUES])
+    ax.set_yticks(range(len(TOPOLOGIES)), [name for name, _ in TOPOLOGIES])
+    ax.set_title("Quantum advantage (mean per-player) by topology x N")
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            ax.text(j, i, f"{data[i, j]:.2f}", ha="center", va="center",
+                    color="white", fontsize=8)
+    fig.colorbar(im, ax=ax, label="advantage")
+    fig.tight_layout()
+    fig.savefig(path, dpi=120)
+    plt.close(fig)
+    print(f"  heatmap.png written")
 
 
 def main() -> None:

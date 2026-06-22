@@ -22,7 +22,7 @@ LINKED TO experiments/config.yaml:
 WHAT FAILS vs WHAT IS A FINDING: a cell that raises -> STATUS_ERROR -> FAIL. A
 non-positive advantage or a non-Nash (Q,...,Q) at low γ is the *discovery*, not a bug.
 
-⚠ Running a full γ sweep at every feasible N (N2..N8) is slow (minutes; N=8 dominates).
+Note: Running a full γ sweep at every feasible N (N2..N8) is slow (minutes; N=8 dominates).
 Lower config.sweep.N, PER_CELL_PROFILE_BUDGET, or GAMMA_STEPS to speed it up.
 """
 
