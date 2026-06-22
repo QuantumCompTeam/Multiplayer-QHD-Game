@@ -134,11 +134,12 @@ def write_topology_folder(
 ) -> dict[str, list[str]]:
     """Write INDIVIDUAL topology-graph + EWL-circuit images into a shared folder.
 
-    One `<topology>_N{n}_graph.png` per (topology, N) and one `ewl_circuit_N{n}.png`
-    per N (text `.txt` fallback if the matplotlib circuit drawer is unavailable).
-    Deterministic filenames make this overwrite-safe across runs and N-sets, so it
-    suits a single shared `results/topology/` folder. Returns
-    {"graphs": [filenames], "circuits": [filenames]}.
+    Files are grouped into one subfolder per topology: `<topology>/<topology>_N{n}.png`
+    for each (topology, N), and EWL circuits into `ewl/ewl_N{n}.png` per N (text
+    `.txt` fallback if the matplotlib circuit drawer is unavailable). Deterministic
+    paths make this overwrite-safe across runs and N-sets, so it suits a single
+    shared `results/topology/` folder. Returns
+    {"graphs": [relpaths], "circuits": [relpaths]} (paths relative to `out_dir`).
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -146,25 +147,29 @@ def write_topology_folder(
     written: dict[str, list[str]] = {"graphs": [], "circuits": []}
 
     for name in topologies:
+        subdir = out_dir / name
+        subdir.mkdir(parents=True, exist_ok=True)
         for n in ns:
             fig = draw_topology_graph(name, n)
             fig.tight_layout()
-            fname = f"{name}_N{n}_graph.png"
+            fname = f"{name}_N{n}.png"
             # No bbox_inches="tight": the square axes define the saved area, so
             # colinear layouts aren't cropped to a thin strip.
-            fig.savefig(out_dir / fname, dpi=120)
+            fig.savefig(subdir / fname, dpi=120)
             plt.close(fig)
-            written["graphs"].append(fname)
+            written["graphs"].append(f"{name}/{fname}")
 
+    ewl_dir = out_dir / "ewl"
+    ewl_dir.mkdir(parents=True, exist_ok=True)
     for n in ns:
         kind, obj = draw_circuit(n)
         if kind == "mpl":
-            fname = f"ewl_circuit_N{n}.png"
-            obj.savefig(out_dir / fname, dpi=120, bbox_inches="tight")
+            fname = f"ewl_N{n}.png"
+            obj.savefig(ewl_dir / fname, dpi=120, bbox_inches="tight")
             plt.close(obj)
         else:
-            fname = f"ewl_circuit_N{n}.txt"
-            (out_dir / fname).write_text(obj)
-        written["circuits"].append(fname)
+            fname = f"ewl_N{n}.txt"
+            (ewl_dir / fname).write_text(obj)
+        written["circuits"].append(f"ewl/{fname}")
 
     return written
