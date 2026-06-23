@@ -72,6 +72,16 @@ def _cell_record(r: CellResult) -> dict[str, Any]:
         "symmetric": None if r.result is None else r.result["symmetric"],
         "q_payoff_per_player": None if r.result is None else r.result["q_payoff_per_player"],
         "classical_ne_payoff": None if r.result is None else r.result["classical_ne_payoff"],
+        # Per-player vectors (lengths vary with N) as JSON strings, so each cell
+        # stays one CSV row while still carrying the asymmetric (hub/leaf) split.
+        "advantage_vector": None if r.result is None else json.dumps(r.result["advantage_vector"]),
+        "q_payoff_vector": None if r.result is None else json.dumps(r.result["q_payoff_vector"]),
+        "strategy_mode": r.cell.strategy_mode,
+        "strategy_params": None if r.strategy is None else ",".join(
+            f"{x:.6f}" for x in r.strategy["params"]
+        ),
+        "strategy_nash_gap": None if r.strategy is None else r.strategy["nash_gap"],
+        "strategy_is_nash": None if r.strategy is None else r.strategy["is_nash"],
         "message": r.message,
     }
     return rec
@@ -94,6 +104,7 @@ def _config_snapshot(config: ExperimentConfig, timestamp: str) -> dict[str, Any]
                 "C": c.C,
                 "gamma": c.gamma,
                 "gamma_label": c.gamma_label,
+                "strategy_mode": c.strategy_mode,
             }
             for c in config.cells
         ],
@@ -107,6 +118,23 @@ def _fmt(value: float | None) -> str:
     return "—" if value is None else f"{value:.6f}"
 
 
+def _nash_uncertified(r: CellResult) -> bool:
+    """True for a `nash`-mode cell whose strategy is NOT a certified equilibrium.
+
+    In nash mode the goal is a self-enforcing strategy; when the search does not
+    reach one (is_nash False) or the fixed point did not converge, the reported
+    advantage is the payoff at a transient candidate, NOT a stable advantage.
+    Such values must be marked so they are not misread as headline results.
+    (cooperative mode is excluded: there the advantage is the best *reachable*
+    payoff gap, which is a valid result and is not claimed to be an equilibrium.)
+    """
+    return (
+        r.cell.strategy_mode == "nash"
+        and r.strategy is not None
+        and (not r.strategy["is_nash"] or not r.strategy["converged"])
+    )
+
+
 def _summary_table(results: list[CellResult]) -> list[str]:
     header = (
         "| N | topology | V | C | gamma | q_payoff | classical_ne | advantage "
@@ -114,16 +142,30 @@ def _summary_table(results: list[CellResult]) -> list[str]:
     )
     sep = "|---|---|---|---|---|---|---|---|---|---|---|"
     rows = [header, sep]
+    any_flagged = False
     for r in results:
         qp = None if r.result is None else r.result["q_payoff_per_player"]
         cp = None if r.result is None else r.result["classical_ne_payoff"]
         nash = "—" if r.q_is_nash is None else ("yes" if r.q_is_nash else "**NO**")
         sym = "—" if r.result is None else ("yes" if r.result["symmetric"] else "no")
+        adv = _fmt(r.advantage)
+        if r.advantage is not None and _nash_uncertified(r):
+            adv = f"{adv} †"  # non-equilibrium candidate, not a stable advantage
+            any_flagged = True
         rows.append(
             f"| {r.cell.N} | {r.cell.topology} | {r.cell.V:g} | {r.cell.C:g} "
-            f"| {r.cell.gamma_label} | {_fmt(qp)} | {_fmt(cp)} | {_fmt(r.advantage)} "
+            f"| {r.cell.gamma_label} | {_fmt(qp)} | {_fmt(cp)} | {adv} "
             f"| {nash} | {sym} | {r.status} |"
         )
+    if any_flagged:
+        rows += [
+            "",
+            "† nash candidate is **not a certified equilibrium** (nash_gap > tol "
+            "or did not converge): the advantage shown is the payoff at a "
+            "non-equilibrium / transient strategy, **not a stable advantage**. "
+            "For asymmetric topologies (e.g. star) the mean also hides per-player "
+            "spread — see the per-cell breakdown.",
+        ]
     return rows
 
 
@@ -181,6 +223,36 @@ def _findings(results: list[CellResult], summary: SweepSummary) -> list[str]:
             f"**{summary.q_nash}/{summary.ok}** computed cells."
         )
 
+    # In nash mode, separate certified equilibria from transient candidates so a
+    # non-equilibrium value (e.g. an asymmetric star cell) is not read as a real
+    # advantage. Only the certified set is a stable game-theoretic result.
+    nash_cells = [
+        r for r in results if r.status == STATUS_OK and r.cell.strategy_mode == "nash"
+    ]
+    if nash_cells:
+        certified = [r for r in nash_cells if r.strategy and r.strategy["is_nash"]]
+        candidates = [r for r in nash_cells if _nash_uncertified(r)]
+        lines.append("")
+        lines.append(
+            "**Nash mode — certified vs candidate.** A self-enforcing equilibrium "
+            "may not exist (Benjamin–Hayden); only certified cells are stable results."
+        )
+        lines.append(
+            f"  - **Certified Nash** ({len(certified)}/{len(nash_cells)}): "
+            + (
+                ", ".join(
+                    f"{r.cell.topology} N={r.cell.N} (adv {_fmt(r.advantage)})"
+                    for r in certified
+                )
+                or "none"
+            )
+        )
+        lines.append(
+            f"  - **Non-equilibrium candidates** ({len(candidates)}/{len(nash_cells)}): "
+            "their reported advantage is a transient payoff, not a stable advantage "
+            "(includes any asymmetric-topology means)."
+        )
+
     # A non-positive advantage or non-Nash Q is an RQ1 *finding*, not a bug.
     if summary.nonpositive_cells:
         lines.append("")
@@ -227,6 +299,25 @@ def _cell_detail(r: CellResult) -> list[str]:
         f"- Player-symmetric: **{res['symmetric']}**",
         "",
     ]
+    if r.strategy is not None:
+        s = r.strategy
+        theta, alpha, beta = s["params"]
+        caveat = (
+            " _(symmetric-strategy caveat: topology is not vertex-transitive, "
+            "so this is a constrained sub-optimum)_"
+            if s["symmetric_caveat"] else ""
+        )
+        lines += [
+            f"**Topology-optimized quantum strategy ({s['mode']} mode):**{caveat}",
+            "",
+            f"- Q := U(θ={theta:.6f}, α={alpha:.6f}, β={beta:.6f})  "
+            f"(vs GHZ-fixed U(0, π/{r.cell.N}, π/{r.cell.N}))",
+            f"- Symmetric payoff/player: **{s['payoff_per_player']:.6f}**",
+            f"- Nash gap (max unilateral gain): **{s['nash_gap']:.2e}** → "
+            f"is Nash: **{s['is_nash']}**",
+            f"- Optimizer converged: **{s['converged']}**",
+            "",
+        ]
     if not res["symmetric"]:
         # For asymmetric topologies (e.g. star), the scalar means hide per-player
         # spread — show the full vectors so the asymmetry is visible.

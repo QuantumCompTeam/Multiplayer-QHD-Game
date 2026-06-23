@@ -185,7 +185,7 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
 
 # Validate the codebase — the real validation is the test suite
-pytest tests/ -v
+  pytest tests/ -v
 # Expected: all tests pass
 
 # Run the Month 2 result (N=3 quantum advantage)
@@ -258,14 +258,14 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 
 | Result | Status | Notes |
 |---|---|---|
-| 2-player EWL validation | ✅ Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
-| N=3 GHZ quantum advantage | ✅ Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
-| Full topology × N heatmap | 🔄 In Progress | Month 3 |
-| Noise robustness surface | ⏳ Pending | Month 4 |
-| IBM hardware validation | ⏳ Pending | Month 5 (optional) |
-| arXiv preprint | ⏳ Pending | Month 6 |
+| 2-player EWL validation | Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
+| N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
+| Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
+| Noise robustness surface | Pending | Month 4 |
+| IBM hardware validation | Pending | Month 5 (optional) |
+| arXiv preprint | Pending | Month 6 |
 
-### Month 2 — N=3 Quantum Advantage ✅
+### Month 2 — N=3 Quantum Advantage
 
 - Quantum strategy generalises: **Q_N = U(0, π/N, π/N)** (not fixed U(0, π/2, π/2))
 - (Q₃, Q₃, Q₃) payoff: **4/3 per player** — unique pure Nash equilibrium

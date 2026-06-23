@@ -22,7 +22,7 @@ LINKED TO experiments/config.yaml:
 WHAT FAILS vs WHAT IS A FINDING: a cell that raises -> STATUS_ERROR -> FAIL. A
 non-positive advantage or a non-Nash (Q,...,Q) at low γ is the *discovery*, not a bug.
 
-⚠ Running a full γ sweep at every feasible N (N2..N8) is slow (minutes; N=8 dominates).
+Note: Running a full γ sweep at every feasible N (N2..N8) is slow (minutes; N=8 dominates).
 Lower config.sweep.N, PER_CELL_PROFILE_BUDGET, or GAMMA_STEPS to speed it up.
 """
 
@@ -188,4 +188,4 @@ def test_gamma_subfolders_and_topology(gamma_run, topology_folder) -> None:
         report = (n_dir / "report.md").read_text()
         assert "Entanglement (γ) thresholds" in report
     # Shared topology folder has individual topology images (not in the run folders).
-    assert list(topology_folder.glob("*_graph.png")), "results/topology/ has no graphs"
+    assert list(topology_folder.glob("*/*.png")), "results/topology/ has no graphs"
