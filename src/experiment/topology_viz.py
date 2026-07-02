@@ -169,7 +169,7 @@ def write_topology_folder(
             plt.close(obj)
         else:
             fname = f"ewl_N{n}.txt"
-            (ewl_dir / fname).write_text(obj)
+            (ewl_dir / fname).write_text(obj, encoding="utf-8")
         written["circuits"].append(f"ewl/{fname}")
 
     return written

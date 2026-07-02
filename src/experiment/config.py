@@ -137,7 +137,7 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
 def load_config(path: str | Path) -> ExperimentConfig:
     """Load and validate a YAML experiment config into an ExperimentConfig."""
     path = Path(path)
-    with path.open() as fh:
+    with path.open(encoding="utf-8") as fh:
         raw = yaml.safe_load(fh)
 
     if not isinstance(raw, dict):

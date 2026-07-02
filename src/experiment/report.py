@@ -424,7 +424,7 @@ def write_outputs(
     run_dir.mkdir(parents=True, exist_ok=True)
 
     # Always snapshot the exact parameters for reproducibility.
-    with (run_dir / "config.snapshot.yaml").open("w") as fh:
+    with (run_dir / "config.snapshot.yaml").open("w", encoding="utf-8") as fh:
         yaml.safe_dump(_config_snapshot(config, timestamp), fh, sort_keys=False)
 
     if "json" in config.formats:
@@ -441,12 +441,12 @@ def write_outputs(
                 for r in results
             ],
         }
-        with (run_dir / "results.json").open("w") as fh:
+        with (run_dir / "results.json").open("w", encoding="utf-8") as fh:
             json.dump(payload, fh, indent=2)
 
     if "csv" in config.formats:
         fields = list(_cell_record(results[0]).keys()) if results else []
-        with (run_dir / "results.csv").open("w", newline="") as fh:
+        with (run_dir / "results.csv").open("w", newline="", encoding="utf-8") as fh:
             writer = csv.DictWriter(fh, fieldnames=fields)
             writer.writeheader()
             for r in results:
@@ -464,6 +464,6 @@ def write_outputs(
 
     if "md" in config.formats:
         md = _render_markdown(config, results, timestamp, plot_files)
-        (run_dir / "report.md").write_text(md)
+        (run_dir / "report.md").write_text(md, encoding="utf-8")
 
     return run_dir
