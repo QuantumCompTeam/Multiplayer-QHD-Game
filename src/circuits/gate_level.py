@@ -16,27 +16,21 @@ RXXGate(-gamma). The GHZ global rotation exp(+i*gamma/2 * X^(x)N) is built by
 conjugating a Z^(x)N parity rotation with Hadamards; RZ(phi) = exp(-i*phi/2 Z),
 so the parity rotation uses RZ(-gamma).
 
-W has no compact native-gate form, so w_gate_circuit transpiles the dense
-w_entangler unitary to the pinned {u, cx} basis (Month-4 spec D2/1A). Its gate
-count is synthesis-derived, so W noise results are labelled "approximate".
+W is built exactly by conjugation: J_W = T . MCU . T-dagger, where T is the
+CRy+CNOT W-prep cascade (fixes |0...0>) and MCU is an anti-controlled
+exp(i*gamma/2 * X) on qubit 0 — see
+docs/superpowers/specs/2026-07-02-w-entangler-gate-level-design.md.
 """
 
 from __future__ import annotations
 
 import math
 
-from qiskit import transpile
 from qiskit.circuit import QuantumCircuit
-from qiskit.circuit.library import RXXGate, UnitaryGate
+from qiskit.circuit.library import RXXGate
 
-from circuits.topologies import w_entangler
 from circuits.topology_graphs import topology_graph
 from config import GAMMA
-
-# Basis for the transpiled W fallback -- pinned so W's gate count (and thus its
-# noise cost) is deterministic and version-independent (Month-4 spec D2/D3).
-_PINNED_BASIS = ["u", "cx"]
-_PINNED_OPT_LEVEL = 1
 
 
 def pairwise_gate_circuit(
@@ -112,15 +106,29 @@ def _w_prep_cascade(N: int) -> QuantumCircuit:
 
 
 def w_gate_circuit(N: int, gamma: float = GAMMA) -> QuantumCircuit:
-    """W entangler as gates: transpile the dense w_entangler unitary (APPROXIMATE).
+    """Exact W entangler J_W(gamma) = exp(i*gamma/2 * S_W) as elementary gates.
 
-    The S_W reflection has no compact native-gate form, so we synthesize the dense
-    unitary into the pinned {u, cx} basis. The gate count is a synthesis artifact,
-    not a physical W-prep circuit -- W noise results must be reported as
-    approximate (Month-4 spec D2/1A). A faithful gate-level W is a TODO.
+    Conjugation construction (spec 2026-07-02-w-entangler-gate-level-design.md):
+    S_W acts as X on span{|0...0>, |W>} and as identity on the complement, so
+    with T = _w_prep_cascade (T|e_0> = |W>, T|0...0> = |0...0>):
+
+        J_W = T . exp(i*gamma/2 * S') . T-dagger
+
+    where S' swaps |0...0> <-> |e_0>. That exponential is an anti-controlled
+    (qubits 1..N-1 all |0>) gate U = e^{-i*gamma/2} * RX(-gamma) on qubit 0,
+    times a global phase e^{i*gamma/2}. The e^{-i*gamma/2} inside U is the
+    RELATIVE phase between the control branches and is required; RX(-gamma) =
+    exp(+i*gamma/2 * X) matches the project sign convention. Gate count is
+    physical: W-prep + one collective interaction + un-prep, O(N) blocks.
     """
-    qc = QuantumCircuit(N)
-    qc.append(UnitaryGate(w_entangler(N, gamma), label="Jw"), list(range(N)))
-    return transpile(
-        qc, basis_gates=_PINNED_BASIS, optimization_level=_PINNED_OPT_LEVEL
-    )
+    prep = _w_prep_cascade(N)
+    u = QuantumCircuit(1, global_phase=-gamma / 2.0)
+    u.rx(-gamma, 0)
+    mcu = u.to_gate(label="expWX").control(N - 1, ctrl_state=0)
+    qc = QuantumCircuit(N, global_phase=gamma / 2.0)
+    qc.compose(prep.inverse(), inplace=True)
+    # .control() puts controls first: qubits 1..N-1 are the (negative) controls,
+    # qubit 0 is the rotation target.
+    qc.append(mcu, list(range(1, N)) + [0])
+    qc.compose(prep, inplace=True)
+    return qc
