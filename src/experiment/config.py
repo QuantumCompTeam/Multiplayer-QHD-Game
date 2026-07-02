@@ -2,10 +2,16 @@
 
 A "cell" is one concrete parameter combination evaluated by the sweep. The full
 cell list is the cartesian product over every list-valued sweep/game field:
-`sweep.N`, `sweep.topologies`, and `game.V`, `game.C`, `game.gamma` each become a
-sweep axis when given a list (a scalar is a single fixed point). `strategy_names`
-(the discrete action set) and `strategy_mode` (fixed|cooperative|nash) are
-constant per run, not sweep axes. Required keys: `sweep.N` and `sweep.topologies`.
+`sweep.N`, `sweep.topologies`, `game.V`, `game.C`, `game.gamma`, and `noise.p`
+each become a sweep axis when given a list (a scalar is a single fixed point).
+`strategy_names` (the discrete action set) and `strategy_mode`
+(fixed|cooperative|nash) are constant per run, not sweep axes. Required keys:
+`sweep.N` and `sweep.topologies`.
+
+Month-4 constraint (spec D4/3A): `noise.p > 0` requires `strategy_mode: "fixed"`.
+The optimizer behind cooperative/nash runs on the noiseless path, so a noisy
+score of a noiselessly-optimized Q would be a silent inconsistency — rejected
+loudly here at config load instead.
 
 See experiments/config.yaml itself for the per-field documentation (valid values,
 defaults, and which fields are sweep axes) — that file is the user-facing
@@ -44,6 +50,7 @@ class Cell:
     gamma: float
     gamma_label: str  # original config text (e.g. "pi/2") for display
     strategy_mode: str = "fixed"  # fixed | cooperative | nash (constant per run)
+    noise_p: float = 0.0  # depolarizing noise probability (0.0 = exact noiseless path)
 
 
 @dataclass
@@ -115,9 +122,23 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
     c_values = _as_list(game.get("C", 3.0))
     gamma_values = _as_list(game.get("gamma", "pi/2"))
 
+    noise = raw.get("noise", {})
+    noise_p_values = [float(p) for p in _as_list(noise.get("p", 0.0))]
+    for p in noise_p_values:
+        if not 0.0 <= p <= 1.0:
+            raise ValueError(f"noise.p values must be in [0, 1], got {p}")
+        # Month-4 D4/3A: cooperative/nash optimize Q on the NOISELESS path, so
+        # scoring that Q under noise would silently mix two different worlds.
+        if p > 0.0 and strategy_mode != "fixed":
+            raise ValueError(
+                f"noise.p > 0 requires strategy_mode: \"fixed\" (got "
+                f"{strategy_mode!r}). Noise-aware strategy optimization is not "
+                f"implemented; see the Month-4 spec (D4/3A) and TODOS.md."
+            )
+
     cells: list[Cell] = []
-    for N, topo, V, C, gamma_raw in itertools.product(
-        n_values, topologies, v_values, c_values, gamma_values
+    for N, topo, V, C, gamma_raw, noise_p in itertools.product(
+        n_values, topologies, v_values, c_values, gamma_values, noise_p_values
     ):
         cells.append(
             Cell(
@@ -129,6 +150,7 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
                 gamma=parse_gamma(gamma_raw),
                 gamma_label=_gamma_label(gamma_raw),
                 strategy_mode=strategy_mode,
+                noise_p=noise_p,
             )
         )
     return cells

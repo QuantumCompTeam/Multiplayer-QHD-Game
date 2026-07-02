@@ -1,7 +1,8 @@
-"""Matplotlib figures for a sweep.
+"""Matplotlib figures for a sweep, plus the noise-threshold p* extractor.
 
 advantage-vs-N lines + a topology x N heatmap always; advantage-vs-gamma lines + a
-gamma x topology heatmap when gamma varies across the sweep.
+gamma x topology heatmap when gamma varies across the sweep; 3D (N x p) advantage
+surfaces per topology when noise_p varies (Month 4 / RQ3).
 
 Uses the non-interactive Agg backend so it runs headless. Only cells with status
 "ok" contribute data points; missing/failed pairs render as greyed cells in heatmaps.
@@ -12,6 +13,7 @@ from __future__ import annotations
 
 import math
 from pathlib import Path
+from typing import Sequence
 
 import matplotlib
 
@@ -21,6 +23,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 from experiment.sweep import STATUS_OK, CellResult  # noqa: E402
+from experiment.topology_registry import canonical  # noqa: E402
 
 # Cycled so coincident series (topologies whose advantage is identical) stay
 # distinguishable — the alternating dash/marker pattern reveals the overlap.
@@ -62,7 +65,7 @@ def _smooth_curve(xs, ys, n: int = 200):
 
 
 def _secondary_label(r: CellResult, vary: dict[str, bool]) -> str:
-    """Append any swept secondary params (gamma/V/C) that vary, to disambiguate."""
+    """Append any swept secondary params (gamma/V/C/noise_p) that vary, to disambiguate."""
     parts: list[str] = []
     if vary["gamma"]:
         parts.append(f"γ={r.cell.gamma_label}")
@@ -70,6 +73,8 @@ def _secondary_label(r: CellResult, vary: dict[str, bool]) -> str:
         parts.append(f"V={r.cell.V:g}")
     if vary["C"]:
         parts.append(f"C={r.cell.C:g}")
+    if vary["noise_p"]:
+        parts.append(f"p={r.cell.noise_p:g}")
     return (" (" + ", ".join(parts) + ")") if parts else ""
 
 
@@ -79,6 +84,7 @@ def _varying(results: list[CellResult]) -> dict[str, bool]:
         "gamma": len({r.cell.gamma_label for r in results}) > 1,
         "V": len({r.cell.V for r in results}) > 1,
         "C": len({r.cell.C for r in results}) > 1,
+        "noise_p": len({r.cell.noise_p for r in results}) > 1,
     }
 
 
@@ -249,6 +255,98 @@ def _gamma_topology_heatmap(ok: list[CellResult], out: Path) -> str | None:
     return out.name
 
 
+def extract_pstar(
+    ps: Sequence[float],
+    advantages: Sequence[float],
+    q_is_nash: Sequence[bool],
+) -> float | None:
+    """Noise threshold p* for one (topology, N) series (Month-4 spec §4.4).
+
+    p* is the smallest p at which the series loses its quantum advantage:
+      - mean advantage <= 0 — linearly interpolated between the bracketing grid
+        points (the published number must not be off by a grid step), or
+      - (Q,...,Q) STOPS being a pure Nash equilibrium — a True->False flip,
+        reported at the flip's grid point (a boolean has no in-between to
+        interpolate),
+    whichever happens at the smaller p. A series that was never Nash at any
+    swept p has nothing to "stop" being — the Nash criterion is inert there and
+    p* is governed by the advantage crossing alone (the caller should surface
+    the never-Nash fact separately; it is a Month-3 fixed-mode finding, not
+    noise fragility). Returns None when the advantage survives the whole grid
+    (report as "> p_max", a finding, not a failure).
+
+    Pure logic on already-computed series; feeds the published p* table. The
+    series may be passed in any order — it is sorted by p here.
+    """
+    if not (len(ps) == len(advantages) == len(q_is_nash)):
+        raise ValueError(
+            f"extract_pstar: mismatched series lengths "
+            f"{len(ps)}/{len(advantages)}/{len(q_is_nash)}"
+        )
+    order = sorted(range(len(ps)), key=lambda i: ps[i])
+    seen_nash = False
+    prev_p: float | None = None
+    prev_adv = 0.0
+    for i in order:
+        p, adv, nash = float(ps[i]), float(advantages[i]), bool(q_is_nash[i])
+        if adv <= 0.0:
+            if prev_p is None:
+                return p  # dead already at the first grid point
+            # prev_adv > 0 here (else we would have returned on that point).
+            return prev_p + (p - prev_p) * prev_adv / (prev_adv - adv)
+        if seen_nash and not nash:
+            return p
+        seen_nash = seen_nash or nash
+        prev_p, prev_adv = p, adv
+    return None
+
+
+def _noise_surfaces(ok: list[CellResult], plots_dir: Path) -> list[str]:
+    """3D advantage surface over (N, p), one PNG per topology (Month 4 / RQ3).
+
+    Needs at least a 2x2 (N, p) grid per topology to define a surface; smaller
+    series are skipped (the summary table still carries their numbers). W is
+    titled "approximate" — its gate-level circuit is transpiler synthesis, not a
+    physical W-prep circuit (spec D2).
+    """
+    by_topo: dict[str, dict[tuple[int, float], float]] = {}
+    for r in ok:
+        by_topo.setdefault(r.cell.topology, {})[(r.cell.N, r.cell.noise_p)] = float(
+            r.advantage  # type: ignore[arg-type]
+        )
+
+    written: list[str] = []
+    noise_dir = plots_dir / "noise"
+    for topo, cells in sorted(by_topo.items()):
+        ns = sorted({n for n, _ in cells})
+        ps = sorted({p for _, p in cells})
+        if len(ns) < 2 or len(ps) < 2:
+            continue
+        grid = np.full((len(ps), len(ns)), np.nan)
+        for (n, p), adv in cells.items():
+            grid[ps.index(p), ns.index(n)] = adv
+
+        noise_dir.mkdir(parents=True, exist_ok=True)
+        xs, ys = np.meshgrid(ns, ps)
+        fig = plt.figure(figsize=(7.5, 5.5))
+        ax = fig.add_subplot(projection="3d")
+        surf = ax.plot_surface(
+            xs, ys, grid, cmap="viridis", edgecolor="k", linewidth=0.3, alpha=0.95
+        )
+        ax.set_xticks(ns)
+        ax.set_xlabel("N (players)")
+        ax.set_ylabel("depolarizing p")
+        ax.set_zlabel("quantum advantage")
+        approx = " (approximate)" if canonical(topo) == "w" else ""
+        ax.set_title(f"Advantage surface — {topo}{approx}")
+        fig.colorbar(surf, shrink=0.6, pad=0.1, label="advantage")
+        out = noise_dir / f"advantage_surface_{topo}.png"
+        fig.savefig(out, dpi=120, bbox_inches="tight")
+        plt.close(fig)
+        written.append(f"noise/{out.name}")
+    return written
+
+
 def _per_player_advantage(ok: list[CellResult], plots_dir: Path) -> list[str]:
     """Per-player advantage bar charts for ASYMMETRIC topologies (one per topology).
 
@@ -321,8 +419,12 @@ def write_plots(results: list[CellResult], plots_dir: str | Path) -> list[str]:
         written.append(heatmap)
 
     # Per-player advantage for asymmetric topologies (the scalar mean hides the
-    # hub/leaf split); only emitted when an asymmetric cell is present.
-    written += _per_player_advantage(ok, plots_dir)
+    # hub/leaf split); only emitted when an asymmetric cell is present. Skipped
+    # when noise_p is swept: gate-level noise makes even symmetric topologies
+    # slightly player-asymmetric, and multiple p values per (topology, N) would
+    # overprint the bars (the per-cell report still carries the vectors).
+    if not vary["noise_p"]:
+        written += _per_player_advantage(ok, plots_dir)
 
     # Entanglement-strength views — only meaningful when gamma is swept.
     if vary["gamma"]:
@@ -334,4 +436,8 @@ def write_plots(results: list[CellResult], plots_dir: str | Path) -> list[str]:
         )
         if gamma_heatmap:
             written.append(gamma_heatmap)
+
+    # Noise-robustness surfaces (Month 4 / RQ3) — only when noise_p is swept.
+    if vary["noise_p"]:
+        written += _noise_surfaces(ok, plots_dir)
     return written

@@ -92,6 +92,7 @@ def main() -> int:
             "V": sorted({c.V for c in config.cells}),
             "C": sorted({c.C for c in config.cells}),
             "gamma": sorted({c.gamma_label for c in config.cells}),
+            "noise_p": sorted({c.noise_p for c in config.cells}),
             "strategy_names": list(config.cells[0].strategy_names),
             "formats": config.formats,
         },

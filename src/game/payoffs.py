@@ -92,15 +92,24 @@ def expected_payoff(
     Returns: shape (N,). result[j] = expected payoff for player j.
     Shape contract is stable from N=2 through N=6 without changes to this function.
     """
-    # Interface contract (spec §4 / config.py): probs must be shape (2**N,) and normalised.
+    # Interface contract (spec §4 / config.py, Month-4 D6): probs must be shape
+    # (2**N,), non-negative, and normalised. The density-matrix noisy path can
+    # emit ~1e-16 negatives; those are clamped, anything larger is a real bug.
     if probs.shape != (2 ** N,):
         raise ValueError(
             f"expected_payoff: probs shape {probs.shape} does not match (2**{N},) = "
             f"({2**N},). Check that build_ewl_circuit returns the correct number of qubits."
         )
-    if not np.isclose(probs.sum(), 1.0, atol=1e-6):
+    if (probs < 0.0).any():
+        if probs.min() < -1e-9:
+            raise ValueError(
+                f"expected_payoff: probs contain a negative value {probs.min():.3e} "
+                f"beyond tolerance 1e-9. The producing circuit is broken."
+            )
+        probs = np.where(probs < 0.0, 0.0, probs)
+    if abs(probs.sum() - 1.0) > 1e-9:
         raise ValueError(
-            f"expected_payoff: probs sum to {probs.sum():.6f}, expected 1.0. "
+            f"expected_payoff: probs sum to {probs.sum():.12f}, expected 1.0. "
             f"Circuit probabilities are not normalised."
         )
     # Expected payoff per player = sum_i probs[i] * P[i, :] = probs @ P, where P

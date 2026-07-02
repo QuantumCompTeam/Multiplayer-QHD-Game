@@ -419,21 +419,22 @@ Lane 0 merges. Then integrate + run `experiments/noise-sweep.yaml`.
 
 Synthesized from this review. P1 blocks the milestone; P2 same-branch; P3 follow-up.
 
-- [ ] **T1 (P1, CC: ~20min)** — pre-reqs — fix the cp1252 UTF-8 write bug + add `pyyaml` to `pyproject.toml`
+- [x] **T1 (P1, CC: ~20min)** — pre-reqs — fix the cp1252 UTF-8 write bug + add `pyyaml` to `pyproject.toml`
   - Surfaced by: prior session — every report write crashes on Windows
   - Files: `src/experiment/topology_viz.py`, `src/experiment/report.py`, `pyproject.toml`
   - Verify: a noise sweep writes its report without `UnicodeEncodeError`
-- [ ] **T2 (P1, CC: ~30min)** — `gate_level.py` + registry (D5) — gate-level builders, dual-view registry
+- [x] **T2 (P1, CC: ~30min)** — `gate_level.py` + registry (D5) — gate-level builders, dual-view registry
   - Verify: test 2 (gate vs dense, all 5 topologies) + test 8 (parity) pass
-- [ ] **T3 (P1, CC: ~30min)** — `noise.py` (D3 basis, D8 template) — noise model + parametrized template + runner
+- [x] **T3 (P1, CC: ~30min)** — `noise.py` (D3 basis, D8 template) — noise model + parametrized template + runner
   - Verify: test 1 (p=0 anchor) + test 12 + test 13 pass
-- [ ] **T4 (P1, CC: ~15min)** — `nash.py` `prob_fn` + `payoffs.py` guard (D6)
+- [x] **T4 (P1, CC: ~15min)** — `nash.py` `prob_fn` + `payoffs.py` guard (D6)
   - Verify: full existing suite green (regression) + tests 7, 11
-- [ ] **T5 (P1, CC: ~20min)** — harness: `config` noise axis + D4 validation, `sweep` wiring
+- [x] **T5 (P1, CC: ~20min)** — harness: `config` noise axis + D4 validation, `sweep` wiring
   - Verify: tests 5, 9, 10
-- [ ] **T6 (P1, CC: ~20min)** — `plots.py` p* extraction + 3D surface, `report.py` column
+- [x] **T6 (P1, CC: ~20min)** — `plots.py` p* extraction + 3D surface, `report.py` column
   - Verify: test 6 (the published-number guard)
-- [ ] **T7 (P2, CC: ~10min)** — `experiments/noise-sweep.yaml` + run + write `results/`, flip README §9
+- [x] **T7 (P2, CC: ~10min)** — `experiments/noise-sweep.yaml` + run + write `results/`, flip README §9
+  - Done 2026-07-02: `results/noise-robustness/2026-07-02T1212Z/` (132/132 cells, 0 errors)
 - [ ] **T8 (P3)** — TODO: faithful gate-level W entangler (D2)
 - [ ] **T9 (P3)** — TODO: noise-aware strategy optimization (D4)
 

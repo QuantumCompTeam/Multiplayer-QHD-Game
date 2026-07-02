@@ -82,6 +82,25 @@ game:
   # V: [4, 100, 1000]                                # resource-value sweep
   # C: [3, 55, 550]                                  # conflict-cost sweep
 
+noise:
+  # ---- [sweep axis] depolarizing noise probability p. Default 0.0. ------------
+  # A number in [0, 1], or a list to sweep (Month 4 / RQ3; see
+  # experiments/noise-sweep.yaml for the ready-made RQ3 run).
+  #   p = 0.0  -- exact noiseless statevector path (byte-identical to omitting
+  #               this section entirely).
+  #   p > 0.0  -- gate-level circuit transpiled to the pinned {u, cx} basis, run
+  #               on a density-matrix simulator with depolarizing errors: prob p
+  #               on every 1-qubit `u` gate, p on every 2-qubit `cx` gate. So a
+  #               topology's noise cost scales with its entangling gate count
+  #               (ring N edges, star N-1, fully-connected N(N-1)/2).
+  # CONSTRAINT: p > 0 requires strategy_mode: "fixed" above (the cooperative/
+  # nash optimizer runs noiselessly and would silently mismatch a noisy score;
+  # the config loader rejects the combination).
+  # NOTE: W-topology noise results are APPROXIMATE — W has no compact gate-level
+  # form, so its gate count comes from transpiler synthesis, not a physical
+  # W-prep circuit (Month-4 spec D2).
+  p: 0.0
+
 output:
   # Which artifacts to write. Subset of: md | json | csv | plots.
   # Default if omitted: all four.

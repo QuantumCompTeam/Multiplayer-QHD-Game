@@ -21,7 +21,7 @@ Public API:
 from __future__ import annotations
 
 import itertools
-from typing import Any
+from typing import Any, Callable, TypeAlias
 
 import numpy as np
 import numpy.typing as npt
@@ -31,6 +31,11 @@ from circuits.n_player import build_ewl_circuit
 from circuits.topologies import Entangler, ghz_entangler
 from config import C as DEFAULT_C, GAMMA, V as DEFAULT_V
 from game.payoffs import expected_payoff
+
+# Month-4 injection seam (spec §4.2): (N, per-player params) -> probs (2^N,).
+# Lets the sweep layer swap in a noisy density-matrix runner without nash.py
+# knowing anything about noise. None = the exact statevector path (unchanged).
+ProbFn: TypeAlias = Callable[[int, list[StrategyParams]], npt.NDArray[np.float64]]
 
 # Default strategy set for all Month-2 computations.
 STRATEGY_NAMES: list[str] = ["D", "H", "Q"]
@@ -61,6 +66,7 @@ def build_payoff_tensor(
     entangler: Entangler = ghz_entangler,
     gamma: float = GAMMA,
     q_params: StrategyParams | None = None,
+    prob_fn: ProbFn | None = None,
 ) -> dict[tuple[str, ...], npt.NDArray[np.float64]]:
     """Evaluate all strategy profiles and return per-player payoffs.
 
@@ -71,16 +77,25 @@ def build_payoff_tensor(
     `q_params` overrides it (e.g. a topology-optimized gate from
     game.strategy_opt).
 
+    `prob_fn` (Month 4) overrides how outcome probabilities are produced (e.g.
+    the depolarizing-noise density-matrix runner). Default None runs the exact
+    statevector path via build_ewl_circuit — byte-identical to prior behavior.
+    When prob_fn is given, `entangler`/`gamma` are unused (the injected runner
+    owns its own circuit construction).
+
     Returns: dict mapping profile tuple -> shape (N,) payoff array.
     For N=3, strategy_names=["D","H","Q"]: 27 entries.
 
     Pure-strategy enumeration only.  Does not compute mixed-strategy equilibria.
     """
+    run = prob_fn or (
+        lambda n, params: build_ewl_circuit(n, params, entangler=entangler, gamma=gamma)
+    )
     smap = _strategy_map(N, q_params)
     tensor: dict[tuple[str, ...], npt.NDArray[np.float64]] = {}
     for profile in itertools.product(strategy_names, repeat=N):
         params = [smap[s] for s in profile]
-        probs = build_ewl_circuit(N, params, entangler=entangler, gamma=gamma)
+        probs = run(N, params)
         tensor[profile] = expected_payoff(probs, N, V, C)
     return tensor
 
@@ -132,6 +147,7 @@ def compute_advantage(
     entangler: Entangler = ghz_entangler,
     gamma: float = GAMMA,
     q_params: StrategyParams | None = None,
+    prob_fn: ProbFn | None = None,
 ) -> dict[str, Any]:
     """Compute quantum advantage: quantum NE payoff vs classical NE payoff (RQ1).
 
@@ -139,6 +155,12 @@ def compute_advantage(
     q_strategy(N)).  Pass a topology-optimized gate from game.strategy_opt to
     measure the advantage of the topology's OWN best quantum strategy rather
     than the fixed GHZ one.  Default None is byte-identical to prior behavior.
+
+    `prob_fn` (Month 4) overrides the probability producer for every profile
+    (see build_payoff_tensor) — the seam the noisy sweep uses.  Default None is
+    the exact statevector path, byte-identical to prior behavior.  Under noise,
+    (Q,...,Q) may stop being Nash and advantage may go negative — both are
+    RQ3 findings read from the noisy tensor, not bugs.
 
     Advantage is defined as:
         advantage = q_payoff_per_player - classical_ne_payoff
@@ -193,7 +215,9 @@ def compute_advantage(
       deviation_check         dict   -- per-(player, alt) unilateral deviation
                                         from (Q,...,Q): payoff and dominance flag
     """
-    tensor = build_payoff_tensor(N, strategy_names, V, C, entangler, gamma, q_params)
+    tensor = build_payoff_tensor(
+        N, strategy_names, V, C, entangler, gamma, q_params, prob_fn
+    )
     all_nash = find_pure_nash(tensor, N, strategy_names)
 
     def _is_symmetric(vec: npt.NDArray[np.float64]) -> bool:

@@ -15,9 +15,10 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
+from circuits.noise import build_ewl_circuit_noisy
 from experiment.config import Cell
 from experiment.topology_registry import canonical, resolve
-from game.nash import compute_advantage
+from game.nash import ProbFn, compute_advantage
 from game.strategy_opt import optimal_strategy
 
 # Soft per-cell ceiling (seconds) for the nash optimizer, so no single cell pegs
@@ -61,9 +62,20 @@ def run_cell(cell: Cell) -> CellResult:
     optimal symmetric gate is computed first (game.strategy_opt) and passed as
     `q_params`, so "Q" reflects the topology's best quantum play rather than the
     fixed GHZ-derived strategy. "fixed" (default) leaves the legacy behavior.
+
+    When `cell.noise_p > 0`, every profile is evaluated on the depolarizing
+    density-matrix path (circuits.noise) via the `prob_fn` seam; the transpiled
+    entangler is cached per (topology, N, gamma) inside circuits.noise, so the
+    3^N profiles of a cell share one synthesis (Month-4 D8). noise_p == 0 keeps
+    the exact statevector path, byte-identical to before.
     """
     try:
         entangler = resolve(cell.topology, cell.N)
+        prob_fn: ProbFn | None = None
+        if cell.noise_p > 0.0:
+            prob_fn = lambda n, params: build_ewl_circuit_noisy(  # noqa: E731
+                n, params, topology=cell.topology, gamma=cell.gamma, p=cell.noise_p
+            )
         q_params = None
         strategy: dict[str, Any] | None = None
         if cell.strategy_mode != "fixed":
@@ -95,6 +107,7 @@ def run_cell(cell: Cell) -> CellResult:
             entangler=entangler,
             gamma=cell.gamma,
             q_params=q_params,
+            prob_fn=prob_fn,
         )
     except NotImplementedError as exc:
         return CellResult(cell, STATUS_NOT_IMPLEMENTED, message=str(exc))

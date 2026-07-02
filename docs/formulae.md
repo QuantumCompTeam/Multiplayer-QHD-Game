@@ -256,7 +256,56 @@ honestly (`is_nash=False`, `converged=False`).
 
 ---
 
-## 8. Symbol summary
+## 8. Depolarizing noise (Month 4 / RQ3)
+
+The noisy path (`src/circuits/noise.py`, `build_ewl_circuit_noisy`) re-expresses
+the same `J† U J` sandwich as **elementary gates** (`src/circuits/gate_level.py`),
+transpiles to the pinned basis `{u, cx}` at `optimization_level=1`, and runs it on
+`AerSimulator(method="density_matrix")` — exact channel probabilities, no shot
+sampling. At `p = 0` it reproduces the noiseless statevector result
+(`tests/test_noise.py::test_p0_equals_statevector`, atol 1e-6).
+
+**Channel.** Depolarizing error with parameter `λ` on an `n`-qubit gate
+(Qiskit Aer convention):
+
+$$
+\mathcal{E}(\rho)=(1-\lambda)\,\rho+\lambda\,\operatorname{Tr}[\rho]\,\frac{I}{2^{n}}
+$$
+
+Attached per gate of the transpiled circuit (`build_noise_model`):
+- every 1-qubit `u` gate: `λ = p`
+- every 2-qubit `cx` gate: `λ = min(1, p·r)` with `p2_ratio r = 1` in v1
+
+so a topology's noise cost scales with its **entangling gate count** — the
+RQ3-distinguishing quantity (ring `N` edges, star `N−1`, fully-connected
+`N(N−1)/2`, GHZ one O(N) ladder).
+
+**Gate-level entanglers** (each verified against the dense §3 matrices up to a
+global phase, `tests/test_gate_level.py`):
+- **pairwise (ring/star/FC):** one `RXX(−γ)` per edge — Qiskit
+  `RXX(θ) = exp(−iθ/2·XᵢXⱼ)`, so the sign flip realizes the project convention
+  `exp(+iγ/2·XᵢXⱼ)`.
+- **GHZ:** `X^{⊗N} = H^{⊗N} Z^{⊗N} H^{⊗N}`, so
+  `exp(+iγ/2·X^{⊗N}) = H^{⊗N}·[CNOT ladder → RZ(−γ) → ladder†]·H^{⊗N}`.
+- **W:** the dense `S_W` reflection has no compact native-gate form; it is
+  **transpiled** to `{u, cx}` (pinned). Its gate count is synthesis-derived, so
+  every W noise result is labelled **approximate** (spec D2).
+
+**Noise threshold `p*`** (`src/experiment/plots.py`, `extract_pstar`): per
+`(topology, N)` series over the swept grid, the smallest `p` at which
+
+$$
+p^{*}=\min\Big\{\,p:\ \text{advantage}(p)\le 0\ \text{(linear interpolation)}
+\ \ \lor\ \ (Q,\dots,Q)\ \text{Nash flips True}\!\to\!\text{False}\,\Big\}
+$$
+
+A series that survives the whole grid reports `p* > p_max`; a series that was
+never Nash at any swept `p` (fixed-mode `Q_GHZ` on a non-GHZ topology) reports
+`p*` from the advantage criterion alone, with the never-Nash fact footnoted.
+
+---
+
+## 9. Symbol summary
 
 | symbol | meaning |
 |---|---|
@@ -270,6 +319,8 @@ honestly (`is_nash=False`, `converged=False`).
 | `π_j` | expected payoff to player `j` |
 | `f(θ,α,β)` | mean per-player payoff of the symmetric profile |
 | `nashgap(s)` | max unilateral deviation gain from `s` (≤1e-6 ⇒ Nash) |
+| `p` | depolarizing probability per gate (`u`: `p`, `cx`: `p·r`, `r=1`) |
+| `p*` | noise threshold: smallest `p` where a series loses its advantage |
 
 ## Source files
 
@@ -279,5 +330,8 @@ honestly (`is_nash=False`, `converged=False`).
 - `src/circuits/topology_graphs.py` — ring/star/fully-connected edge sets
 - `src/circuits/n_player.py` — `build_ewl_circuit` (the `J† U J` sandwich)
 - `src/game/payoffs.py` — Benjamin–Hayden payoff matrix, `expected_payoff`
-- `src/game/nash.py` — `find_pure_nash`, `compute_advantage`
+- `src/game/nash.py` — `find_pure_nash`, `compute_advantage` (+ `prob_fn` seam)
 - `src/game/strategy_opt.py` — `cooperative_strategy`, `nash_strategy`, `nash_gap`
+- `src/circuits/gate_level.py` — elementary-gate entanglers for the noisy path
+- `src/circuits/noise.py` — depolarizing `NoiseModel`, `build_ewl_circuit_noisy`
+- `src/experiment/plots.py` — `extract_pstar`, 3D (N × p) advantage surfaces

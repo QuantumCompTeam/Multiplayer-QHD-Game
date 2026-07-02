@@ -20,6 +20,7 @@ from experiment.sweep import (
     SweepSummary,
     summarize,
 )
+from experiment.topology_registry import canonical
 
 
 def _profile_str(profile: tuple[str, ...]) -> str:
@@ -66,6 +67,7 @@ def _cell_record(r: CellResult) -> dict[str, Any]:
         "C": r.cell.C,
         "gamma": r.cell.gamma,
         "gamma_label": r.cell.gamma_label,
+        "noise_p": r.cell.noise_p,
         "status": r.status,
         "advantage": r.advantage,
         "q_is_nash": r.q_is_nash,
@@ -105,6 +107,7 @@ def _config_snapshot(config: ExperimentConfig, timestamp: str) -> dict[str, Any]
                 "gamma": c.gamma,
                 "gamma_label": c.gamma_label,
                 "strategy_mode": c.strategy_mode,
+                "noise_p": c.noise_p,
             }
             for c in config.cells
         ],
@@ -137,10 +140,10 @@ def _nash_uncertified(r: CellResult) -> bool:
 
 def _summary_table(results: list[CellResult]) -> list[str]:
     header = (
-        "| N | topology | V | C | gamma | q_payoff | classical_ne | advantage "
+        "| N | topology | V | C | gamma | noise_p | q_payoff | classical_ne | advantage "
         "| q_is_nash | symmetric | status |"
     )
-    sep = "|---|---|---|---|---|---|---|---|---|---|---|"
+    sep = "|---|---|---|---|---|---|---|---|---|---|---|---|"
     rows = [header, sep]
     any_flagged = False
     for r in results:
@@ -154,7 +157,7 @@ def _summary_table(results: list[CellResult]) -> list[str]:
             any_flagged = True
         rows.append(
             f"| {r.cell.N} | {r.cell.topology} | {r.cell.V:g} | {r.cell.C:g} "
-            f"| {r.cell.gamma_label} | {_fmt(qp)} | {_fmt(cp)} | {adv} "
+            f"| {r.cell.gamma_label} | {r.cell.noise_p:g} | {_fmt(qp)} | {_fmt(cp)} | {adv} "
             f"| {nash} | {sym} | {r.status} |"
         )
     if any_flagged:
@@ -204,6 +207,105 @@ def _gamma_findings(results: list[CellResult]) -> list[str]:
             if nash else "(Q,…,Q) never Nash in range"
         )
         lines.append(f"  - {topo}, N={N}: {adv_txt}; {nash_txt}")
+    return lines
+
+
+def _noise_findings(results: list[CellResult]) -> list[str]:
+    """Noise-threshold p* findings (Month 4 / RQ3), only when noise_p is swept.
+
+    Per (topology, N) series: p* = the smallest p at which advantage <= 0
+    (linearly interpolated between grid points) or (Q,...,Q) stops being a pure
+    Nash equilibrium (see plots.extract_pstar). The GHZ-vs-W p* ordering is the
+    RQ3 headline — REPORTED from the measured values, never assumed. All W rows
+    are labelled approximate: W's gate-level circuit is transpiler synthesis,
+    not a physical W-prep circuit (Month-4 spec D2).
+    """
+    ok = [r for r in results if r.status == STATUS_OK and r.advantage is not None]
+    ps_all = sorted({r.cell.noise_p for r in ok})
+    if len(ps_all) <= 1:
+        return []  # noise not swept — nothing to threshold
+
+    # Lazy import (pattern as write_outputs): keeps matplotlib out of md/json/csv
+    # runs that don't sweep noise.
+    from experiment.plots import extract_pstar
+
+    groups: dict[tuple[str, int], list[CellResult]] = {}
+    for r in ok:
+        groups.setdefault((r.cell.topology, r.cell.N), []).append(r)
+
+    p_max = ps_all[-1]
+    pstars: dict[tuple[str, int], float | None] = {}
+    never_nash: set[tuple[str, int]] = set()
+    for (topo, N), rs in sorted(groups.items()):
+        rs.sort(key=lambda r: r.cell.noise_p)
+        pstars[(topo, N)] = extract_pstar(
+            [r.cell.noise_p for r in rs],
+            [float(r.advantage) for r in rs],  # type: ignore[arg-type]
+            [bool(r.q_is_nash) for r in rs],
+        )
+        if not any(r.q_is_nash for r in rs):
+            never_nash.add((topo, N))
+
+    lines = [
+        "",
+        f"**Noise thresholds p\\*** — smallest depolarizing p at which a series "
+        f"loses its quantum advantage (advantage ≤ 0, linearly interpolated "
+        f"between grid points) or (Q,…,Q) stops being a pure Nash equilibrium "
+        f"(True→False flip), whichever happens first. “> {p_max:g}” = the "
+        f"advantage survived the whole swept grid (a finding, not a failure).",
+        "",
+        "| topology | N | p* |",
+        "|---|---|---|",
+    ]
+    for (topo, N), pstar in sorted(pstars.items()):
+        label = f"{topo} _(approximate)_" if canonical(topo) == "w" else topo
+        val = f"> {p_max:g}" if pstar is None else f"{pstar:.4f}"
+        if (topo, N) in never_nash:
+            val += " †"
+        lines.append(f"| {label} | {N} | {val} |")
+    if never_nash:
+        lines += [
+            "",
+            "† (Q,…,Q) is not a pure Nash equilibrium at ANY swept p for this "
+            "series — with the fixed GHZ-derived Q this is a Month-3 finding "
+            "about the topology, not noise fragility. The Nash-flip criterion "
+            "is inert; p* reflects the advantage ≤ 0 criterion only.",
+        ]
+
+    # GHZ-vs-W ordering — the RQ3 headline, read off the measured p* values.
+    by_canon = {(canonical(t), n): v for (t, n), v in pstars.items()}
+    ns_both = sorted(
+        {n for t, n in by_canon if t == "ghz"} & {n for t, n in by_canon if t == "w"}
+    )
+    if ns_both:
+        lines += [
+            "",
+            "**GHZ vs W noise robustness (RQ3 headline — measured, not assumed; "
+            "W is approximate, see above):**",
+        ]
+        for n in ns_both:
+            g, w = by_canon[("ghz", n)], by_canon[("w", n)]
+            if g is None and w is None:
+                verdict = (
+                    "both survive the whole swept grid — no ordering measurable in range"
+                )
+            elif g is None:
+                verdict = (
+                    f"W collapses at p*={w:.4f} while GHZ survives the grid "
+                    f"→ W degrades faster"
+                )
+            elif w is None:
+                verdict = (
+                    f"GHZ collapses at p*={g:.4f} while W survives the grid "
+                    f"→ GHZ degrades faster"
+                )
+            elif abs(g - w) < 1e-12:
+                verdict = f"identical p*={g:.4f} — no ordering at this grid resolution"
+            elif g < w:
+                verdict = f"GHZ collapses first (p*={g:.4f} < {w:.4f}) → GHZ degrades faster"
+            else:
+                verdict = f"W collapses first (p*={w:.4f} < {g:.4f}) → W degrades faster"
+            lines.append(f"  - N={n}: {verdict}")
     return lines
 
 
@@ -258,18 +360,25 @@ def _findings(results: list[CellResult], summary: SweepSummary) -> list[str]:
         lines.append("")
         lines.append("**Cells with advantage <= 0 (RQ1 finding — investigate, do not paper over):**")
         for r in summary.nonpositive_cells:
+            noise = f", p={r.cell.noise_p:g}" if r.cell.noise_p > 0 else ""
             lines.append(
-                f"  - N={r.cell.N}, {r.cell.topology}, gamma={r.cell.gamma_label}: "
+                f"  - N={r.cell.N}, {r.cell.topology}, gamma={r.cell.gamma_label}{noise}: "
                 f"advantage = {_fmt(r.advantage)}"
             )
     if summary.non_nash_cells:
         lines.append("")
         lines.append("**Cells where (Q,...,Q) is NOT Nash (RQ1 finding):**")
         for r in summary.non_nash_cells:
-            lines.append(f"  - N={r.cell.N}, {r.cell.topology}, gamma={r.cell.gamma_label}")
+            noise = f", p={r.cell.noise_p:g}" if r.cell.noise_p > 0 else ""
+            lines.append(
+                f"  - N={r.cell.N}, {r.cell.topology}, gamma={r.cell.gamma_label}{noise}"
+            )
 
     # Entanglement-threshold findings (only present when gamma is swept).
     lines += _gamma_findings(results)
+
+    # Noise-threshold p* findings (only present when noise_p is swept).
+    lines += _noise_findings(results)
 
     # Make skipped coverage explicit so gaps never read as "covered".
     skipped = [r for r in results if r.status != STATUS_OK]
@@ -288,10 +397,20 @@ def _cell_detail(r: CellResult) -> list[str]:
     assert r.result is not None
     res = r.result
     q = tuple("Q" for _ in range(r.cell.N))
+    noise = f" · noise p={r.cell.noise_p:g}" if r.cell.noise_p > 0 else ""
     lines = [
-        f"### N={r.cell.N} · {r.cell.topology} · gamma={r.cell.gamma_label} "
-        f"(V={r.cell.V:g}, C={r.cell.C:g})",
+        f"### N={r.cell.N} · {r.cell.topology} · gamma={r.cell.gamma_label}"
+        f"{noise} (V={r.cell.V:g}, C={r.cell.C:g})",
         "",
+    ]
+    if r.cell.noise_p > 0 and canonical(r.cell.topology) == "w":
+        lines += [
+            "_W noise results are **approximate**: the W entangler's gate-level "
+            "circuit is transpiler synthesis, not a physical W-prep circuit "
+            "(Month-4 spec D2)._",
+            "",
+        ]
+    lines += [
         f"- {_profile_str(q)} mean per-player payoff: **{res['q_payoff_per_player']:.6f}**",
         f"- Classical NE mean payoff: **{res['classical_ne_payoff']:.6f}**",
         f"- Advantage (QNE − CNE, mean): **{res['advantage']:.6f}**",
