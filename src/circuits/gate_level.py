@@ -23,6 +23,8 @@ count is synthesis-derived, so W noise results are labelled "approximate".
 
 from __future__ import annotations
 
+import math
+
 from qiskit import transpile
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import RXXGate, UnitaryGate
@@ -88,6 +90,25 @@ def fully_connected_gate_circuit(N: int, gamma: float = GAMMA) -> QuantumCircuit
         (int(i), int(j)) for i, j in topology_graph("fully-connected", N).edges()
     ]
     return pairwise_gate_circuit(edges, N, gamma)
+
+
+def _w_prep_cascade(N: int) -> QuantumCircuit:
+    """Cascade T with T|e_0> = |W> (all real +1/sqrt(N) amplitudes) and T|0..0> = |0..0>.
+
+    Block k (k = 0..N-2): CRy(theta_k) control k -> target k+1, then CNOT
+    control k+1 -> target k, with theta_k = 2*arccos(1/sqrt(N-k)). Each block
+    moves sin(theta_k/2) of the excitation amplitude from qubit k to k+1,
+    leaving cos(theta_k/2) * prod_{m<k} sin(theta_m/2) = 1/sqrt(N) behind.
+    Every gate is controlled on a qubit that is |0> in the all-zeros state, so
+    T fixes |0...0> exactly — required by the conjugation construction
+    (spec 2026-07-02-w-entangler-gate-level-design.md, D-T8.3).
+    """
+    qc = QuantumCircuit(N)
+    for k in range(N - 1):
+        theta = 2.0 * math.acos(1.0 / math.sqrt(N - k))
+        qc.cry(theta, k, k + 1)
+        qc.cx(k + 1, k)
+    return qc
 
 
 def w_gate_circuit(N: int, gamma: float = GAMMA) -> QuantumCircuit:
