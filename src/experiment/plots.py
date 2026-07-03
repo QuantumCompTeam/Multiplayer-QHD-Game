@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 from experiment.sweep import STATUS_OK, CellResult  # noqa: E402
-from experiment.topology_registry import canonical  # noqa: E402
 
 # Cycled so coincident series (topologies whose advantage is identical) stay
 # distinguishable — the alternating dash/marker pattern reveals the overlap.
@@ -305,9 +304,7 @@ def _noise_surfaces(ok: list[CellResult], plots_dir: Path) -> list[str]:
     """3D advantage surface over (N, p), one PNG per topology (Month 4 / RQ3).
 
     Needs at least a 2x2 (N, p) grid per topology to define a surface; smaller
-    series are skipped (the summary table still carries their numbers). W is
-    titled "approximate" — its gate-level circuit is transpiler synthesis, not a
-    physical W-prep circuit (spec D2).
+    series are skipped (the summary table still carries their numbers).
     """
     by_topo: dict[str, dict[tuple[int, float], float]] = {}
     for r in ok:
@@ -337,8 +334,7 @@ def _noise_surfaces(ok: list[CellResult], plots_dir: Path) -> list[str]:
         ax.set_xlabel("N (players)")
         ax.set_ylabel("depolarizing p")
         ax.set_zlabel("quantum advantage")
-        approx = " (approximate)" if canonical(topo) == "w" else ""
-        ax.set_title(f"Advantage surface — {topo}{approx}")
+        ax.set_title(f"Advantage surface — {topo}")
         fig.colorbar(surf, shrink=0.6, pad=0.1, label="advantage")
         out = noise_dir / f"advantage_surface_{topo}.png"
         fig.savefig(out, dpi=120, bbox_inches="tight")

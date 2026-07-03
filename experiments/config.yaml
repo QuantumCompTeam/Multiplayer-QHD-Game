@@ -96,9 +96,6 @@ noise:
   # CONSTRAINT: p > 0 requires strategy_mode: "fixed" above (the cooperative/
   # nash optimizer runs noiselessly and would silently mismatch a noisy score;
   # the config loader rejects the combination).
-  # NOTE: W-topology noise results are APPROXIMATE — W has no compact gate-level
-  # form, so its gate count comes from transpiler synthesis, not a physical
-  # W-prep circuit (Month-4 spec D2).
   p: 0.0
 
 output:

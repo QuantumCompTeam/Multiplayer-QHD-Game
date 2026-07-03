@@ -216,9 +216,7 @@ def _noise_findings(results: list[CellResult]) -> list[str]:
     Per (topology, N) series: p* = the smallest p at which advantage <= 0
     (linearly interpolated between grid points) or (Q,...,Q) stops being a pure
     Nash equilibrium (see plots.extract_pstar). The GHZ-vs-W p* ordering is the
-    RQ3 headline — REPORTED from the measured values, never assumed. All W rows
-    are labelled approximate: W's gate-level circuit is transpiler synthesis,
-    not a physical W-prep circuit (Month-4 spec D2).
+    RQ3 headline — REPORTED from the measured values, never assumed.
     """
     ok = [r for r in results if r.status == STATUS_OK and r.advantage is not None]
     ps_all = sorted({r.cell.noise_p for r in ok})
@@ -258,7 +256,7 @@ def _noise_findings(results: list[CellResult]) -> list[str]:
         "|---|---|---|",
     ]
     for (topo, N), pstar in sorted(pstars.items()):
-        label = f"{topo} _(approximate)_" if canonical(topo) == "w" else topo
+        label = topo
         val = f"> {p_max:g}" if pstar is None else f"{pstar:.4f}"
         if (topo, N) in never_nash:
             val += " †"
@@ -280,8 +278,7 @@ def _noise_findings(results: list[CellResult]) -> list[str]:
     if ns_both:
         lines += [
             "",
-            "**GHZ vs W noise robustness (RQ3 headline — measured, not assumed; "
-            "W is approximate, see above):**",
+            "**GHZ vs W noise robustness (RQ3 headline — measured, not assumed):**",
         ]
         for n in ns_both:
             g, w = by_canon[("ghz", n)], by_canon[("w", n)]
@@ -403,13 +400,6 @@ def _cell_detail(r: CellResult) -> list[str]:
         f"{noise} (V={r.cell.V:g}, C={r.cell.C:g})",
         "",
     ]
-    if r.cell.noise_p > 0 and canonical(r.cell.topology) == "w":
-        lines += [
-            "_W noise results are **approximate**: the W entangler's gate-level "
-            "circuit is transpiler synthesis, not a physical W-prep circuit "
-            "(Month-4 spec D2)._",
-            "",
-        ]
     lines += [
         f"- {_profile_str(q)} mean per-player payoff: **{res['q_payoff_per_player']:.6f}**",
         f"- Classical NE mean payoff: **{res['classical_ne_payoff']:.6f}**",
