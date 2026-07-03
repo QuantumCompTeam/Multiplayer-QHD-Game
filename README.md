@@ -181,8 +181,12 @@ cd entangled-equilibria
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install dependencies
-pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
+# Install dependencies — versions PINNED to match pyproject.toml.
+# Unpinned installs pull qiskit 2.x, which is incompatible with this code
+# (targets qiskit==1.3.2); the sign/basis conventions differ.
+pip install "qiskit==1.3.2" "qiskit-aer==0.14.2" "nashpy==0.0.19" \
+            "networkx==3.3" "numpy==1.26.4" "scipy==1.13.1" \
+            "matplotlib==3.9.2" "pyyaml>=6.0" "pylatexenc>=2.10"
 
 # Validate the codebase — the real validation is the test suite
   pytest tests/ -v
