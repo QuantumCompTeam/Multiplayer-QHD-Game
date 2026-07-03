@@ -261,7 +261,7 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 | 2-player EWL validation | Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
 | N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
 | Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
-| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; GHZ collapses at every N≥3 while W (exact gate-level circuit, T8) survives the whole swept grid; 13 noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
+| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; two criteria diverge — GHZ's cooperative equilibrium is the most noise-fragile (loses pure-NE status at finite p for N≥3), while GHZ keeps the *largest* mean advantage at small N and W keeps a positive-but-small mean advantage across the grid (exact gate-level W, T8); 22 collected noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
 | IBM hardware validation | Pending | Month 5 (optional) |
 | arXiv preprint | Pending | Month 6 |
 
@@ -285,9 +285,15 @@ N=5, vs 100/444 for the retired transpiled-unitary fallback).
 Full run: `results/noise-robustness/2026-07-03T0213Z/` (config:
 `experiments/noise-sweep.yaml`).
 
+Throughout this section "advantage" means the **mean over players** (the
+§5.2 metric averaged across the N players). Depolarizing noise breaks player
+symmetry (symmetric = False for every noisy cell, p ≥ 0.005), so the mean can
+stay positive while some individual players fall below classical — see the
+per-player caveat in the findings.
+
 **Measured noise thresholds p\*** — smallest p at which a series loses its
-advantage (advantage ≤ 0, linearly interpolated) or (Q,…,Q) stops being a pure
-Nash equilibrium, whichever first:
+mean advantage (advantage ≤ 0, linearly interpolated) or (Q,…,Q) stops being a
+pure Nash equilibrium, whichever first:
 
 | topology | N=2 | N=3 | N=4 | N=5 |
 |---|---|---|---|---|
@@ -302,30 +308,44 @@ known noiseless zero-advantage dip, not a noise effect.)
 
 Findings (measured, with caveats):
 
-- **GHZ collapses at every N ≥ 3 while W survives the entire swept grid**
-  (p* ordering) — formally consistent with the GHZ-fragility hypothesis
-  (§4.1). W's advantage decays geometrically but stays strictly positive
-  (N=4: 0.375 → 0.011; N=5: 0.300 → 0.0013 across p=0 → 0.05). Caveat: W's
-  surviving tail at N=5 is small in absolute magnitude, so the ordering
-  should not be over-read as "W preserves a *large* advantage longer".
-- **Mechanism at N ≥ 4:** noise kills GHZ's advantage mainly by *raising the
-  classical baseline* — at N=4 the best classical NE payoff jumps from 0.47 to
-  0.98 between p=0.015 and p=0.02 (the classical equilibrium set restructures
+- **Two criteria give different orderings — state which you mean.** Under the
+  *Nash-equilibrium* criterion, GHZ's cooperative equilibrium is the most
+  fragile: (Q,…,Q) stops being a pure NE at finite noise for every N ≥ 3
+  (between p=0.04 and 0.045 at N=3, ≈0.0197 at N=4, ≈0.0098 at N=5). For W and
+  ring the fixed GHZ-derived Q is *never* a strict pure NE, even at p=0, so the
+  Nash criterion does not apply to them (the † rows). Under the
+  *advantage-magnitude* criterion the picture flips: at N=3 GHZ retains the most
+  mean advantage at p=0.05 (0.333 — 33% of its noiseless value) versus ring
+  0.200 (20%) and W 0.047 (9%). So "GHZ degrades fastest" (the §4.1 hypothesis)
+  holds for the *equilibrium*, not for advantage magnitude at small N.
+- **W keeps a positive mean advantage across the whole grid, but the mean hides
+  per-player losses.** W's mean advantage decays monotonically (N=4: 0.375 →
+  0.011; N=5: 0.300 → 0.0013 across p=0 → 0.05) and never crosses zero. But
+  noise breaks symmetry, so at N=5 two of the five players have *negative*
+  advantage from p=0.01 on (worst −0.077 at p=0.015): the surviving "W
+  advantage" is a mean over winners and losers, not a per-player guarantee. Ring
+  N=5 likewise has one player just negative (−0.003) at p=0.05.
+- **Mechanism at N ≥ 4:** noise kills GHZ's mean advantage mainly by *raising
+  the classical baseline* — at N=4 the best classical NE payoff jumps from 0.47
+  to 0.98 between p=0.015 and p=0.02 (the classical equilibrium set restructures
   under noise), flipping the advantage negative rather than the quantum payoff
   merely decaying.
-- **The earlier "W saturates to the maximally-mixed payoff" finding was an
-  artifact of the retired transpiled-unitary W** (100–444 cx per J at N=4–5).
-  With the exact T8 circuit (44–68 cx), W does not saturate: its advantage is
-  a smooth positive decay across the grid. The earlier run's W N=5
-  p\*=0.0294 was interpolated between advantages of +1.5e-10 and −2.0e-11 on
-  a fully depolarized state — numerical noise, not a physical crossing — and
-  is superseded.
-- **Ring is the most robust positive-advantage series at N=5**: advantage 0.60
-  → 0.059 across the grid, strictly positive throughout, while GHZ N=5 goes
-  negative from p≈0.01 and W N=5 decays to ≈0.001.
-- GHZ retains the largest absolute advantage under noise at small N: 0.73 (N=2)
-  and 0.33 (N=3) at p=0.05; GHZ N=3 stays a pure Nash equilibrium up to
-  p=0.045.
+- **A retired-circuit artifact, superseded.** The earlier run
+  (`results/noise-robustness/2026-07-02T1212Z/`, transpiled-unitary W, 100–444
+  cx per J at N=4–5) reported "W saturates to the maximally-mixed payoff" and a
+  W N=5 threshold p\*=0.0294. Both were artifacts of that synthesis circuit: the
+  p\*=0.0294 was interpolated between mean advantages of +1.5e-10 and −2.0e-11
+  on a fully depolarized state (numerical noise, not a physical crossing). With
+  the exact T8 circuit (44–68 cx) W does not saturate; that run is superseded by
+  the cited `2026-07-03T0213Z`.
+- **Ring holds the largest positive mean advantage at N=5:** 0.60 → 0.059 across
+  the grid, mean strictly positive throughout (per-player caveat above applies
+  at p=0.05), while GHZ N=5's mean goes negative from p≈0.01 and W N=5 decays to
+  ≈0.001.
+- GHZ retains the largest absolute mean advantage under noise at small N: 0.73
+  (N=2) and 0.33 (N=3) at p=0.05; (Q,Q,Q) stays a pure NE for GHZ N=3 through
+  p=0.04 and loses it at p=0.045 (the Nash-flip resolution is the 0.005 grid
+  step, not interpolated).
 
 ---
 
