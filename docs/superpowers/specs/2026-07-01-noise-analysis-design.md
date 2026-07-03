@@ -435,7 +435,9 @@ Synthesized from this review. P1 blocks the milestone; P2 same-branch; P3 follow
   - Verify: test 6 (the published-number guard)
 - [x] **T7 (P2, CC: ~10min)** — `experiments/noise-sweep.yaml` + run + write `results/`, flip README §9
   - Done 2026-07-02: `results/noise-robustness/2026-07-02T1212Z/` (132/132 cells, 0 errors)
-- [ ] **T8 (P3)** — TODO: faithful gate-level W entangler (D2)
+- [x] **T8 (P3)** — faithful gate-level W entangler (D2) — done, see
+  `2026-07-02-w-entangler-gate-level-design.md`; the D2 "approximate" labelling
+  is retired.
 - [ ] **T9 (P3)** — TODO: noise-aware strategy optimization (D4)
 
 ## GSTACK REVIEW REPORT

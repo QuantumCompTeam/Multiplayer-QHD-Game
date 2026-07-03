@@ -287,9 +287,9 @@ global phase, `tests/test_gate_level.py`):
   `exp(+iγ/2·XᵢXⱼ)`.
 - **GHZ:** `X^{⊗N} = H^{⊗N} Z^{⊗N} H^{⊗N}`, so
   `exp(+iγ/2·X^{⊗N}) = H^{⊗N}·[CNOT ladder → RZ(−γ) → ladder†]·H^{⊗N}`.
-- **W:** the dense `S_W` reflection has no compact native-gate form; it is
-  **transpiled** to `{u, cx}` (pinned). Its gate count is synthesis-derived, so
-  every W noise result is labelled **approximate** (spec D2).
+- **W:** exact conjugation `J_W = T·MCU·T†` — `T` is the CRy+CNOT W-prep
+  cascade (`θ_k = 2·arccos(1/√(N−k))`, fixes `|0…0⟩`), `MCU` an anti-controlled
+  `exp(+iγ/2·X)` on qubit 0 (T8 spec, 2026-07-02).
 
 **Noise threshold `p*`** (`src/experiment/plots.py`, `extract_pstar`): per
 `(topology, N)` series over the swept grid, the smallest `p` at which

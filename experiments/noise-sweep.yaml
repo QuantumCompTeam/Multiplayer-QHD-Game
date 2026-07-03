@@ -13,10 +13,6 @@
 # p = 0.0 is always included: those cells run the exact noiseless statevector
 # path and must reproduce the Month-3 numbers (the correctness anchor).
 #
-# NOTE: W noise results are APPROXIMATE — W has no compact gate-level form, so
-# its gate count is transpiler synthesis, not a physical W-prep circuit (spec
-# D2). The report labels every W row accordingly.
-#
 # See experiments/config.yaml for full per-field documentation.
 # =============================================================================
 
@@ -25,7 +21,8 @@ experiment:
   description: >-
     RQ3: quantum advantage under a depolarizing channel (p on u, p on cx in the
     pinned {u, cx} basis) for GHZ / W / ring, N = 2..5, V=4, C=3, gamma=pi/2.
-    W results approximate (transpiled-unitary entangler, spec D2).
+    All entanglers exact gate-level circuits (W via the T8 conjugation
+    construction).
 
 sweep:
   N: [2, 3, 4, 5]
