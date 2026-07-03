@@ -261,7 +261,7 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 | 2-player EWL validation | Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
 | N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
 | Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
-| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; GHZ crosses zero before W at every N≥3 (W approximate); 13 noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
+| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; GHZ collapses at every N≥3 while W (exact gate-level circuit, T8) survives the whole swept grid; 13 noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
 | IBM hardware validation | Pending | Month 5 (optional) |
 | arXiv preprint | Pending | Month 6 |
 
@@ -279,7 +279,10 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 Depolarizing sweep p = 0 → 0.05 (11 points) on the gate-level noisy path
 (pinned {u, cx} basis, exact density-matrix simulation; p on every `u`, p on
 every `cx`), GHZ / W / ring at N = 2–5, V=4, C=3, γ=π/2, fixed Q strategy.
-Full run: `results/noise-robustness/2026-07-02T1212Z/` (config:
+All entanglers are exact gate-level circuits — W via the T8 conjugation
+construction (prep-cascade + anti-controlled RX; 44 cx per J at N=4, 68 at
+N=5, vs 100/444 for the retired transpiled-unitary fallback).
+Full run: `results/noise-robustness/2026-07-03T0213Z/` (config:
 `experiments/noise-sweep.yaml`).
 
 **Measured noise thresholds p\*** — smallest p at which a series loses its
@@ -290,7 +293,7 @@ Nash equilibrium, whichever first:
 |---|---|---|---|---|
 | GHZ | > 0.05 | 0.0450 | 0.0197 † | 0.0098 † |
 | ring | > 0.05 | > 0.05 | 0.0000 † | > 0.05 † |
-| W *(approximate)* | > 0.05 † | > 0.05 † | > 0.05 † | 0.0294 |
+| W | > 0.05 † | > 0.05 † | > 0.05 † | > 0.05 † |
 
 † = (Q,…,Q) is not a pure NE at any swept p for that series with the fixed
 GHZ-derived Q — a Month-3 finding about the topology, not noise fragility; for
@@ -299,24 +302,27 @@ known noiseless zero-advantage dip, not a noise effect.)
 
 Findings (measured, with caveats):
 
-- **GHZ crosses zero before W at every N ≥ 3** (p* ordering) — formally
-  consistent with the GHZ-fragility hypothesis (§4.1). Caveat: W's surviving
-  "advantage" at N ≥ 4 is negligible in magnitude (see below), so the ordering
-  should not be read as "W preserves a *useful* advantage longer".
+- **GHZ collapses at every N ≥ 3 while W survives the entire swept grid**
+  (p* ordering) — formally consistent with the GHZ-fragility hypothesis
+  (§4.1). W's advantage decays geometrically but stays strictly positive
+  (N=4: 0.375 → 0.011; N=5: 0.300 → 0.0013 across p=0 → 0.05). Caveat: W's
+  surviving tail at N=5 is small in absolute magnitude, so the ordering
+  should not be over-read as "W preserves a *large* advantage longer".
 - **Mechanism at N ≥ 4:** noise kills GHZ's advantage mainly by *raising the
   classical baseline* — at N=4 the best classical NE payoff jumps from 0.47 to
   0.98 between p=0.015 and p=0.02 (the classical equilibrium set restructures
   under noise), flipping the advantage negative rather than the quantum payoff
   merely decaying.
-- **W saturates to the maximally-mixed payoff almost immediately** at N ≥ 4
-  (0.953125 = 61/64 at N=4, 0.781250 = 25/32 at N=5 — the uniform-outcome
-  limit): its transpiled circuit has a synthesis-derived (large) gate count, so
-  even small p fully depolarizes the state. Every W noise number is
-  **approximate** for exactly this reason — the gate count is a transpiler
-  artifact, not a physical W-prep circuit.
+- **The earlier "W saturates to the maximally-mixed payoff" finding was an
+  artifact of the retired transpiled-unitary W** (100–444 cx per J at N=4–5).
+  With the exact T8 circuit (44–68 cx), W does not saturate: its advantage is
+  a smooth positive decay across the grid. The earlier run's W N=5
+  p\*=0.0294 was interpolated between advantages of +1.5e-10 and −2.0e-11 on
+  a fully depolarized state — numerical noise, not a physical crossing — and
+  is superseded.
 - **Ring is the most robust positive-advantage series at N=5**: advantage 0.60
   → 0.059 across the grid, strictly positive throughout, while GHZ N=5 goes
-  negative from p≈0.01 and W N=5 flatlines at ≈0.
+  negative from p≈0.01 and W N=5 decays to ≈0.001.
 - GHZ retains the largest absolute advantage under noise at small N: 0.73 (N=2)
   and 0.33 (N=3) at p=0.05; GHZ N=3 stays a pure Nash equilibrium up to
   p=0.045.
