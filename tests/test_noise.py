@@ -256,3 +256,40 @@ def test_noisy_invalid_p(bad_p: float) -> None:
         )
     with pytest.raises(ValueError):
         build_noise_model(bad_p)
+
+
+# --- Noise breaks player symmetry: the mean advantage hides per-player losses --
+
+
+def test_noise_induces_per_player_asymmetry_w_n5() -> None:
+    """W N=5 under noise: positive MEAN advantage, but some players go negative.
+
+    Locks the README §9 finding. W is vertex-transitive, so at p=0 its advantage
+    is uniform across players. Depolarizing noise breaks that symmetry, and at
+    N=5, p=0.02 the per-player advantage_vector has two NEGATIVE entries while
+    the mean stays positive -- i.e. "W survives the grid" is a statement about
+    the mean over players, not a per-player guarantee. Without this test a
+    refactor could silently symmetrize the noisy result and the caveat in the
+    docs would become false with nothing to catch it.
+
+    Runs the SAME path the sweep uses: compute_advantage with the density-matrix
+    noisy runner injected as prob_fn (fixed GHZ-derived Q, V=4, C=3, gamma=pi/2).
+    """
+    def prob_fn(n: int, params: list[tuple[float, float, float]]):
+        return build_ewl_circuit_noisy(n, params, topology="w", gamma=GAMMA, p=0.02)
+
+    r = compute_advantage(N=5, V=4.0, C=3.0, prob_fn=prob_fn)
+    adv = r["advantage_vector"]
+
+    # Symmetry is genuinely broken by noise (uniform at p=0, not here).
+    assert r["symmetric"] is False
+    # The mean survives positive -- this is why the p* table shows W N=5 as ">0.05".
+    assert r["advantage"] > 0.0
+    # ...but at least two players are strictly below classical: the mean hides it.
+    n_negative = sum(1 for x in adv if x < 0.0)
+    assert n_negative >= 2, f"expected >=2 players below classical, got {n_negative}: {adv}"
+    # Pin the measured magnitudes (deterministic density-matrix sim, qiskit pinned).
+    assert r["advantage"] == pytest.approx(0.02142, abs=2e-3)
+    assert min(adv) == pytest.approx(-0.0667, abs=2e-3)
+    # Scalar mean is exactly the mean of the vector (per-player bookkeeping intact).
+    assert r["advantage"] == pytest.approx(float(np.mean(adv)), abs=1e-9)
