@@ -291,9 +291,16 @@ Full run: `results/noise-robustness/2026-07-03T0213Z/` (config:
 
 Throughout this section "advantage" means the **mean over players** (the
 §5.2 metric averaged across the N players). Depolarizing noise breaks player
-symmetry (symmetric = False for every noisy cell, p ≥ 0.005), so the mean can
-stay positive while some individual players fall below classical — see the
-per-player caveat in the findings.
+symmetry for **every N ≥ 3 cell (all three topologies) and for N=2 W**, so for
+those cells the mean can stay positive while some individual players fall below
+classical — see the per-player caveat in the findings. It does **not** break
+symmetry for **N=2 GHZ and N=2 ring**, which stay player-symmetric at every
+noisy p (identical per-player payoffs, spread 0): by the same gate-ordering
+mechanism as the ring N=5 finding below, their N=2 noisy circuits load noise
+equally on both qubits, whereas W's directional prep circuit does not.
+(`symmetric` is a tolerance test — `np.allclose(vec, vec[0], atol=1e-8)` in
+`game/nash.py` — so these `True` flags are genuine symmetry, not a
+floating-point near-miss registering as equal.)
 
 **Measured noise thresholds p\*** — smallest p at which a series loses its
 mean advantage (advantage ≤ 0, linearly interpolated) or (Q,…,Q) stops being a
@@ -328,7 +335,16 @@ Findings (measured, with caveats):
   noise breaks symmetry, so at N=5 two of the five players have *negative*
   advantage from p=0.01 on (worst −0.077 at p=0.015): the surviving "W
   advantage" is a mean over winners and losers, not a per-player guarantee. Ring
-  N=5 likewise has one player just negative (−0.003) at p=0.05.
+  N=5 likewise has one player just negative (−0.003) at p=0.05, and that
+  disadvantaged player is **position-locked** — a confirmed gate-ordering effect,
+  not a bug. A wiring-permutation test (`scripts/asymmetry_diagnostics.py`, ring
+  N=5) shows the loser follows the entangler's *circuit position*: cyclically
+  shifting the wiring rigidly permutes the whole per-player payoff vector with it
+  (deviation ≈1e-16), and applying the same depolarizing weight to the *ideal
+  final state* instead of per-gate collapses the per-player spread to ~0. So the
+  asymmetry lives on the gate-level implementation (gate ordering), not on the
+  ideal state or the player label — consistent with the Week-1 permutation-test
+  finding.
 - **Mechanism at N ≥ 4:** noise kills GHZ's mean advantage mainly by *raising
   the classical baseline* — at N=4 the best classical NE payoff jumps from 0.47
   to 0.98 between p=0.015 and p=0.02 (the classical equilibrium set restructures
