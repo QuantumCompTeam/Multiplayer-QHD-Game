@@ -367,6 +367,19 @@ Findings (measured, with caveats):
   p=0.04 and loses it at p=0.045 (the Nash-flip resolution is the 0.005 grid
   step, not interpolated).
 
+#### Exploratory follow-up — T9 adaptation & fairness (PROVISIONAL, not a locked result)
+
+A pilot asks whether letting each player **adapt** their strategy under noise
+restores the per-player fairness that the fixed (Q,…,Q) profile loses. For W
+N=4 the answer is **no**: independent best-response adaptation equalizes only by
+collapsing welfare (p=0: mean 1.00→0.51), fails to converge into a limit cycle
+(p=0.02), or barely moves anything (p=0.05) — consistent with the disadvantage
+being a *structural* property of the entangler (cf. the position-locked ring N=5
+result above), not a coordination failure players adapt away. The adaptation
+rule is a provisional modeling choice pending review, so this is **kept out of
+the results table above**. Full writeup:
+[`docs/findings/2026-07-05-t9-adaptation-fairness.md`](docs/findings/2026-07-05-t9-adaptation-fairness.md).
+
 ---
 
 ## 10. Real-World Applications
