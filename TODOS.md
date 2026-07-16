@@ -15,6 +15,13 @@ job id is in `results/hardware-scaling/pending_jobs.txt`; recover with
 **Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
 variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.
 
+**Pre-registration (frozen 2026-07-16, BEFORE any repeat):** each repeat must
+be judged against the frozen effective-p predictions in
+`results/hardware-scaling/preregistration.json` (protocol + falsification
+criteria: `docs/findings/2026-07-16-preregistered-peff-scaling-predictions.md`).
+Primary test is the drift-robust conditional one (refit p_eff on that run's
+N=3, judge its N=4/5). Do not edit the registration after repeats exist.
+
 ## Pre-existing: test_gamma_sweep locale failure on Windows
 
 `tests/test_gamma_sweep.py::test_gamma_subfolders_and_topology` reads report.md
