@@ -134,6 +134,15 @@ def main() -> None:
                  yerr=[zne_err[N] for N in NS], color=DATA, ls="none",
                  marker="o", ms=7, capsize=3, lw=1.2, zorder=5,
                  label="measured (readout-mitigated + ZNE)")
+    # retention labels: the ideal itself falls as 3/N (game theory, not noise);
+    # annotate measured/ideal so the staircase is never misread as decay
+    for N in NS:
+        ret = 100.0 * zne_adv[N] / ideal[N]
+        axA.annotate(f"{ret:.1f}%\nof ideal", (N, zne_adv[N]),
+                     textcoords="offset points", xytext=(10, -22),
+                     fontsize=7.8, color=INK, ha="left")
+    axA.text(3.02, 0.63, "ideal advantage = 3/N — the ceiling\nitself falls "
+             "with N (game theory, not noise)", fontsize=7.8, color=MUTED)
     style_axis(axA)
     axA.set_xticks(list(NS))
     axA.set_xlabel("players N")
