@@ -38,6 +38,15 @@ criteria: `docs/findings/2026-07-16-preregistered-peff-scaling-predictions.md`).
 Primary test is the drift-robust conditional one (refit p_eff on that run's
 N=3, judge its N=4/5). Do not edit the registration after repeats exist.
 
+**After each repeat:** run
+`conda run -n entangled-equilibria python scripts/judge_repeat_run.py` —
+applies the registered conditional test, tracks whether the N=5 deficit
+(run 1: −0.0101, z=−5.2) reproduces, reports per-player vectors/worst/spread,
+and regenerates `results/hardware-scaling/repeat-judgments.json` (it refuses
+to run if preregistration.json differs from HEAD). Then regenerate the
+scaling figure (`PYTHONPATH=src python scripts/plot_hardware_scaling.py`),
+which auto-aggregates all runs. Commit the run dir + judgments + plots.
+
 ## Pre-existing: test_gamma_sweep locale failure on Windows
 
 `tests/test_gamma_sweep.py::test_gamma_subfolders_and_topology` reads report.md
