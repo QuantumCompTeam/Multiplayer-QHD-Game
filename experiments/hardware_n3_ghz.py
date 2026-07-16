@@ -194,11 +194,25 @@ def run_hardware(qc, shots, backend_name):
     print(f"transpiled to {backend.name}: depth {depth} | 2q gates {twoq}")
 
     job = Sampler(mode=backend).run([isa], shots=shots)
+    # Persist the id to disk BEFORE the (possibly hours-long) poll, so a network
+    # drop / sleep / Ctrl-C during job.result() can never orphan the job. Recover
+    # with:  python experiments/fetch_result.py <id>
+    _save_pending_job_id(job.job_id(), backend.name)
     print(f"submitted job {job.job_id()} -- waiting for result (queue may be long)...")
+    print(f"  (if this crashes, recover with: python experiments/fetch_result.py {job.job_id()})")
     result = job.result()
     counts = result[0].data.meas.get_counts()
     print("counts:", counts)
     return counts, backend.name, job.job_id(), depth, twoq
+
+
+def _save_pending_job_id(job_id, backend_name):
+    """Append the just-submitted job id to results/hardware-n3/pending_jobs.txt."""
+    out_dir = os.path.join(os.path.dirname(__file__), "..", "results", "hardware-n3")
+    os.makedirs(out_dir, exist_ok=True)
+    stamp = datetime.now(timezone.utc).isoformat()
+    with open(os.path.join(out_dir, "pending_jobs.txt"), "a", encoding="utf-8") as fh:
+        fh.write(f"{stamp}\t{backend_name}\t{job_id}\n")
 
 
 def git_provenance():

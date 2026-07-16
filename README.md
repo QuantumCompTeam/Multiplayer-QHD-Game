@@ -266,7 +266,7 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 | N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
 | Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
 | Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; two criteria diverge — GHZ's cooperative equilibrium is the most noise-fragile (loses pure-NE status at finite p for N≥3), while GHZ keeps the *largest* mean advantage at small N and W keeps a positive-but-small mean advantage across the grid (exact gate-level W, T8); 22 collected noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
-| IBM hardware validation | Pending | Month 5 (optional) |
+| IBM hardware validation | Complete | N=3 GHZ Q-profile on **ibm_fez** (Heron r2), 4096 shots: measured advantage **0.9978** vs 1.0 ideal; 3911/4096 shots in \|000⟩. Hand-built J keeps it to 6 two-qubit gates. `results/hardware-n3/2026-07-16T013912Z/` |
 | arXiv preprint | Pending | Month 6 |
 
 ### Month 2 — N=3 Quantum Advantage
@@ -379,6 +379,31 @@ result above), not a coordination failure players adapt away. The adaptation
 rule is a provisional modeling choice pending review, so this is **kept out of
 the results table above**. Full writeup:
 [`docs/findings/2026-07-05-t9-adaptation-fairness.md`](docs/findings/2026-07-05-t9-adaptation-fairness.md).
+
+### Month 5 — Hardware Validation (N=3 GHZ)
+
+The N=3 GHZ quantum advantage reproduces on a **real quantum computer**, not just
+in simulation. The validated Q-profile circuit was run on **ibm_fez** (an IBM
+Heron r2, 156-qubit superconducting device) with 4096 shots:
+
+- **Measured advantage = 0.9978** against the noiseless ideal of 1.0 — a gap of
+  just 0.0022, attributable to device noise.
+- **3911 / 4096 shots (95.5%) landed in \|000⟩**, exactly the output the ideal
+  (Q,Q,Q) profile should produce; the largest error bin was \|011⟩ at 2.8%.
+- Per-player payoffs `[1.351, 1.340, 1.303]` (ideal V/N = 1.333); the small
+  spread is per-qubit error-rate variation on the physical device.
+- The **hand-built J** decomposition keeps the entangler to **6 two-qubit gates**
+  (vs ~35 for generic QSD synthesis), which is what makes a result this clean
+  achievable on NISQ hardware.
+
+Verified end-to-end: two safety gates (an 8×8 circuit-identity assertion and a
+noiseless Aer dry-run reproducing advantage = 1.0) run before any submission, so
+credits are never spent on a wrong circuit. Result artifact + figure:
+`results/hardware-n3/2026-07-16T013912Z/` (`result.json`, `plots/`). Pipeline:
+`experiments/hardware_n3_ghz.py --hardware`; recover a queued job by ID with
+`experiments/fetch_result.py <job_id>`.
+
+![N=3 GHZ hardware validation on ibm_fez](results/hardware-n3/2026-07-16T013912Z/plots/hardware_n3_validation.png)
 
 ---
 
