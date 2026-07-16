@@ -44,15 +44,61 @@ import sys
 from datetime import datetime, timezone
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "src"))
 HW = os.path.join(REPO, "results", "hardware-scaling")
 PRIMARY = os.path.join(HW, "preregistration.json")
 OUT = os.path.join(HW, "preregistration-baselines.json")
 NS = (3, 4, 5)
 
+# 2q-gate count of the Month-4 logical {u,cx} GHZ circuit the primary p_eff
+# model simulates (J + J-dagger, double CX ladder): 4(N-1). The hardware ISA
+# circuits use the pub_meta cz counts instead (run 1: 6/9/14) -- the dose
+# mismatch (ratios 0.75/0.75/0.875) is the declared N=5-deficit mechanism.
+LOGICAL_CX = {N: 4 * (N - 1) for N in NS}
+
 
 def fold1_cz(res: dict) -> dict[int, int]:
     return {m["N"]: m["cz"] for m in res["pub_meta"]
             if m.get("kind") == "series" and m.get("fold") == 1}
+
+
+def corrected_fit_predict(res: dict) -> dict:
+    """Item-5A competitor: the primary p_eff model with its 2q depolarizing
+    dose rescaled per N to the run's ACTUAL transpiled cz count
+    (p2_ratio = cz_N / logical_cx_N; 1q dose unchanged -- Part B territory).
+    Fit on the day's N=3 mitigated fold-1 PAYOFF by the same 40-step
+    bisection as the primary fit; predict N=4/5 advantages."""
+    import numpy as np
+    from circuits.ewl import q_strategy
+    from circuits.noise import build_ewl_circuit_noisy
+    from game.payoffs import expected_payoff
+
+    cz = fold1_cz(res)
+    ratio = {N: cz[N] / LOGICAL_CX[N] for N in NS}
+
+    def pay(N: int, p: float) -> float:
+        probs = build_ewl_circuit_noisy(
+            N, [q_strategy(N)] * N, topology="ghz", p=p, p2_ratio=ratio[N])
+        return float(np.mean(expected_payoff(probs, N)))
+
+    target = res["analysis"]["series"]["3"]["folds"]["1"]["mitigated"]["mean"]
+    lo, hi = 0.0, 0.10
+    if pay(3, lo) < target:
+        p_fit = 0.0
+    else:
+        for _ in range(40):
+            mid = (lo + hi) / 2
+            if pay(3, mid) > target:
+                lo = mid
+            else:
+                hi = mid
+        p_fit = (lo + hi) / 2
+    out = {"p_fit": p_fit,
+           "p2_ratio": {str(N): ratio[N] for N in NS}}
+    for N in (4, 5):
+        classical = res["analysis"]["series"][str(N)]["classical_ne_payoff"]
+        out[str(N)] = pay(N, p_fit) - classical
+    return out
 
 
 def baseline_predictions(res: dict, ideal: dict[int, float]) -> dict:
@@ -64,13 +110,18 @@ def baseline_predictions(res: dict, ideal: dict[int, float]) -> dict:
     r = (a3 / ideal[3]) ** (1.0 / cz[3])
     dm = {N: res["predictions"]["device_model"][str(N)]["noro"]["advantage"]
           for N in NS}
+    corrected = corrected_fit_predict(res)
     out = {"anchor_A3": a3, "cz_fold1": {str(N): cz[N] for N in NS},
-           "cz_exponential_r": r}
+           "cz_exponential_r": r,
+           "transpiled_count_corrected_fit": {
+               "p_fit": corrected["p_fit"],
+               "p2_ratio": corrected["p2_ratio"]}}
     for N in (4, 5):
         out[str(N)] = {
             "cz_exponential": ideal[N] * r ** cz[N],
             "device_model_anchored": dm[N] * (a3 / dm[3]),
             "constant_retention": ideal[N] * (a3 / ideal[3]),
+            "transpiled_count_corrected": corrected[str(N)],
         }
     return out
 
@@ -135,6 +186,17 @@ def main() -> None:
                                       "anchored on the day's N=3"),
             "constant_retention": ("no-decay null: N=3's fractional deficit "
                                    "applied unchanged at N=4/5"),
+            "transpiled_count_corrected": (
+                "item-5A (registered 2026-07-16, still before batch 2 "
+                "returned): the primary p_eff depolarizing model with its "
+                "2q dose rescaled per N to the run's ACTUAL transpiled cz "
+                "counts (p2_ratio = cz_N / 4(N-1)); fit on the day's N=3 "
+                "mitigated fold-1 payoff by the same bisection as the "
+                "primary. This is the corrected SPECIFICATION of the "
+                "primary model: if it scores near cz_exponential, the "
+                "model competition partially resolves into a specification "
+                "error in the original fit. 1q-count and raw-vs-mitigated "
+                "corrections (item-5 Part B) are explicitly deferred."),
         },
         "judging": {
             "sigma_predictive": {str(N): sigma[N] for N in (4, 5)},
@@ -154,12 +216,12 @@ def main() -> None:
     print("registered baseline predictions (run-1 anchored):")
     print(f"  anchor A3 = {preds['anchor_A3']:.6f}, "
           f"cz = {preds['cz_fold1']}, r = {preds['cz_exponential_r']:.6f}")
-    print("  N | model                  | predicted | run-1 measured | z")
+    print("  N | model                      | predicted | run-1 measured | z")
     for N in (4, 5):
         for model in ("cz_exponential", "device_model_anchored",
-                      "constant_retention"):
+                      "constant_retention", "transpiled_count_corrected"):
             row = self_check[str(N)][model]
-            print(f"  {N} | {model:<22s} | {row['predicted']:9.6f} | "
+            print(f"  {N} | {model:<26s} | {row['predicted']:9.6f} | "
                   f"{self_check[str(N)]['measured_run1']:14.6f} | "
                   f"{row['z']:+5.2f}")
     print(f"saved: {os.path.relpath(OUT, os.getcwd())}")

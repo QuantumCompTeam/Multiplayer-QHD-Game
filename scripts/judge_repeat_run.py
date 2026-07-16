@@ -130,7 +130,7 @@ def judge_run(run_id: str, res: dict, cal: dict | None, prereg: dict,
     competitors: dict = {}
     scores = {"p_eff_primary": sum(cond[str(N)]["z"] ** 2 for N in (4, 5))}
     for model in ("cz_exponential", "device_model_anchored",
-                  "constant_retention"):
+                  "constant_retention", "transpiled_count_corrected"):
         blk = {}
         score = 0.0
         for N in (4, 5):

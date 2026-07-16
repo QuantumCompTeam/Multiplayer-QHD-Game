@@ -1,5 +1,5 @@
 {
-  "registered_utc": "2026-07-16T18:10:33.678251+00:00",
+  "registered_utc": "2026-07-16T18:25:30.397235+00:00",
   "purpose": "Competing baseline predictors for the scaling repeats, registered before any repeat run landed. SECONDARY to the primary p_eff registration (preregistration.json, untouched). Conditional protocol: each model anchors on the day's N=3 mitigated fold-1 advantage and predicts that day's N=4/5.",
   "pending_job_not_yet_returned": "d9chh0qneu4c739lvgb0",
   "primary_registration": {
@@ -9,7 +9,8 @@
   "models": {
     "cz_exponential": "advantage retention r^cz with r fit on the day's N=3 (cz counts from that run's pub_meta, fold 1)",
     "device_model_anchored": "the run's stored device-noise-model 'noro' advantage, multiplicatively anchored on the day's N=3",
-    "constant_retention": "no-decay null: N=3's fractional deficit applied unchanged at N=4/5"
+    "constant_retention": "no-decay null: N=3's fractional deficit applied unchanged at N=4/5",
+    "transpiled_count_corrected": "item-5A (registered 2026-07-16, still before batch 2 returned): the primary p_eff depolarizing model with its 2q dose rescaled per N to the run's ACTUAL transpiled cz counts (p2_ratio = cz_N / 4(N-1)); fit on the day's N=3 mitigated fold-1 payoff by the same bisection as the primary. This is the corrected SPECIFICATION of the primary model: if it scores near cz_exponential, the model competition partially resolves into a specification error in the original fit. 1q-count and raw-vs-mitigated corrections (item-5 Part B) are explicitly deferred."
   },
   "judging": {
     "sigma_predictive": {
@@ -27,15 +28,25 @@
       "5": 14
     },
     "cz_exponential_r": 0.9986509904519102,
+    "transpiled_count_corrected_fit": {
+      "p_fit": 0.001974131840370319,
+      "p2_ratio": {
+        "3": 0.75,
+        "4": 0.75,
+        "5": 0.875
+      }
+    },
     "4": {
       "cz_exponential": 0.7409431665227652,
       "device_model_anchored": 0.7442522594435643,
-      "constant_retention": 0.7439498932974373
+      "constant_retention": 0.7439498932974373,
+      "transpiled_count_corrected": 0.7426754300920465
     },
     "5": {
       "cz_exponential": 0.5887671481568136,
       "device_model_anchored": 0.5938225437783927,
-      "constant_retention": 0.59515991463795
+      "constant_retention": 0.59515991463795,
+      "transpiled_count_corrected": 0.5929163327128719
     }
   },
   "run1_self_check": {
@@ -55,6 +66,11 @@
         "predicted": 0.7439498932974373,
         "delta": -0.005522623307854024,
         "z": -2.7784715557959707
+      },
+      "transpiled_count_corrected": {
+        "predicted": 0.7426754300920465,
+        "delta": -0.004248160102463205,
+        "z": -2.1372799394764197
       }
     },
     "5": {
@@ -73,6 +89,11 @@
         "predicted": 0.59515991463795,
         "delta": -0.012040897384422378,
         "z": -6.18965110875519
+      },
+      "transpiled_count_corrected": {
+        "predicted": 0.5929163327128719,
+        "delta": -0.009797315459344258,
+        "z": -5.036332638646074
       }
     }
   }

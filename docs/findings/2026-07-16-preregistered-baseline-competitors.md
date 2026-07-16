@@ -73,3 +73,34 @@ Applied automatically by `scripts/judge_repeat_run.py` as
 `competing_baselines_secondary` — clearly separated from the primary p_eff
 conditional test, which remains the registered falsification criterion for
 the depolarizing model.
+
+## Item-5A addendum (registered 2026-07-16, still before batch 2 returned)
+
+**Fourth competitor: `transpiled_count_corrected`** — the corrected
+*specification* of the primary model: the same depolarizing simulation and
+N=3 payoff-bisection fit, but with the 2q dose per N rescaled to the run's
+actual transpiled cz counts (`p2_ratio = cz_N / 4(N−1)`; run 1:
+6/9/14 vs logical 8/12/16, ratios 0.75/0.75/0.875). Registered
+interpretation, stated up front: **if this model scores near
+cz-exponential, the "model competition" partially resolves into a
+specification error in the original p_eff fit** — declared now, not
+retrofitted.
+
+Run-1 self-check (declared): the correction moves almost nothing —
+N=4: 0.742675 (z −2.14, vs primary −2.14), N=5: 0.592916 (z −5.04, vs
+primary −5.17); score 30.0 vs primary 31.3, versus cz-exponential 10.0. So
+on run 1 the anticipated resolution did **not** materialize: the fit
+re-absorbs the dose rescale at the N=3 anchor, and the residual N=5
+correction (~17% more relative 2q dose) shifts the prediction by only
+~0.0004 because the model attributes much of its decay to 1q `u` gates.
+The p_eff-vs-cz-exponential gap is therefore dominated by the **1q/2q noise
+attribution**, not the gate-count bookkeeping. If repeats confirm this
+ranking, the specification to interrogate next is the 1q dose (and the fit
+target), i.e. exactly **item-5 Part B (raw-vs-mitigated fit target) —
+explicitly deferred and not registered here**.
+
+Safety rails reused verbatim: the generator hard-fails if any repeat run
+directory exists (none did — job `d9chh0qneu4c739lvgb0` still queued);
+the judge refuses on any HEAD deviation of either registration file; the
+primary registration is untouched. Had batch 2 landed first, this entry
+would bind only runs 3–5 — it did not.
