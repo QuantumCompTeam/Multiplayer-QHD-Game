@@ -2,6 +2,27 @@
 
 Deferred work with enough context to pick up cold. Ordered newest-first.
 
+## Hardware scaling repeat runs (cross-day error bars)
+
+**What:** Re-run `python experiments/hardware_scaling.py --hardware` (conda env
+`entangled-equilibria`) on 3–5 different days. Each run is one ~35s-QPU batch
+job on ibm_fez; `scripts/plot_hardware_scaling.py` automatically aggregates all
+runs under `results/hardware-scaling/` into mean ± std. First run:
+2026-07-16T074134Z (job d9c8fpn550hc73dl1tcg). If a run crashes mid-poll, the
+job id is in `results/hardware-scaling/pending_jobs.txt`; recover with
+`--from-job <id>`.
+
+**Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
+variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.
+
+## Pre-existing: test_gamma_sweep locale failure on Windows
+
+`tests/test_gamma_sweep.py::test_gamma_subfolders_and_topology` reads report.md
+via `Path.read_text()` with no encoding; on cp1252 consoles the UTF-8 "γ" reads
+as mojibake and the assert fails. Passes with `PYTHONUTF8=1`. Fix is a one-word
+change (`read_text(encoding="utf-8")`) — not applied yet because it predates the
+hardware-scaling work (surfaced 2026-07-16 during full-suite verification).
+
 ## T9 adaptation & fairness pilot — DONE (provisional); follow-ups open
 
 **Done:** Pilot answering "does independent best-response adaptation restore

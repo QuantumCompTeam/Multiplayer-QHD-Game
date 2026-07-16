@@ -1,0 +1,34 @@
+{
+  "experiment": "hardware-n3-ghz",
+  "created_utc": "2026-07-16T01:39:12.716554+00:00",
+  "git": {
+    "commit": "d5b4b1259ba7c9bccdc0a6d60b78cd13f31d4ea8",
+    "dirty": true
+  },
+  "backend": "ibm_fez",
+  "job_id": "d9br6l66hjac73fg3g7g",
+  "shots": 4096,
+  "N": 3,
+  "gamma": "pi/2",
+  "isa_depth": null,
+  "isa_2q_gates": null,
+  "counts": {
+    "000": 3911,
+    "001": 20,
+    "010": 8,
+    "011": 113,
+    "110": 6,
+    "100": 25,
+    "111": 9,
+    "101": 4
+  },
+  "measured_per_player_payoff": [
+    1.3505045572916665,
+    1.3397623697916665,
+    1.3031412760416665
+  ],
+  "measured_q_payoff": 1.3311360677083333,
+  "measured_advantage": 0.997802734375,
+  "reference_advantage": 1.0,
+  "classical_ne_payoff": 0.3333333333333333
+}

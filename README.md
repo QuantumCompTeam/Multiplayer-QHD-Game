@@ -266,7 +266,8 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 | N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
 | Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
 | Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; two criteria diverge — GHZ's cooperative equilibrium is the most noise-fragile (loses pure-NE status at finite p for N≥3), while GHZ keeps the *largest* mean advantage at small N and W keeps a positive-but-small mean advantage across the grid (exact gate-level W, T8); 22 collected noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
-| IBM hardware validation | Pending | Month 5 (optional) |
+| IBM hardware validation | Complete | N=3 GHZ Q-profile on **ibm_fez** (Heron r2), 4096 shots: measured advantage **0.9978** vs 1.0 ideal; 3911/4096 shots in \|000⟩. Hand-built J keeps it to 6 two-qubit gates. `results/hardware-n3/2026-07-16T013912Z/` |
+| Hardware scaling N=3–5 + error mitigation | Complete | One pinned chain on **ibm_fez**, one batch job: measured advantage (raw/ZNE) **0.992/0.994** (N=3), **0.739/0.740** (N=4), **0.584/0.589** (N=5) vs ideals 1.0/0.75/0.6. Readout-mitigation (tensored, M3-style) + ZNE (cz folding); device-model + fit-one-predict-two depolarizing predictions (p_eff=0.0018 fit at N=3 predicts N=4 to 0.004, N=5 to 0.010). `results/hardware-scaling/2026-07-16T074134Z/`, `experiments/hardware_scaling.py` |
 | arXiv preprint | Pending | Month 6 |
 
 ### Month 2 — N=3 Quantum Advantage
@@ -379,6 +380,70 @@ result above), not a coordination failure players adapt away. The adaptation
 rule is a provisional modeling choice pending review, so this is **kept out of
 the results table above**. Full writeup:
 [`docs/findings/2026-07-05-t9-adaptation-fairness.md`](docs/findings/2026-07-05-t9-adaptation-fairness.md).
+
+### Month 5 — Hardware Validation (N=3 GHZ)
+
+The N=3 GHZ quantum advantage reproduces on a **real quantum computer**, not just
+in simulation. The validated Q-profile circuit was run on **ibm_fez** (an IBM
+Heron r2, 156-qubit superconducting device) with 4096 shots:
+
+- **Measured advantage = 0.9978** against the noiseless ideal of 1.0 — a gap of
+  just 0.0022, attributable to device noise.
+- **3911 / 4096 shots (95.5%) landed in \|000⟩**, exactly the output the ideal
+  (Q,Q,Q) profile should produce; the largest error bin was \|011⟩ at 2.8%.
+- Per-player payoffs `[1.351, 1.340, 1.303]` (ideal V/N = 1.333); the small
+  spread is per-qubit error-rate variation on the physical device.
+- The **hand-built J** decomposition keeps the entangler to **6 two-qubit gates**
+  (vs ~35 for generic QSD synthesis), which is what makes a result this clean
+  achievable on NISQ hardware.
+
+Verified end-to-end: two safety gates (an 8×8 circuit-identity assertion and a
+noiseless Aer dry-run reproducing advantage = 1.0) run before any submission, so
+credits are never spent on a wrong circuit. Result artifact + figure:
+`results/hardware-n3/2026-07-16T013912Z/` (`result.json`, `plots/`). Pipeline:
+`experiments/hardware_n3_ghz.py --hardware`; recover a queued job by ID with
+`experiments/fetch_result.py <job_id>`.
+
+![N=3 GHZ hardware validation on ibm_fez](results/hardware-n3/2026-07-16T013912Z/plots/hardware_n3_validation.png)
+
+### Month 5/6 — Hardware Scaling (N=3,4,5) with Error Mitigation
+
+The scaling curve on real hardware, all three N on prefixes of ONE pinned
+5-qubit chain ([59,75,74,73,79] on ibm_fez, chosen by calibration error), in a
+single 11-pub batch job (readout calibrations + cz-fold ZNE circuits):
+
+| N | ideal advantage | measured raw | readout-mit + ZNE | P(\|0…0⟩) |
+|---|---|---|---|---|
+| 3 | 1.00 | 0.9919 | 0.9938 | 0.938 |
+| 4 | 0.75 | 0.7386 | 0.7403 | 0.922 |
+| 5 | 0.60 | 0.5837 | 0.5887 | 0.868 |
+
+Findings (single run; repeats accumulate cross-day error bars):
+
+- **Fit-one-predict-two:** a single depolarizing p_eff = 0.0018 fitted to the
+  N=3 mitigated point alone predicts N=4 to 0.004 and N=5 to 0.010 of the
+  measured advantage — the Month-4 noise model quantitatively predicts
+  real-hardware scaling.
+- **The advantage is far more noise-robust than the state.** P(|0…0⟩) drops
+  ~3× faster than the advantage because the mean-payoff observable is
+  first-order insensitive to single bit-flips from |0…0⟩: a one-Hawk outcome
+  still has mean payoff V/N. Readout mitigation therefore barely moves the mean
+  (it mainly redistributes per-player payoffs); ZNE, which targets the
+  correlated cz errors that create ≥2-Hawk outcomes, improves all three N.
+- **Honesty:** advantage = cooperative (Q,…,Q) payoff minus the analytic
+  noiseless classical NE (1/3, 1/4, 1/5); (Q,…,Q) is a pure NE **only at N=3**
+  (at N=4,5 a unilateral Hawk deviation profits in the noiseless game — the
+  Month-3 finding). The hardware curve measures the cooperative profile, not an
+  equilibrium claim at N=4,5.
+
+Pipeline gates (all must pass before any submission): per-N circuit-identity
+assertion vs the dense J†·(U⊗…⊗U)·J reference, noiseless Aer dry-run
+reproducing `compute_advantage(N)` exactly, and a full dress rehearsal of the
+batch + mitigation analysis on the device noise model. Repeat protocol:
+`python experiments/hardware_scaling.py --hardware` on later days;
+`scripts/plot_hardware_scaling.py` aggregates every run (mean ± std).
+
+![N=3,4,5 hardware scaling on ibm_fez](results/hardware-scaling/2026-07-16T074134Z/plots/hardware_scaling.png)
 
 ---
 

@@ -122,3 +122,17 @@ def test_w_gate_circuit_matches_dense_n5() -> None:
     dense = Operator(resolve("w", 5)(5, GAMMA))
     gate = Operator(resolve_gate_circuit("w", 5, GAMMA))
     assert gate.equiv(dense)
+
+
+@pytest.mark.parametrize("N", [5, 6])
+def test_ghz_gate_circuit_matches_dense_large_n(N: int) -> None:
+    """GHZ CX-ladder construction at the hardware-scaling Ns (existing stop at 4).
+
+    The Month-5/6 hardware pipeline (experiments/hardware_scaling.py) builds its
+    J from ghz_gate_circuit at N up to 5; pin the dense equivalence there (and at
+    6 for headroom) so the hardware circuit can never drift from the validated
+    entangler.
+    """
+    dense = Operator(resolve("ghz", N)(N, GAMMA))
+    gate = Operator(resolve_gate_circuit("ghz", N, GAMMA))
+    assert gate.equiv(dense)
