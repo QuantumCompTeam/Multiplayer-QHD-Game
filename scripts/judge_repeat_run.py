@@ -40,24 +40,27 @@ from datetime import datetime, timezone
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "src"))
 sys.path.insert(0, os.path.join(REPO, "experiments"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import numpy as np  # noqa: E402
 
 from hardware_scaling import effective_p_prediction  # noqa: E402
 from game.nash import compute_advantage  # noqa: E402
+from preregister_baselines import baseline_predictions  # noqa: E402
 
 HW_DIR = os.path.join(REPO, "results", "hardware-scaling")
 PREREG = os.path.join(HW_DIR, "preregistration.json")
+BASELINES = os.path.join(HW_DIR, "preregistration-baselines.json")
 OUT = os.path.join(HW_DIR, "repeat-judgments.json")
 NS = (3, 4, 5)
 Z_CRIT = 1.96
 
 
 def prereg_is_pristine() -> bool:
-    """The registration must be byte-identical to the committed version."""
+    """Both registrations must be byte-identical to the committed versions."""
     r = subprocess.run(
         ["git", "status", "--porcelain", "--",
-         os.path.relpath(PREREG, REPO)],
+         os.path.relpath(PREREG, REPO), os.path.relpath(BASELINES, REPO)],
         cwd=REPO, capture_output=True, text=True)
     return r.returncode == 0 and r.stdout.strip() == ""
 
@@ -120,6 +123,29 @@ def judge_run(run_id: str, res: dict, cal: dict | None, prereg: dict,
             "pass_95": bool(abs(z) <= Z_CRIT),
         }
 
+    # competing baselines (secondary registered tests, item 4): same
+    # conditional protocol, shared sigma yardstick, score = z4^2 + z5^2.
+    ideal = {N: prereg["predicted_advantages"][str(N)]["ideal"] for N in NS}
+    bp = baseline_predictions(res, ideal)
+    competitors: dict = {}
+    scores = {"p_eff_primary": sum(cond[str(N)]["z"] ** 2 for N in (4, 5))}
+    for model in ("cz_exponential", "device_model_anchored",
+                  "constant_retention"):
+        blk = {}
+        score = 0.0
+        for N in (4, 5):
+            sig = prereg["predicted_advantages"][str(N)]["mitigated_fold1"] \
+                        ["sigma_predictive"]
+            z = (meas[N]["advantage"] - bp[str(N)][model]) / sig
+            blk[str(N)] = {"predicted_conditional": bp[str(N)][model],
+                           "measured": meas[N]["advantage"],
+                           "z": z, "pass_95": bool(abs(z) <= Z_CRIT)}
+            score += z ** 2
+        blk["score_z2"] = score
+        scores[model] = score
+        competitors[model] = blk
+    ranking = sorted(scores, key=scores.get)
+
     # unconditional (secondary): registered intervals as-is
     uncond = {}
     for N in (4, 5):
@@ -159,6 +185,14 @@ def judge_run(run_id: str, res: dict, cal: dict | None, prereg: dict,
                                  ["mitigated_fold1"]["delta"])),
         },
         "unconditional_secondary": uncond,
+        "competing_baselines_secondary": {
+            "note": ("item-4 registration: preregistration-baselines.json; "
+                     "model-comparison scores on the shared sigma yardstick, "
+                     "separate from the primary p_eff test above"),
+            "models": competitors,
+            "scores_z2": scores,
+            "ranking_best_first": ranking,
+        },
         "per_player_fold1": per_player_report(res),
     }
 
@@ -215,6 +249,10 @@ def main() -> None:
               f"registered {d['registered_run1_delta']:+.4f} "
               f"(z={d['registered_run1_z']:+.2f}) -- same sign: "
               f"{d['same_sign_as_run1']}")
+        cb = j["competing_baselines_secondary"]
+        print("  secondary baselines (score z4^2+z5^2, lower better): "
+              + "  ".join(f"{m}={cb['scores_z2'][m]:.1f}"
+                          for m in cb["ranking_best_first"]))
         for N in NS:
             pp = j["per_player_fold1"][str(N)]["mitigated"]
             print(f"  N={N} per-player mitigated adv: "
