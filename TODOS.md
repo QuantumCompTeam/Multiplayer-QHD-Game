@@ -2,6 +2,22 @@
 
 Deferred work with enough context to pick up cold. Ordered newest-first.
 
+## Device-noise (T1/T2) version of the topology controls
+
+**What:** Re-run the topology-vs-implementation control study
+(`scripts/topology_noise_controls.py`, finding
+`docs/findings/2026-07-16-topology-vs-implementation-controls.md`) under a
+device noise model (thermal relaxation + measured gate errors, e.g.
+`NoiseModel.from_backend(ibm_fez)` reduced to a chain as in
+`experiments/hardware_scaling.py`).
+
+**Why:** Under the pinned per-gate depolarizing model, depth and qubit
+mapping are provably not free variables (see the study's null checks), so
+the 2026-07-16 controls could only equalize gate counts. With T1/T2 idling
+noise, depth and mapping become real confounds — the matched-depth control
+the depolarizing model cannot express becomes meaningful there. Simulation
+only, zero quota.
+
 ## Hardware scaling repeat runs (cross-day error bars)
 
 **What:** Re-run `python experiments/hardware_scaling.py --hardware` (conda env

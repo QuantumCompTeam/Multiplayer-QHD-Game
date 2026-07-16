@@ -320,6 +320,21 @@ known noiseless zero-advantage dip, not a noise effect.)
 
 Findings (measured, with caveats):
 
+- **Topology-vs-implementation controls (2026-07-16): the orderings below are
+  largely circuit architecture, not entanglement topology.** Gate-count-matched
+  and compilation-varied controls (`scripts/topology_noise_controls.py`, data
+  `results/topology-controls/2026-07-16T172737Z/`) show the per-cx advantage
+  decay rates are indistinguishable across GHZ/ring/star/fully-connected
+  (λ/cx ≈ 2.1–2.7 at every N), so their robustness ordering tracks the
+  2q-gate budget of the chosen synthesis; the N≥4 advantage cliffs are
+  classical-NE switches whose timing moves with compilation (GHZ N=4 at
+  p=0.02: −0.03 production vs +0.44 at opt-level 3, same unitary). W is the
+  genuine structural outlier — ~2.5× more robust *per gate* (λ/cx ≈ 0.8–1.0),
+  inverting its last-place absolute standing — and the measured p\* values are
+  budget-dependent, not topology constants. Read "X is more robust than Y"
+  below as "X's production circuit at its natural gate budget is more robust
+  than Y's". Per-claim verdicts:
+  `docs/findings/2026-07-16-topology-vs-implementation-controls.md`.
 - **Two criteria give different orderings — state which you mean.** Under the
   *Nash-equilibrium* criterion, GHZ's cooperative equilibrium is the most
   fragile: (Q,…,Q) stops being a pure NE at finite noise for every N ≥ 3
