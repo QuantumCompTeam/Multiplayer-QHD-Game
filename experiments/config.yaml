@@ -67,10 +67,10 @@ sweep:
 
 game:
   # ---- [sweep axis] resource value V. Number, or a list to sweep. Default 4.0.
-  V: 1000
+  V: 4
   # ---- [sweep axis] conflict cost C. Number, or a list to sweep. Default 3.0.
   # Hawk-Dove is non-trivial when C > V/2 (mutual-Hawk payoff goes negative).
-  C: 550
+  C: 3
   # ---- [sweep axis] entanglement strength gamma. Default "pi/2". --------------
   # A number, or a pi-expression using only `pi`, digits, `.`, `/`, `*`
   # (e.g. "pi/2", "pi/4", "2*pi"). gamma = pi/2 is MAXIMUM entanglement;

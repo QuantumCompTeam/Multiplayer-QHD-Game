@@ -36,16 +36,23 @@ advantage. Three findings organize the landscape. First, at the maximally
 entangled point the cooperative quantum profile pays exactly $V/N$ against a
 classical Nash payoff of $1/N$ --- a constant $4\times$ multiplier for $V=4$
 --- but it is a self-enforcing equilibrium only at $N=3$. Second, under noise
-the two natural robustness criteria \emph{disagree}: GHZ loses its cooperative
-equilibrium fastest yet retains the largest mean advantage at small $N$, while
+the two natural robustness criteria \emph{disagree}: GHZ --- the only
+topology whose cooperative profile is a pure equilibrium ($N{=}2,3$) ---
+loses it at finite noise yet retains the largest mean advantage at small $N$
+(an ordering that matched-gate-count controls attribute to circuit gate
+budgets rather than entanglement structure, W's $\sim$2.5$\times$ per-gate
+robustness excepted), while
 W never crosses zero in the mean but hides position-locked per-player losses
-that strategy adaptation does not repair. Third, the landscape is
-\emph{predictive}: on an IBM Heron r2 processor (ibm\_fez), a scaling
+that strategy adaptation does not repair. Third, on an IBM Heron r2 processor
+(ibm\_fez), a scaling
 experiment at $N=3,4,5$ on one pinned qubit chain retains
 99.4\%/98.7\%/98.1\% of the ideal advantage $3/N$ after readout mitigation and
-zero-noise extrapolation, and a single depolarizing parameter fitted to the
-$N{=}3$ point alone predicts the $N{=}4$ and $N{=}5$ measurements to within
-0.004 and 0.010 advantage units. The mean-payoff observable is first-order
+zero-noise extrapolation. A single depolarizing parameter fitted to the
+$N{=}3$ point alone --- the registered primary prediction --- matches
+$N{=}4$ to 0.004 but over-predicts $N{=}5$ by 0.010, a registered
+$\approx$5$\sigma$ deviation that reproduces across runs; a
+per-two-qubit-gate decay law leads the registered model comparison, with the
+depolarizing fit as its physical interpretation. The mean-payoff observable is first-order
 insensitive to single bit-flips, so the advantage decays several times slower
 than state fidelity --- a structural robustness with direct consequences for
 quantum market design.
@@ -72,8 +79,8 @@ a different response to decoherence. Varsamis et al.~\cite{varsamis2025}
 studied $N$-player entanglement operators and scalability on IBM hardware;
 our contribution is orthogonal: we fix a financially interpreted game and
 chart how \emph{topology $\times$ player count $\times$ noise} determine both
-the magnitude and the equilibrium status of the quantum advantage, then show
-the resulting noise model is quantitatively predictive on hardware.
+the magnitude and the equilibrium status of the quantum advantage, then test
+the resulting noise model against registered predictions on hardware.
 
 Our contributions:
 \begin{enumerate}
@@ -87,12 +94,20 @@ Our contributions:
   \emph{differently}; noise also breaks player symmetry, producing
   position-locked per-player disadvantage that follows the entangler's gate
   ordering (proved by a wiring-permutation experiment) and that independent
-  best-response adaptation fails to repair.
+  best-response adaptation fails to repair. Matched-gate-count and
+  compilation controls attribute the advantage-magnitude ordering within the
+  XX-product family (GHZ/ring/star/fully connected) to circuit gate budgets
+  rather than entanglement structure; W's $\sim$2.5$\times$ per-gate
+  robustness is the surviving structural effect.
+  % docs/findings/2026-07-16-topology-vs-implementation-controls.md
   \item \textbf{Predictive hardware validation.} An $N=3,4,5$ scaling
   experiment on ibm\_fez (one pinned chain, one batch job) with tensored
   readout mitigation and cz-fold zero-noise extrapolation retains
   98--99\% of the ideal advantage $3/N$; a one-parameter depolarizing model
-  fitted at $N{=}3$ predicts $N{=}4,5$ to $\le 0.010$. We identify the
+  fitted at $N{=}3$ --- the registered primary prediction --- matches
+  $N{=}4$ to 0.004 while its $N{=}5$ miss (0.010, $\approx$5$\sigma$,
+  reproduced) leaves a registered per-two-qubit-gate decay baseline leading
+  the model comparison. We identify the
   mechanism --- first-order insensitivity of the mean payoff to single
   bit-flips --- that makes the advantage more noise-robust than the state.
   \item \textbf{Reproducible pipeline.} An open-source harness with
@@ -167,11 +182,14 @@ N-scaling table: ideal advantage $3/N$; $(Q_N,\dots,Q_N)$ pure NE only at
 $N=3$ --- deviation payoffs 2.0 vs 1.0 ($N{=}4$), 2.618 vs 0.8 ($N{=}5$).}
 
 \subsection{Noise robustness: two criteria disagree}\label{sec:noise}
-\todo{Port README \S9 Month-4 findings: p* table (GHZ NE-loss at finite p for
-N$\ge$3: 0.045/0.0197/0.0098); GHZ keeps largest mean advantage at small N
-(0.33 at N=3, p=0.05) while W keeps positive-but-small mean advantage
-everywhere; the mean-hides-losers caveat (W N=5: 2/5 players negative from
-p=0.01).}
+\todo{Port README \S9 Month-4 findings (as corrected 2026-07-17): p* table
+--- GHZ NE-loss at finite p at N=3 only (0.045); the N=4/5 values
+0.0197/0.0098 are advantage-zero crossings, $(Q,\dots,Q)$ is not a pure NE
+there even at p=0; GHZ keeps largest mean advantage at small N
+(0.33 at N=3, p=0.05) with the gate-budget qualification from the
+topology-vs-implementation controls; W keeps positive-but-small mean
+advantage everywhere; the mean-hides-losers caveat (W N=5: 2/5 players
+negative from p=0.01).}
 
 \subsection{Position-locked unfairness and the adaptation pilot}
 \todo{Wiring-permutation result (asymmetry follows circuit position;
@@ -245,13 +263,20 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
   \label{fig:scaling}
 \end{figure*}
 
-Two predictions, both computed independently of the measured counts, frame
+Two model predictions frame
 Table~\ref{tab:scaling}: the reduced device noise model
 (\texttt{NoiseModel.from\_backend}) and a \emph{fit-one-predict-two} test in
 the paper's own depolarizing model --- a single $p_{\text{eff}}=0.0018$
-fitted to the $N{=}3$ mitigated point predicts $N{=}4$ to $0.004$ and $N{=}5$
-to $0.010$ advantage units. The simulation landscape of
-Sec.~\ref{sec:sim} is therefore quantitatively predictive of hardware.
+fitted to the $N{=}3$ mitigated point, committed as the registered primary
+prediction before any repeat run. It predicts $N{=}4$ to $0.004$; at $N{=}5$
+it over-predicts by $0.010$ ($\approx$5$\sigma$ of the registered predictive
+interval), a deficit that reproduces on a second run. In the registered
+five-model comparison, an exponential-retention baseline in the transpiled
+two-qubit-gate count leads both runs, so we treat per-gate decay as the
+operative scaling law and $p_{\text{eff}}$ as its physical interpretation.
+% registered: results/hardware-scaling/preregistration.json and
+% preregistration-baselines.json; outcomes (runs 1-2, scores 7.4/10.0 vs
+% p_eff 23.4/31.3): results/hardware-scaling/repeat-judgments.json
 
 \subsection{Why the advantage outlives the state}
 Ground-state probability decays $\sim$3$\times$ faster than the advantage
@@ -283,9 +308,10 @@ the T9 adaptation rule is provisional.
 
 % =============================================================================
 \section{Conclusion}\label{sec:conclusion}
-\todo{Half page: the landscape is charted, the dichotomy is real, the noise
-model predicts hardware, and the mean-payoff robustness mechanism suggests
-quantum market mechanisms degrade gracefully on NISQ devices.}
+\todo{Half page: the landscape is charted, the dichotomy is real, the
+registered model comparison favors per-gate decay (with the depolarizing fit
+as its physical interpretation), and the mean-payoff robustness mechanism
+suggests quantum market mechanisms degrade gracefully on NISQ devices.}
 
 \section*{Reproducibility}
 All circuits, harnesses, per-run calibration snapshots, and analysis code are

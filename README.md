@@ -60,7 +60,7 @@ The Q strategy is the key quantum insight: when both players play Q, neither can
 
 ### 3.3 Why N-Player Extension Is Non-Trivial
 
-With 2 players there is exactly 1 entanglement link and the geometry is trivially fixed. With N players, there are multiple possible connectivity patterns — and each topology produces qualitatively different interference structures, different per-player payoff distributions, and different Nash equilibria. The GHZ state creates all-or-nothing correlations; the W state distributes entanglement pairwise; ring, star, and fully-connected topologies interpolate between local and global correlation structures. Each topology corresponds to a different market architecture and generates a distinct quantum game. The landscape of how topology interacts with player count, strategy space, and noise to determine quantum advantage has not been mapped in the Hawk-Dove trading context. Charting this landscape — and identifying which topology yields the most robust cooperative equilibrium — is the central contribution of this project.
+With 2 players there is exactly 1 entanglement link and the geometry is trivially fixed. With N players, there are multiple possible connectivity patterns — and each topology produces qualitatively different interference structures, different per-player payoff distributions, and different Nash equilibria. The GHZ state creates all-or-nothing correlations; the W state distributes entanglement pairwise; ring, star, and fully-connected topologies interpolate between local and global correlation structures. Each topology corresponds to a different market architecture and generates a distinct quantum game. The landscape of how topology interacts with player count, strategy space, and noise to determine quantum advantage has not been mapped in the Hawk-Dove trading context. Charting this landscape is the central contribution of this project.
 
 ---
 
@@ -93,7 +93,7 @@ With 2 players there is exactly 1 entanglement link and the geometry is triviall
 - **Market analogy:** Circular commodity futures trading pit — each participant only interacts bilaterally with their immediate neighbours, and information propagates around the ring
 - **Key properties:**
   - Hardware-cheap: requires only N entangling gates (one per edge)
-  - Moderate noise robustness: no single-point failure, but entanglement is local rather than global
+  - No single-point failure, but entanglement is local rather than global
   - Slow information propagation: correlations between non-adjacent players are mediated through intermediate nodes
 
 ### 4.4 Star Topology
@@ -112,7 +112,7 @@ With 2 players there is exactly 1 entanglement link and the geometry is triviall
 - **Key properties:**
   - Maximum pairwise entanglement: every pair of players shares a direct entanglement channel
   - Requires O(N²) entangling gates; quadratic circuit depth growth
-  - Most noise-sensitive topology due to gate count and accumulated error
+  - Most noise-sensitive topology at its natural gate budget — a gate-count effect (O(N²) edges), not a per-gate structural one (per-gate decay rates match the other pairwise topologies; see the §9 controls bullet)
   - Most hardware-expensive; likely infeasible on near-term devices beyond N=5
 
 ---
@@ -265,9 +265,9 @@ PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/
 | 2-player EWL validation | Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
 | N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
 | Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
-| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; two criteria diverge — GHZ's cooperative equilibrium is the most noise-fragile (loses pure-NE status at finite p for N≥3), while GHZ keeps the *largest* mean advantage at small N and W keeps a positive-but-small mean advantage across the grid (exact gate-level W, T8); 22 collected noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
+| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; two criteria diverge — GHZ's cooperative equilibrium loses pure-NE status at finite p at N=3 (the only N≥3 where (Q,…,Q) is a pure NE at p=0; the N=4,5 † thresholds are advantage-zero crossings), while GHZ keeps the *largest* mean advantage at small N and W keeps a positive-but-small mean advantage across the grid (exact gate-level W, T8); orderings are properties of the production circuits at their gate budgets (see the controls bullet in the findings); 22 collected noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
 | IBM hardware validation | Complete | N=3 GHZ Q-profile on **ibm_fez** (Heron r2), 4096 shots: measured advantage **0.9978** vs 1.0 ideal; 3911/4096 shots in \|000⟩. Hand-built J keeps it to 6 two-qubit gates. `results/hardware-n3/2026-07-16T013912Z/` |
-| Hardware scaling N=3–5 + error mitigation | Complete | One pinned chain on **ibm_fez**, one batch job: measured advantage (raw/ZNE) **0.992/0.994** (N=3), **0.739/0.740** (N=4), **0.584/0.589** (N=5) vs ideals 1.0/0.75/0.6. Readout-mitigation (tensored, M3-style) + ZNE (cz folding); device-model + fit-one-predict-two depolarizing predictions (p_eff=0.0018 fit at N=3 predicts N=4 to 0.004, N=5 to 0.010). `results/hardware-scaling/2026-07-16T074134Z/`, `experiments/hardware_scaling.py` |
+| Hardware scaling N=3–5 + error mitigation | Complete | One pinned chain on **ibm_fez**, one batch job: measured advantage (raw/ZNE) **0.992/0.994** (N=3), **0.739/0.740** (N=4), **0.584/0.589** (N=5) vs ideals 1.0/0.75/0.6. Readout-mitigation (tensored, M3-style) + ZNE (cz folding); device-model + fit-one-predict-two depolarizing predictions (p_eff=0.0018 fit at N=3 predicts N=4 to 0.004, N=5 to 0.010 — the registered primary prediction; its N=5 miss is ≈−5σ and reproduced in run 2, and the registered cz-exponential baseline leads the five-model competition in both runs, scores 7.4 and 10.0 (`results/hardware-scaling/repeat-judgments.json`)). `results/hardware-scaling/2026-07-16T074134Z/`, `experiments/hardware_scaling.py` |
 | arXiv preprint | Pending | Month 6 |
 
 ### Month 2 — N=3 Quantum Advantage
@@ -336,9 +336,12 @@ Findings (measured, with caveats):
   than Y's". Per-claim verdicts:
   `docs/findings/2026-07-16-topology-vs-implementation-controls.md`.
 - **Two criteria give different orderings — state which you mean.** Under the
-  *Nash-equilibrium* criterion, GHZ's cooperative equilibrium is the most
-  fragile: (Q,…,Q) stops being a pure NE at finite noise for every N ≥ 3
-  (between p=0.04 and 0.045 at N=3, ≈0.0197 at N=4, ≈0.0098 at N=5). For W and
+  *Nash-equilibrium* criterion, GHZ's cooperative equilibrium is fragile:
+  (Q,…,Q) is a pure NE at p=0 only for GHZ N=2,3, and at N=3 it stops being
+  one at finite noise (between p=0.04 and 0.045). At N=4,5 (Q,…,Q) is not a
+  pure NE even at p=0 (the Month-3 finding; † rows), so the GHZ p* values
+  there (≈0.0197, ≈0.0098) are advantage-zero crossings, not equilibrium
+  losses. For W and
   ring the fixed GHZ-derived Q is *never* a strict pure NE, even at p=0, so the
   Nash criterion does not apply to them (the † rows). Under the
   *advantage-magnitude* criterion the picture flips: at N=3 GHZ retains the most
@@ -433,12 +436,19 @@ single 11-pub batch job (readout calibrations + cz-fold ZNE circuits):
 | 4 | 0.75 | 0.7386 | 0.7403 | 0.922 |
 | 5 | 0.60 | 0.5837 | 0.5887 | 0.868 |
 
-Findings (single run; repeats accumulate cross-day error bars):
+Findings (runs 1–2; repeats accumulate cross-day error bars):
 
 - **Fit-one-predict-two:** a single depolarizing p_eff = 0.0018 fitted to the
   N=3 mitigated point alone predicts N=4 to 0.004 and N=5 to 0.010 of the
-  measured advantage — the Month-4 noise model quantitatively predicts
-  real-hardware scaling.
+  measured advantage. p_eff is the registered primary prediction
+  (`results/hardware-scaling/preregistration.json`), but its N=5 miss
+  (−0.010, ≈−5σ of the registered predictive interval) is statistically
+  significant and reproduced in run 2; in the registered five-model
+  competition the cz-exponential baseline leads both runs (scores 7.4 and
+  10.0) with p_eff third — p_eff serves as the physical interpretation of
+  the per-gate decay, not the headline law (protocol:
+  `docs/findings/2026-07-16-preregistered-baseline-competitors.md`; outcomes:
+  `results/hardware-scaling/repeat-judgments.json`).
 - **The advantage is far more noise-robust than the state.** P(|0…0⟩) drops
   ~3× faster than the advantage because the mean-payoff observable is
   first-order insensitive to single bit-flips from |0…0⟩: a one-Hawk outcome

@@ -2,7 +2,9 @@
 
 Target: IEEE International Conference on Quantum Computing and Engineering
 (QCE). Thesis structure: the simulation noise findings are the contribution;
-the hardware scaling run is the validation that the landscape is predictive.
+the hardware scaling runs test the registered predictions (the registered
+model comparison favors per-gate decay, with the depolarizing fit as its
+physical interpretation).
 
 ## Build
 
@@ -17,8 +19,10 @@ Locally: `latexmk -pdf main.tex` (needs a TeX distribution with IEEEtran).
   - Prithvi: intro narrative, error-budget paragraph, robustness-mechanism
     link to fairness, conclusion.
   - Aasa: payoff-tensor section, zero-noise landscape section (needs the
-    advantage map regenerated at V=4, C=3 — the 2026-07-02 n-scaling run used
-    V=1000/C=550), Month-4 noise-findings port from README §9.
+    advantage map regenerated at V=4, C=3 — every n-scaling-advantage run to
+    date, 2026-07-02 through 2026-07-16, and every gamma-sweep run used
+    V=1000/C=550; verified against the runs' config.snapshot.yaml),
+    Month-4 noise-findings port from README §9.
 - `references.bib` has two metadata TODOs (varsamis2025, flitney2002 year).
 - Table II (scaling) gains cross-day error bars automatically as repeat runs
   accumulate (`TODOS.md` protocol); regenerate `figs/hardware_scaling.pdf`
