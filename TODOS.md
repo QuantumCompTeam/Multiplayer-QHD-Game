@@ -23,10 +23,23 @@ only, zero quota.
 **What:** Re-run `python experiments/hardware_scaling.py --hardware` (conda env
 `entangled-equilibria`) on 3–5 different days. Each run is one ~35s-QPU batch
 job on ibm_fez; `scripts/plot_hardware_scaling.py` automatically aggregates all
-runs under `results/hardware-scaling/` into mean ± std. First run:
-2026-07-16T074134Z (job d9c8fpn550hc73dl1tcg). If a run crashes mid-poll, the
-job id is in `results/hardware-scaling/pending_jobs.txt`; recover with
-`--from-job <id>`.
+runs under `results/hardware-scaling/` into mean ± std. If a run crashes
+mid-poll, the job id is in `results/hardware-scaling/pending_jobs.txt`;
+recover with `--from-job <id>`.
+
+**Progress:**
+- Run 1: 2026-07-16T074134Z (job d9c8fpn550hc73dl1tcg) — registration anchor.
+- Run 2: 2026-07-17T014458Z (job d9cohq1htsac739c1iu0). First attempt
+  d9chh0qneu4c739lvgb0 failed backend-side (error 9603, RF hardware, during
+  ibm_fez maintenance; 0 quantum seconds billed — checked before
+  resubmitting). Judged: N=4 conditional PASS (z −0.93), N=5 FAIL (z −4.74,
+  same-signed deficit as run 1 → reproduced 1/1); cz-exponential again the
+  best registered predictor (7.4 vs p_eff 23.4).
+- **Caveat for runs 3–5:** run 2's recorded `calibration_last_update` equals
+  run 1's (2026-07-16 08:30+05:30) despite the intervening maintenance —
+  distinct execution, NOT a distinct calibration day. Before counting a
+  future run toward the 3–5 cross-day target, check its calibration stamp
+  differs (the judge flags `distinct_calibration_vs_previous_runs`).
 
 **Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
 variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.

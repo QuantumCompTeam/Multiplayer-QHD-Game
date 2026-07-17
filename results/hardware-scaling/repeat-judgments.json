@@ -1,0 +1,549 @@
+{
+  "generated_utc": "2026-07-17T01:45:51.985423+00:00",
+  "preregistration": {
+    "path": "results/hardware-scaling/preregistration.json",
+    "registered_utc": "2026-07-16T17:04:36.363760+00:00",
+    "p_eff_central": 0.001837649512845019
+  },
+  "n_repeats_judged": 1,
+  "judgments": [
+    {
+      "run": "2026-07-16T074134Z",
+      "job_id": "d9c8fpn550hc73dl1tcg",
+      "backend": "ibm_fez",
+      "created_utc": "2026-07-16T07:41:34.466740+00:00",
+      "calibration_last_update": "2026-07-16 08:30:13+05:30",
+      "distinct_calibration_vs_previous_runs": true,
+      "chain": [
+        59,
+        75,
+        74,
+        73,
+        79
+      ],
+      "is_registration_source": true,
+      "p_eff_refit": 0.001837649512845019,
+      "conditional_primary": {
+        "4": {
+          "predicted_conditional": 0.7426904519741249,
+          "measured": 0.7384272699895833,
+          "delta": -0.004263181984541564,
+          "z": -2.14483755652589,
+          "sigma_predictive": 0.0019876479557020027,
+          "pass_95": false
+        },
+        "5": {
+          "predicted_conditional": 0.5931700156036097,
+          "measured": 0.5831190172535277,
+          "delta": -0.010050998350082052,
+          "z": -5.166738914507109,
+          "sigma_predictive": 0.0019453273169776348,
+          "pass_95": false
+        }
+      },
+      "n5_deficit": {
+        "delta": -0.010050998350082052,
+        "z": -5.166738914507109,
+        "registered_run1_delta": -0.010050998350082052,
+        "registered_run1_z": -5.166738914507109,
+        "same_sign_as_run1": true
+      },
+      "unconditional_secondary": {
+        "4": {
+          "mitigated_fold1": {
+            "measured": 0.7384272699895833,
+            "pi95": [
+              0.7387946619809489,
+              0.7465862419673008
+            ],
+            "pass_95": false
+          },
+          "zne_linear": {
+            "measured": 0.7403308106545325,
+            "pi95": [
+              0.7405416269119036,
+              0.7483982683349117
+            ],
+            "pass_95": false
+          }
+        },
+        "5": {
+          "mitigated_fold1": {
+            "measured": 0.5831190172535277,
+            "pi95": [
+              0.5893571740623336,
+              0.5969828571448859
+            ],
+            "pass_95": false
+          },
+          "zne_linear": {
+            "measured": 0.5886893429587647,
+            "pi95": [
+              0.5908485934112501,
+              0.5986110631198224
+            ],
+            "pass_95": false
+          }
+        }
+      },
+      "competing_baselines_secondary": {
+        "note": "item-4 registration: preregistration-baselines.json; model-comparison scores on the shared sigma yardstick, separate from the primary p_eff test above",
+        "models": {
+          "cz_exponential": {
+            "4": {
+              "predicted_conditional": 0.7409431665227652,
+              "measured": 0.7384272699895833,
+              "z": -1.2657656633632983,
+              "pass_95": true
+            },
+            "5": {
+              "predicted_conditional": 0.5887671481568136,
+              "measured": 0.5831190172535277,
+              "z": -2.903434735117592,
+              "pass_95": false
+            },
+            "score_z2": 10.032095975636892
+          },
+          "device_model_anchored": {
+            "4": {
+              "predicted_conditional": 0.7442522594435643,
+              "measured": 0.7384272699895833,
+              "z": -2.9305941413170107,
+              "pass_95": false
+            },
+            "5": {
+              "predicted_conditional": 0.5938225437783927,
+              "measured": 0.5831190172535277,
+              "z": -5.502172529759482,
+              "pass_95": false
+            },
+            "score_z2": 38.862284568361446
+          },
+          "constant_retention": {
+            "4": {
+              "predicted_conditional": 0.7439498932974373,
+              "measured": 0.7384272699895833,
+              "z": -2.7784715557959707,
+              "pass_95": false
+            },
+            "5": {
+              "predicted_conditional": 0.59515991463795,
+              "measured": 0.5831190172535277,
+              "z": -6.18965110875519,
+              "pass_95": false
+            },
+            "score_z2": 46.03168503448163
+          },
+          "transpiled_count_corrected": {
+            "4": {
+              "predicted_conditional": 0.7426754300920465,
+              "measured": 0.7384272699895833,
+              "z": -2.1372799394764197,
+              "pass_95": false
+            },
+            "5": {
+              "predicted_conditional": 0.5929163327128719,
+              "measured": 0.5831190172535277,
+              "z": -5.036332638646074,
+              "pass_95": false
+            },
+            "score_z2": 29.93261198678005
+          }
+        },
+        "scores_z2": {
+          "p_eff_primary": 31.29551915456605,
+          "cz_exponential": 10.032095975636892,
+          "device_model_anchored": 38.862284568361446,
+          "constant_retention": 46.03168503448163,
+          "transpiled_count_corrected": 29.93261198678005
+        },
+        "ranking_best_first": [
+          "cz_exponential",
+          "transpiled_count_corrected",
+          "p_eff_primary",
+          "device_model_anchored",
+          "constant_retention"
+        ]
+      },
+      "per_player_fold1": {
+        "3": {
+          "raw": {
+            "per_player_payoff": [
+              1.337158203125,
+              1.336669921875,
+              1.302001953125
+            ],
+            "per_player_advantage": [
+              1.0038248697916667,
+              1.0033365885416667,
+              0.9686686197916667
+            ],
+            "worst_player_advantage": 0.9686686197916667,
+            "spread": 0.03515625,
+            "any_player_below_classical": false
+          },
+          "mitigated": {
+            "per_player_payoff": [
+              1.335016981980665,
+              1.3460589441577013,
+              1.2947236470513828
+            ],
+            "per_player_advantage": [
+              1.0016836486473317,
+              1.012725610824368,
+              0.9613903137180495
+            ],
+            "worst_player_advantage": 0.9613903137180495,
+            "spread": 0.05133529710631857,
+            "any_player_below_classical": false
+          }
+        },
+        "4": {
+          "raw": {
+            "per_player_payoff": [
+              0.9829508463541667,
+              0.9600016276041667,
+              0.9741617838541666,
+              1.0374755859375
+            ],
+            "per_player_advantage": [
+              0.7329508463541667,
+              0.7100016276041667,
+              0.7241617838541666,
+              0.7874755859375
+            ],
+            "worst_player_advantage": 0.7100016276041667,
+            "spread": 0.07747395833333326,
+            "any_player_below_classical": false
+          },
+          "mitigated": {
+            "per_player_payoff": [
+              0.9807552544410247,
+              0.9739903884114655,
+              0.9682667549362175,
+              1.0306966821696257
+            ],
+            "per_player_advantage": [
+              0.7307552544410247,
+              0.7239903884114655,
+              0.7182667549362175,
+              0.7806966821696257
+            ],
+            "worst_player_advantage": 0.7182667549362175,
+            "spread": 0.06242992723340823,
+            "any_player_below_classical": false
+          }
+        },
+        "5": {
+          "raw": {
+            "per_player_payoff": [
+              0.7713216145833334,
+              0.7723795572916667,
+              0.7779947916666667,
+              0.7823893229166666,
+              0.8146158854166667
+            ],
+            "per_player_advantage": [
+              0.5713216145833333,
+              0.5723795572916668,
+              0.5779947916666668,
+              0.5823893229166666,
+              0.6146158854166668
+            ],
+            "worst_player_advantage": 0.5713216145833333,
+            "spread": 0.04329427083333337,
+            "any_player_below_classical": false
+          },
+          "mitigated": {
+            "per_player_payoff": [
+              0.7685539934051272,
+              0.7795399989045174,
+              0.7719522204521466,
+              0.7732905905982917,
+              0.8222582829075553
+            ],
+            "per_player_advantage": [
+              0.5685539934051271,
+              0.5795399989045174,
+              0.5719522204521466,
+              0.5732905905982917,
+              0.6222582829075554
+            ],
+            "worst_player_advantage": 0.5685539934051271,
+            "spread": 0.053704289502428115,
+            "any_player_below_classical": false
+          }
+        }
+      }
+    },
+    {
+      "run": "2026-07-17T014458Z",
+      "job_id": "d9cohq1htsac739c1iu0",
+      "backend": "ibm_fez",
+      "created_utc": "2026-07-17T01:44:58.964811+00:00",
+      "calibration_last_update": "2026-07-16 08:30:13+05:30",
+      "distinct_calibration_vs_previous_runs": false,
+      "chain": [
+        59,
+        75,
+        74,
+        73,
+        79
+      ],
+      "is_registration_source": false,
+      "p_eff_refit": 0.0016456338927582697,
+      "conditional_primary": {
+        "4": {
+          "predicted_conditional": 0.7434293298233563,
+          "measured": 0.7415761349129972,
+          "delta": -0.0018531949103590684,
+          "z": -0.9323557046622736,
+          "sigma_predictive": 0.0019876479557020027,
+          "pass_95": true
+        },
+        "5": {
+          "predicted_conditional": 0.5938528682272297,
+          "measured": 0.5846250840823848,
+          "delta": -0.00922778414484493,
+          "z": -4.743563751102674,
+          "sigma_predictive": 0.0019453273169776348,
+          "pass_95": false
+        }
+      },
+      "n5_deficit": {
+        "delta": -0.00922778414484493,
+        "z": -4.743563751102674,
+        "registered_run1_delta": -0.010050998350082052,
+        "registered_run1_z": -5.166738914507109,
+        "same_sign_as_run1": true
+      },
+      "unconditional_secondary": {
+        "4": {
+          "mitigated_fold1": {
+            "measured": 0.7415761349129972,
+            "pi95": [
+              0.7387946619809489,
+              0.7465862419673008
+            ],
+            "pass_95": true
+          },
+          "zne_linear": {
+            "measured": 0.7439747541278858,
+            "pi95": [
+              0.7405416269119036,
+              0.7483982683349117
+            ],
+            "pass_95": true
+          }
+        },
+        "5": {
+          "mitigated_fold1": {
+            "measured": 0.5846250840823848,
+            "pi95": [
+              0.5893571740623336,
+              0.5969828571448859
+            ],
+            "pass_95": false
+          },
+          "zne_linear": {
+            "measured": 0.5896818123692904,
+            "pi95": [
+              0.5908485934112501,
+              0.5986110631198224
+            ],
+            "pass_95": false
+          }
+        }
+      },
+      "competing_baselines_secondary": {
+        "note": "item-4 registration: preregistration-baselines.json; model-comparison scores on the shared sigma yardstick, separate from the primary p_eff test above",
+        "models": {
+          "cz_exponential": {
+            "4": {
+              "predicted_conditional": 0.7418668153258794,
+              "measured": 0.7415761349129972,
+              "z": -0.14624340897404906,
+              "pass_95": true
+            },
+            "5": {
+              "predicted_conditional": 0.5899092409770507,
+              "measured": 0.5846250840823848,
+              "z": -2.7163330553932856,
+              "pass_95": false
+            },
+            "score_z2": 7.399852402490573
+          },
+          "device_model_anchored": {
+            "4": {
+              "predicted_conditional": 0.7448706469222125,
+              "measured": 0.7415761349129972,
+              "z": -1.6574927163355255,
+              "pass_95": true
+            },
+            "5": {
+              "predicted_conditional": 0.5943159415759165,
+              "measured": 0.5846250840823848,
+              "z": -4.981607675456874,
+              "pass_95": false
+            },
+            "score_z2": 27.563697136876158
+          },
+          "constant_retention": {
+            "4": {
+              "predicted_conditional": 0.7445680295448177,
+              "measured": 0.7415761349129972,
+              "z": -1.5052437345544898,
+              "pass_95": true
+            },
+            "5": {
+              "predicted_conditional": 0.5956544236358543,
+              "measured": 0.5846250840823848,
+              "z": -5.669657469574474,
+              "pass_95": false
+            },
+            "score_z2": 34.410774522717176
+          },
+          "transpiled_count_corrected": {
+            "4": {
+              "predicted_conditional": 0.7434163064731041,
+              "measured": 0.7415761349129972,
+              "z": -0.9258035633663985,
+              "pass_95": true
+            },
+            "5": {
+              "predicted_conditional": 0.5936237089038563,
+              "measured": 0.5846250840823848,
+              "z": -4.62576387168215,
+              "pass_95": false
+            },
+            "score_z2": 22.25480363450175
+          }
+        },
+        "scores_z2": {
+          "p_eff_primary": 23.37068422079156,
+          "cz_exponential": 7.399852402490573,
+          "device_model_anchored": 27.563697136876158,
+          "constant_retention": 34.410774522717176,
+          "transpiled_count_corrected": 22.25480363450175
+        },
+        "ranking_best_first": [
+          "cz_exponential",
+          "transpiled_count_corrected",
+          "p_eff_primary",
+          "device_model_anchored",
+          "constant_retention"
+        ]
+      },
+      "per_player_fold1": {
+        "3": {
+          "raw": {
+            "per_player_payoff": [
+              1.3404947916666665,
+              1.3331705729166665,
+              1.3043619791666665
+            ],
+            "per_player_advantage": [
+              1.0071614583333333,
+              0.9998372395833333,
+              0.9710286458333333
+            ],
+            "worst_player_advantage": 0.9710286458333333,
+            "spread": 0.0361328125,
+            "any_player_below_classical": false
+          },
+          "mitigated": {
+            "per_player_payoff": [
+              1.3409716731829666,
+              1.3413946056561576,
+              1.295905839340146
+            ],
+            "per_player_advantage": [
+              1.0076383398496334,
+              1.0080612723228244,
+              0.9625725060068127
+            ],
+            "worst_player_advantage": 0.9625725060068127,
+            "spread": 0.04548876631601173,
+            "any_player_below_classical": false
+          }
+        },
+        "4": {
+          "raw": {
+            "per_player_payoff": [
+              0.9897054036458334,
+              0.9726155598958334,
+              0.9770100911458334,
+              1.0269775390625
+            ],
+            "per_player_advantage": [
+              0.7397054036458334,
+              0.7226155598958334,
+              0.7270100911458334,
+              0.7769775390625
+            ],
+            "worst_player_advantage": 0.7226155598958334,
+            "spread": 0.05436197916666663,
+            "any_player_below_classical": false
+          },
+          "mitigated": {
+            "per_player_payoff": [
+              0.9845452578824727,
+              0.9822842021325844,
+              0.9745964188741585,
+              1.0248786607627733
+            ],
+            "per_player_advantage": [
+              0.7345452578824727,
+              0.7322842021325844,
+              0.7245964188741585,
+              0.7748786607627733
+            ],
+            "worst_player_advantage": 0.7245964188741585,
+            "spread": 0.050282241888614854,
+            "any_player_below_classical": false
+          }
+        },
+        "5": {
+          "raw": {
+            "per_player_payoff": [
+              0.7722493489583334,
+              0.7657389322916667,
+              0.77216796875,
+              0.78828125,
+              0.8275878906249999
+            ],
+            "per_player_advantage": [
+              0.5722493489583333,
+              0.5657389322916666,
+              0.5721679687500001,
+              0.5882812500000001,
+              0.6275878906249999
+            ],
+            "worst_player_advantage": 0.5657389322916666,
+            "spread": 0.06184895833333326,
+            "any_player_below_classical": false
+          },
+          "mitigated": {
+            "per_player_payoff": [
+              0.7660502563047922,
+              0.7686312446217308,
+              0.7693112326199913,
+              0.7841782080462851,
+              0.834954478819125
+            ],
+            "per_player_advantage": [
+              0.5660502563047922,
+              0.5686312446217308,
+              0.5693112326199914,
+              0.5841782080462852,
+              0.634954478819125
+            ],
+            "worst_player_advantage": 0.5660502563047922,
+            "spread": 0.06890422251433281,
+            "any_player_below_classical": false
+          }
+        }
+      }
+    }
+  ]
+}
