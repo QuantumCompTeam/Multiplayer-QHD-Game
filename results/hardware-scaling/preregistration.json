@@ -1,0 +1,230 @@
+{
+  "registered_utc": "2026-07-16T17:04:36.363760+00:00",
+  "purpose": "Frozen fit-one-predict-two prediction: p_eff fitted on the N=3 mitigated fold-1 payoff of run 2026-07-16T074134Z; N=4,5 advantages are predictions committed BEFORE any repeat batch run.",
+  "source_run": {
+    "dir": "results/hardware-scaling/2026-07-16T074134Z",
+    "job_id": "d9c8fpn550hc73dl1tcg",
+    "backend": "ibm_fez",
+    "created_utc": "2026-07-16T07:41:34.466740+00:00",
+    "git_commit_of_run": "9248bb230e7d2c96f2733cf6b22e50138ab1cfee"
+  },
+  "environment": {
+    "python": "3.10.20",
+    "qiskit": "1.3.2",
+    "qiskit_aer": "0.14.2",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1"
+  },
+  "protocol": {
+    "seed": 20260716,
+    "bootstrap_replicates": 2000,
+    "clipped_replicates": 0,
+    "shots": 4096,
+    "fit_target": "N=3 mitigated fold-1 payoff",
+    "model": "Month-4 depolarizing model (circuits.noise, {u,cx} basis, GHZ topology): ONE parameter p on 1q and 2q gates alike",
+    "fold_model": "cz-fold f => 2q depolarizing composed f times (p2 = 1-(1-p)^f); 1q errors not folded",
+    "p_grid": {
+      "min": 0.0,
+      "max": 0.005,
+      "points": 41,
+      "interpolation": "pchip"
+    },
+    "uncertainties_propagated": [
+      "shot (multinomial resampling)",
+      "mitigation (binomial cal resampling)",
+      "fit (p_eff refit per replicate)",
+      "ZNE (weighted fit per replicate)"
+    ],
+    "uncertainties_excluded": [
+      "model-form error",
+      "cross-day calibration drift"
+    ],
+    "registered_tests": {
+      "conditional (primary, drift-robust)": "for each repeat run: refit p_eff on that run's N=3 mitigated fold-1 payoff; that run's measured N=4 and N=5 mitigated fold-1 advantages must fall inside the 95% predictive intervals recentred on the refit prediction (same sigma_predictive)",
+      "unconditional (secondary, assumes stationarity)": "repeat-run measured advantages vs the pi95 intervals below as-is"
+    }
+  },
+  "p_eff": {
+    "central": 0.001837649512845019,
+    "sigma": 0.00032952732404180015,
+    "ci95": [
+      0.0011927002627042038,
+      0.0024903233002597563
+    ]
+  },
+  "predicted_advantages": {
+    "3": {
+      "ideal": 1.0,
+      "classical_ne_payoff": 0.3333333333333333,
+      "mitigated_fold1": {
+        "advantage": 0.9919331910634026,
+        "sigma_model": 0.001410733118750894,
+        "sigma_measurement": 0.0014107331216296397,
+        "sigma_predictive": 0.0019950779114619893,
+        "pi68": [
+          0.9899381131519406,
+          0.9939282689748646
+        ],
+        "pi95": [
+          0.9880228383569372,
+          0.9958435437698681
+        ],
+        "model_ci95": [
+          0.98916377076353,
+          0.9947186262574255
+        ],
+        "anchor": "fit target -- reproduces run 1 by construction; not an independent test"
+      },
+      "zne_linear": {
+        "advantage": 0.9940328398932128,
+        "sigma_model": 0.0010680746680477645,
+        "sigma_measurement": 0.0018610232050496978,
+        "sigma_predictive": 0.00214573783726223,
+        "pi68": [
+          0.9918871020559505,
+          0.996178577730475
+        ],
+        "pi95": [
+          0.9898271937321789,
+          0.9982384860542467
+        ],
+        "model_ci95": [
+          0.9919193587910622,
+          0.9961251341770619
+        ]
+      }
+    },
+    "4": {
+      "ideal": 0.75,
+      "classical_ne_payoff": 0.25,
+      "mitigated_fold1": {
+        "advantage": 0.7426904519741249,
+        "sigma_model": 0.0012631903526413705,
+        "sigma_measurement": 0.0015346317241605953,
+        "sigma_predictive": 0.0019876479557020027,
+        "pi68": [
+          0.7407028040184228,
+          0.7446780999298269
+        ],
+        "pi95": [
+          0.7387946619809489,
+          0.7465862419673008
+        ],
+        "model_ci95": [
+          0.7402212515201326,
+          0.7451949451772087
+        ]
+      },
+      "zne_linear": {
+        "advantage": 0.7444699476234077,
+        "sigma_model": 0.0009923091194063822,
+        "sigma_measurement": 0.0017413562753409906,
+        "sigma_predictive": 0.0020042452609714506,
+        "pi68": [
+          0.7424657023624363,
+          0.7464741928843791
+        ],
+        "pi95": [
+          0.7405416269119036,
+          0.7483982683349117
+        ],
+        "model_ci95": [
+          0.7425055260201181,
+          0.7464128380239987
+        ]
+      }
+    },
+    "5": {
+      "ideal": 0.6000000000000001,
+      "classical_ne_payoff": 0.2,
+      "mitigated_fold1": {
+        "advantage": 0.5931700156036097,
+        "sigma_model": 0.0011659842824313618,
+        "sigma_measurement": 0.0015571701972817312,
+        "sigma_predictive": 0.0019453273169776348,
+        "pi68": [
+          0.5912246882866321,
+          0.5951153429205873
+        ],
+        "pi95": [
+          0.5893571740623336,
+          0.5969828571448859
+        ],
+        "model_ci95": [
+          0.5909008828673996,
+          0.5954916207850126
+        ]
+      },
+      "zne_linear": {
+        "advantage": 0.5947298282655362,
+        "sigma_model": 0.0009467809898069695,
+        "sigma_measurement": 0.001739219477154471,
+        "sigma_predictive": 0.0019802218644316945,
+        "pi68": [
+          0.5927496064011045,
+          0.5967100501299679
+        ],
+        "pi95": [
+          0.5908485934112501,
+          0.5986110631198224
+        ],
+        "model_ci95": [
+          0.5928558478229207,
+          0.5965837231676606
+        ]
+      }
+    }
+  },
+  "verification": {
+    "g1_p_eff_exact": true,
+    "g2_pipeline_max_delta": 4.440892098500626e-16,
+    "g3_interp_error": {
+      "curve": 5.5600635207042615e-11,
+      "inverse": 7.328252371249788e-12
+    }
+  },
+  "source_run_comparison": {
+    "3": {
+      "mitigated_fold1": {
+        "measured_run1": 0.9919331910632498,
+        "predicted": 0.9919331910634026,
+        "delta": -1.5276668818842154e-13,
+        "z": -7.657179066078396e-11
+      },
+      "zne_linear": {
+        "measured_run1": 0.9937541679122668,
+        "predicted": 0.9940328398932128,
+        "delta": -0.0002786719809459992,
+        "z": -0.12987233393878153
+      }
+    },
+    "4": {
+      "mitigated_fold1": {
+        "measured_run1": 0.7384272699895833,
+        "predicted": 0.7426904519741249,
+        "delta": -0.004263181984541564,
+        "z": -2.14483755652589
+      },
+      "zne_linear": {
+        "measured_run1": 0.7403308106545325,
+        "predicted": 0.7444699476234077,
+        "delta": -0.0041391369688751345,
+        "z": -2.0651848600948717
+      }
+    },
+    "5": {
+      "mitigated_fold1": {
+        "measured_run1": 0.5831190172535277,
+        "predicted": 0.5931700156036097,
+        "delta": -0.010050998350082052,
+        "z": -5.166738914507109
+      },
+      "zne_linear": {
+        "measured_run1": 0.5886893429587647,
+        "predicted": 0.5947298282655362,
+        "delta": -0.006040485306771481,
+        "z": -3.0504083483115387
+      }
+    }
+  }
+}

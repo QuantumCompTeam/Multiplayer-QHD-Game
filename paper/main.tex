@@ -1,0 +1,325 @@
+% IEEE QCE submission skeleton — Entangled Equilibria
+% Build: latexmk -pdf main.tex   (or upload paper/ to Overleaf; IEEEtran is built in)
+% Convention: \todo{...} marks prose to be written; all numbers already present
+% are REAL (from results/ artifacts, cited in comments beside each).
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\graphicspath{{figs/}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
+
+\title{Entanglement Topology and Noise Determine Quantum Advantage in
+$N$-Player Trading Games:\\ Simulation Landscape and Hardware Validation}
+
+\author{%
+\IEEEauthorblockN{Prithvi Raghu}
+\IEEEauthorblockA{VIT Chennai\\prithviraghu080706@gmail.com}
+\and
+\IEEEauthorblockN{Aasa Singh Bhui}
+\IEEEauthorblockA{VIT Chennai\\\todo{email}}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% Real numbers: results/hardware-scaling/2026-07-16T074134Z/, README §9.
+We extend the two-player quantum Hawk--Dove trading game of Khan et al.\ to
+$N$ players under five entanglement topologies (GHZ, W, ring, star,
+fully connected) using the Eisert--Wilkens--Lewenstein (EWL) protocol, and map
+how topology, player count, and depolarizing noise jointly determine quantum
+advantage. Three findings organize the landscape. First, at the maximally
+entangled point the cooperative quantum profile pays exactly $V/N$ against a
+classical Nash payoff of $1/N$ --- a constant $4\times$ multiplier for $V=4$
+--- but it is a self-enforcing equilibrium only at $N=3$. Second, under noise
+the two natural robustness criteria \emph{disagree}: GHZ --- the only
+topology whose cooperative profile is a pure equilibrium ($N{=}2,3$) ---
+loses it at finite noise yet retains the largest mean advantage at small $N$
+(an ordering that matched-gate-count controls attribute to circuit gate
+budgets rather than entanglement structure, W's $\sim$2.5$\times$ per-gate
+robustness excepted), while
+W never crosses zero in the mean but hides position-locked per-player losses
+that strategy adaptation does not repair. Third, on an IBM Heron r2 processor
+(ibm\_fez), a scaling
+experiment at $N=3,4,5$ on one pinned qubit chain retains
+99.4\%/98.7\%/98.1\% of the ideal advantage $3/N$ after readout mitigation and
+zero-noise extrapolation. A single depolarizing parameter fitted to the
+$N{=}3$ point alone --- the registered primary prediction --- matches
+$N{=}4$ to 0.004 but over-predicts $N{=}5$ by 0.010, a registered
+$\approx$5$\sigma$ deviation that reproduces across runs; a
+per-two-qubit-gate decay law leads the registered model comparison, with the
+depolarizing fit as its physical interpretation. The mean-payoff observable is first-order
+insensitive to single bit-flips, so the advantage decays several times slower
+than state fidelity --- a structural robustness with direct consequences for
+quantum market design.
+\end{abstract}
+
+\begin{IEEEkeywords}
+quantum games, Nash equilibrium, EWL protocol, entanglement topology, NISQ,
+error mitigation, quantum finance
+\end{IEEEkeywords}
+
+% =============================================================================
+\section{Introduction}\label{sec:intro}
+
+\todo{Opening: financial markets as N-player Hawk--Dove games; crashes as
+all-Hawk tragedies; quantum correlation as a coordination resource that
+replaces trust/regulation. 2--3 paragraphs, seeded from README \S3 and \S10.}
+
+Khan et al.~\cite{khan2025} demonstrated a quantum Nash-equilibrium advantage
+for the two-player trading game on ion-trap hardware. Two players, however,
+admit exactly one entanglement geometry. Real markets are networks: the
+\emph{topology} of who is correlated with whom is a design variable, and each
+topology induces a different interference structure, different equilibria, and
+a different response to decoherence. Varsamis et al.~\cite{varsamis2025}
+studied $N$-player entanglement operators and scalability on IBM hardware;
+our contribution is orthogonal: we fix a financially interpreted game and
+chart how \emph{topology $\times$ player count $\times$ noise} determine both
+the magnitude and the equilibrium status of the quantum advantage, then test
+the resulting noise model against registered predictions on hardware.
+
+Our contributions:
+\begin{enumerate}
+  \item \textbf{Advantage landscape.} The complete $(N,\text{topology})$
+  advantage map for $N=2$--$6$ over five topologies, including the finding
+  that the fixed GHZ-derived cooperative profile $(Q_N,\dots,Q_N)$ is a pure
+  Nash equilibrium only at $N=3$; for $N\ge4$ a unilateral Hawk deviation
+  profits even without noise. % compute_advantage: dev 2.0 vs 1.0 (N=4), 2.618 vs 0.8 (N=5)
+  \item \textbf{Noise-robustness dichotomy.} Under depolarizing noise the
+  equilibrium criterion and the advantage-magnitude criterion order topologies
+  \emph{differently}; noise also breaks player symmetry, producing
+  position-locked per-player disadvantage that follows the entangler's gate
+  ordering (proved by a wiring-permutation experiment) and that independent
+  best-response adaptation fails to repair. Matched-gate-count and
+  compilation controls attribute the advantage-magnitude ordering within the
+  XX-product family (GHZ/ring/star/fully connected) to circuit gate budgets
+  rather than entanglement structure; W's $\sim$2.5$\times$ per-gate
+  robustness is the surviving structural effect.
+  % docs/findings/2026-07-16-topology-vs-implementation-controls.md
+  \item \textbf{Predictive hardware validation.} An $N=3,4,5$ scaling
+  experiment on ibm\_fez (one pinned chain, one batch job) with tensored
+  readout mitigation and cz-fold zero-noise extrapolation retains
+  98--99\% of the ideal advantage $3/N$; a one-parameter depolarizing model
+  fitted at $N{=}3$ --- the registered primary prediction --- matches
+  $N{=}4$ to 0.004 while its $N{=}5$ miss (0.010, $\approx$5$\sigma$,
+  reproduced) leaves a registered per-two-qubit-gate decay baseline leading
+  the model comparison. We identify the
+  mechanism --- first-order insensitivity of the mean payoff to single
+  bit-flips --- that makes the advantage more noise-robust than the state.
+  \item \textbf{Reproducible pipeline.} An open-source harness with
+  circuit-identity gates, a mandatory device-model dress rehearsal before any
+  hardware submission, and crash-safe job recovery.
+\end{enumerate}
+
+% =============================================================================
+\section{Background and Related Work}\label{sec:background}
+
+\subsection{The Hawk--Dove trading game}
+\todo{2×2 payoff matrix (README \S3.1); financial mapping Hawk=Short,
+Dove=Long; V=4, C=3 conventions; classical mixed NE pays less than
+cooperation.}
+
+\subsection{The EWL protocol and its $N$-player extension}
+The EWL quantization~\cite{eisert1999} embeds strategies in SU(2) and
+entangles qubits before strategy application:
+\begin{equation}
+\ket{\psi_{\text{out}}} = J^\dagger \left(\bigotimes_{j=1}^{N} U_j\right) J\, \ket{0}^{\otimes N},
+\qquad
+J = e^{i \frac{\gamma}{2} X^{\otimes N}},
+\end{equation}
+with maximal entanglement at $\gamma=\pi/2$~\cite{benjamin2001,flitney2002}.
+The $N$-appropriate quantum strategy generalizes to
+$Q_N = U(0, \pi/N, \pi/N)$; at $\gamma=\pi/2$ the profile $(Q_N,\dots,Q_N)$
+maps $\ket{0}^{\otimes N}$ back to $\ket{0}^{\otimes N}$ exactly, so the ideal
+output is a single computational basis state at every $N$.
+
+\subsection{Relation to prior $N$-player hardware work}
+\todo{One honest paragraph differentiating from
+Varsamis et al.~\cite{varsamis2025}: they study entanglement operators and
+scalability generically; we study a fixed financial game's advantage landscape
+(topology dichotomy, fairness, predictive noise model) and validate the
+predictions on hardware. Also position vs.\ Flitney--Abbott GHZ/W
+comparison~\cite{flitney2002}.}
+
+% =============================================================================
+\section{Model and Methods}\label{sec:model}
+
+\subsection{$N$-player Hawk--Dove payoffs}
+\todo{Aasa: payoff tensor definition for k Hawks among N (docs/formulae.md);
+classical pure NE = all-Hawk with payoff $1/N$ at $V{=}4,C{=}3$; cooperative
+payoff $V/N$; hence ideal advantage $3/N$ and the constant $4\times$ ratio.}
+
+\subsection{Entanglement topologies}
+\todo{Five topologies + market analogies (README \S4); gate-level entanglers:
+GHZ as H-conjugated CX-ladder parity rotation ($2(N{-}1)$ CX per $J$); W via
+the exact prep-conjugated construction; pairwise topologies via
+$R_{XX}(-\gamma)$ per edge.}
+
+\subsection{Advantage metric and honesty conventions}
+Advantage $= $ mean $(Q_N,\dots,Q_N)$ payoff $-$ best classical pure-NE payoff
+(the most conservative choice when several exist). Under noise the mean over
+players can hide per-player losses; we therefore always report per-player
+vectors alongside means. Equilibrium status ($q$-is-Nash) is reported
+separately from advantage magnitude --- the two criteria diverge under noise
+(Sec.~\ref{sec:noise}).
+
+\subsection{Noise model and simulation paths}
+\todo{Depolarizing p on u, p on cx in the pinned \{u, cx\} basis;
+density-matrix simulation; exact gate-level entanglers for all topologies
+(T8); noiseless statevector path for the tensor.}
+
+% =============================================================================
+\section{Simulation Results: the Advantage Landscape}\label{sec:sim}
+
+\subsection{Scaling and topology at zero noise}
+\todo{Aasa: advantage map figure (regenerate at V=4,C=3), gamma-sweep
+thresholds, ring N=4 zero-advantage dip, star hub/spoke asymmetry. Include the
+N-scaling table: ideal advantage $3/N$; $(Q_N,\dots,Q_N)$ pure NE only at
+$N=3$ --- deviation payoffs 2.0 vs 1.0 ($N{=}4$), 2.618 vs 0.8 ($N{=}5$).}
+
+\subsection{Noise robustness: two criteria disagree}\label{sec:noise}
+\todo{Port README \S9 Month-4 findings (as corrected 2026-07-17): p* table
+--- GHZ NE-loss at finite p at N=3 only (0.045); the N=4/5 values
+0.0197/0.0098 are advantage-zero crossings, $(Q,\dots,Q)$ is not a pure NE
+there even at p=0; GHZ keeps largest mean advantage at small N
+(0.33 at N=3, p=0.05) with the gate-budget qualification from the
+topology-vs-implementation controls; W keeps positive-but-small mean
+advantage everywhere; the mean-hides-losers caveat (W N=5: 2/5 players
+negative from p=0.01).}
+
+\subsection{Position-locked unfairness and the adaptation pilot}
+\todo{Wiring-permutation result (asymmetry follows circuit position;
+deviation $\sim$1e-16; ideal-state depolarizing collapses spread to 0) and the
+T9 pilot: independent best response equalizes only by collapsing welfare
+(mean 1.00$\to$0.51 at p=0), limit-cycles at p=0.02 --- provisional pending
+adaptation-rule review.}
+
+% =============================================================================
+\section{Hardware Validation on IBM Heron r2}\label{sec:hardware}
+
+\subsection{Pipeline and safeguards}
+Every submission passes three gates: (i) an $\mathrm{Operator.equiv}$
+circuit-identity assertion against the dense
+$J^\dagger (U^{\otimes N}) J$ reference, (ii) a noiseless simulator dry-run
+that must reproduce the exact analytic advantage, and (iii) a full dress
+rehearsal of the batch --- including mitigation analysis --- on the device
+noise model reduced to the executed qubits. Job identifiers are persisted
+before result polling, making runs crash-safe and recoverable.
+% experiments/hardware_scaling.py; spec docs/superpowers/specs/2026-07-16-*.md
+
+\subsection{Single-point validation at $N=3$}
+% results/hardware-n3/2026-07-16T013912Z/ (job d9br6l66hjac73fg3g7g)
+The validated $Q_3$ circuit (entangler decomposed to 6 native cz gates) run
+with 4096 shots on ibm\_fez measured advantage $0.9978$ against the ideal
+$1.0$, with $3911/4096$ shots in $\ket{000}$
+(Fig.~\ref{fig:n3}).\todo{one paragraph: error budget consistency
+(naive calibration budget predicts $\sim$0.974 vs measured 0.955 ground-state
+probability --- measured slightly below budget, as expected).}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{hardware_n3_validation.pdf}
+  \caption{\todo{paste caption from
+  results/hardware-n3/2026-07-16T013912Z/plots/caption.md}}
+  \label{fig:n3}
+\end{figure}
+
+\subsection{Scaling at $N=3,4,5$ with error mitigation}
+% results/hardware-scaling/2026-07-16T074134Z/ (job d9c8fpn550hc73dl1tcg)
+All three $N$ ran on prefixes of one pinned 5-qubit chain
+$[59,75,74,73,79]$ (chosen by calibration error) in a single 11-pub batch:
+two readout-calibration circuits plus $N\in\{3,4,5\}\times$ cz-fold
+$\lambda\in\{1,3,5\}$. Readout errors are corrected by tensored confusion-matrix
+inversion (constrained least squares)~\cite{nation2021}; zero-noise
+extrapolation folds each cz locally ($\mathrm{cz}\to\mathrm{cz}^\lambda$,
+unitary-preserving since cz is self-inverse) and extrapolates the
+readout-mitigated payoff linearly to $\lambda=0$~\cite{temme2017,kandala2019}.
+
+\begin{table}[t]
+\centering
+\caption{Measured advantage on ibm\_fez (4096 shots; single run --- repeats in
+progress). Ideal advantage is $3/N$; retention is ZNE/ideal.}
+\label{tab:scaling}
+\begin{tabular}{@{}ccccc c@{}}
+\toprule
+$N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
+\midrule
+3 & 1.00 & 0.9919 & 0.9938 & 99.4\% & 0.938\\
+4 & 0.75 & 0.7386 & 0.7403 & 98.7\% & 0.922\\
+5 & 0.60 & 0.5837 & 0.5887 & 98.1\% & 0.868\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{hardware_scaling.pdf}
+  \caption{\todo{paste caption from
+  results/hardware-scaling/2026-07-16T074134Z/plots/caption.md}}
+  \label{fig:scaling}
+\end{figure*}
+
+Two model predictions frame
+Table~\ref{tab:scaling}: the reduced device noise model
+(\texttt{NoiseModel.from\_backend}) and a \emph{fit-one-predict-two} test in
+the paper's own depolarizing model --- a single $p_{\text{eff}}=0.0018$
+fitted to the $N{=}3$ mitigated point, committed as the registered primary
+prediction before any repeat run. It predicts $N{=}4$ to $0.004$; at $N{=}5$
+it over-predicts by $0.010$ ($\approx$5$\sigma$ of the registered predictive
+interval), a deficit that reproduces on a second run. In the registered
+five-model comparison, an exponential-retention baseline in the transpiled
+two-qubit-gate count leads both runs, so we treat per-gate decay as the
+operative scaling law and $p_{\text{eff}}$ as its physical interpretation.
+% registered: results/hardware-scaling/preregistration.json and
+% preregistration-baselines.json; outcomes (runs 1-2, scores 7.4/10.0 vs
+% p_eff 23.4/31.3): results/hardware-scaling/repeat-judgments.json
+
+\subsection{Why the advantage outlives the state}
+Ground-state probability decays $\sim$3$\times$ faster than the advantage
+(Table~\ref{tab:scaling}): a single bit-flip from $\ket{0\ldots0}$ yields a
+one-Hawk outcome whose \emph{mean} payoff is still exactly $V/N$, so the
+mean-payoff observable is first-order insensitive to uncorrelated single
+flips. Readout mitigation consequently moves the mean very little (it mainly
+repairs \emph{per-player} fairness), while ZNE --- targeting the correlated cz
+errors that create $\ge$2-Hawk outcomes --- improves every series. This
+structural robustness is a property of the game's payoff geometry, not of the
+device.\todo{connect to the per-player asymmetry findings of
+Sec.~\ref{sec:noise}: the same single-flip terms that leave the mean invariant
+are what create winners and losers.}
+
+% =============================================================================
+\section{Discussion}\label{sec:discussion}
+
+\todo{Market-architecture interpretation (README \S10): which topology for
+which market; carbon trading; MEV/DeFi. Tie the two-criteria dichotomy to a
+design rule: pick topology by whether the mechanism needs the *equilibrium* or
+the *payoff*.}
+
+\textbf{Limitations.} Discrete strategy set $\{D,H,Q_N\}$ (mixed/continuous
+deviations are future work); the fixed GHZ-derived $Q_N$ is not
+topology-optimized under noise; hardware results are from one device, one
+chain, and (currently) one calibration day --- the repeat protocol is running
+and Table~\ref{tab:scaling} gains cross-day error bars as runs accumulate;
+the T9 adaptation rule is provisional.
+
+% =============================================================================
+\section{Conclusion}\label{sec:conclusion}
+\todo{Half page: the landscape is charted, the dichotomy is real, the
+registered model comparison favors per-gate decay (with the depolarizing fit
+as its physical interpretation), and the mean-payoff robustness mechanism
+suggests quantum market mechanisms degrade gracefully on NISQ devices.}
+
+\section*{Reproducibility}
+All circuits, harnesses, per-run calibration snapshots, and analysis code are
+open source at \url{https://github.com/Prithvi8706/Multiplayer-QHD-Game}
+(pinned qiskit 1.3.2 / qiskit-aer 0.14.2 / qiskit-ibm-runtime 0.36.1); every
+hardware artifact records its job id, chain, and calibration.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,57 @@
+{
+  "experiment": "noise-robustness",
+  "created_utc": "2026-07-03T02:13:37.445341+00:00",
+  "git": {
+    "commit": "cee54bdc96227e27f90b3e42774405868eb9bb16",
+    "dirty": true
+  },
+  "python": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
+  "params": {
+    "description": "RQ3: quantum advantage under a depolarizing channel (p on u, p on cx in the pinned {u, cx} basis) for GHZ / W / ring, N = 2..5, V=4, C=3, gamma=pi/2. All entanglers exact gate-level circuits (W via the T8 conjugation construction).",
+    "n_cells": 132,
+    "topologies": [
+      "ghz",
+      "ring",
+      "w"
+    ],
+    "N_values": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "V": [
+      4.0
+    ],
+    "C": [
+      3.0
+    ],
+    "gamma": [
+      "pi/2"
+    ],
+    "noise_p": [
+      0.0,
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045,
+      0.05
+    ],
+    "strategy_names": [
+      "D",
+      "H",
+      "Q"
+    ],
+    "formats": [
+      "md",
+      "json",
+      "csv",
+      "plots"
+    ]
+  }
+}

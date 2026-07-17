@@ -1,0 +1,100 @@
+{
+  "registered_utc": "2026-07-16T18:25:30.397235+00:00",
+  "purpose": "Competing baseline predictors for the scaling repeats, registered before any repeat run landed. SECONDARY to the primary p_eff registration (preregistration.json, untouched). Conditional protocol: each model anchors on the day's N=3 mitigated fold-1 advantage and predicts that day's N=4/5.",
+  "pending_job_not_yet_returned": "d9chh0qneu4c739lvgb0",
+  "primary_registration": {
+    "path": "results/hardware-scaling/preregistration.json",
+    "registered_utc": "2026-07-16T17:04:36.363760+00:00"
+  },
+  "models": {
+    "cz_exponential": "advantage retention r^cz with r fit on the day's N=3 (cz counts from that run's pub_meta, fold 1)",
+    "device_model_anchored": "the run's stored device-noise-model 'noro' advantage, multiplicatively anchored on the day's N=3",
+    "constant_retention": "no-decay null: N=3's fractional deficit applied unchanged at N=4/5",
+    "transpiled_count_corrected": "item-5A (registered 2026-07-16, still before batch 2 returned): the primary p_eff depolarizing model with its 2q dose rescaled per N to the run's ACTUAL transpiled cz counts (p2_ratio = cz_N / 4(N-1)); fit on the day's N=3 mitigated fold-1 payoff by the same bisection as the primary. This is the corrected SPECIFICATION of the primary model: if it scores near cz_exponential, the model competition partially resolves into a specification error in the original fit. 1q-count and raw-vs-mitigated corrections (item-5 Part B) are explicitly deferred."
+  },
+  "judging": {
+    "sigma_predictive": {
+      "4": 0.0019876479557020027,
+      "5": 0.0019453273169776348
+    },
+    "sigma_source": "primary registration, mitigated_fold1 -- shared yardstick; model-comparison scores, not per-competitor calibrated intervals",
+    "score": "z4^2 + z5^2 per run, cumulative across repeats; lower is better; the primary p_eff model competes on the same score"
+  },
+  "run1_anchored_predictions": {
+    "anchor_A3": 0.9919331910632498,
+    "cz_fold1": {
+      "3": 6,
+      "4": 9,
+      "5": 14
+    },
+    "cz_exponential_r": 0.9986509904519102,
+    "transpiled_count_corrected_fit": {
+      "p_fit": 0.001974131840370319,
+      "p2_ratio": {
+        "3": 0.75,
+        "4": 0.75,
+        "5": 0.875
+      }
+    },
+    "4": {
+      "cz_exponential": 0.7409431665227652,
+      "device_model_anchored": 0.7442522594435643,
+      "constant_retention": 0.7439498932974373,
+      "transpiled_count_corrected": 0.7426754300920465
+    },
+    "5": {
+      "cz_exponential": 0.5887671481568136,
+      "device_model_anchored": 0.5938225437783927,
+      "constant_retention": 0.59515991463795,
+      "transpiled_count_corrected": 0.5929163327128719
+    }
+  },
+  "run1_self_check": {
+    "4": {
+      "measured_run1": 0.7384272699895833,
+      "cz_exponential": {
+        "predicted": 0.7409431665227652,
+        "delta": -0.0025158965331818495,
+        "z": -1.2657656633632983
+      },
+      "device_model_anchored": {
+        "predicted": 0.7442522594435643,
+        "delta": -0.005824989453981022,
+        "z": -2.9305941413170107
+      },
+      "constant_retention": {
+        "predicted": 0.7439498932974373,
+        "delta": -0.005522623307854024,
+        "z": -2.7784715557959707
+      },
+      "transpiled_count_corrected": {
+        "predicted": 0.7426754300920465,
+        "delta": -0.004248160102463205,
+        "z": -2.1372799394764197
+      }
+    },
+    "5": {
+      "measured_run1": 0.5831190172535277,
+      "cz_exponential": {
+        "predicted": 0.5887671481568136,
+        "delta": -0.005648130903285975,
+        "z": -2.903434735117592
+      },
+      "device_model_anchored": {
+        "predicted": 0.5938225437783927,
+        "delta": -0.010703526524865059,
+        "z": -5.502172529759482
+      },
+      "constant_retention": {
+        "predicted": 0.59515991463795,
+        "delta": -0.012040897384422378,
+        "z": -6.18965110875519
+      },
+      "transpiled_count_corrected": {
+        "predicted": 0.5929163327128719,
+        "delta": -0.009797315459344258,
+        "z": -5.036332638646074
+      }
+    }
+  }
+}

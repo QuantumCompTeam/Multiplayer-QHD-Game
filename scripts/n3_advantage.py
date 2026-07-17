@@ -17,11 +17,15 @@ Run from repo root:
   conda run -n entangled-equilibria python scripts/n3_advantage.py
 """
 
+import json
 import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+import cpu_limit  # noqa: E402,F401  (caps BLAS threads; MUST precede numpy import)
+import results_io
+from config import C as DEFAULT_C, GAMMA, V as DEFAULT_V
 from game.nash import compute_advantage
 
 N = 3
@@ -64,6 +68,34 @@ for (player, alt), info in sorted(result["deviation_check"].items()):
     )
 
 print()
+
+# Persist the full result (JSON-safe: tuple keys/profiles -> strings/lists).
+run_dir = results_io.new_run_dir("month2_n3_advantage")
+summary = {
+    "N": N,
+    "q_payoff_per_player": result["q_payoff_per_player"],
+    "q_payoff_vector": result["q_payoff_vector"],
+    "classical_ne_payoff": result["classical_ne_payoff"],
+    "classical_ne_payoff_vector": result["classical_ne_payoff_vector"],
+    "advantage": result["advantage"],
+    "advantage_vector": result["advantage_vector"],
+    "symmetric": result["symmetric"],
+    "q_is_nash": result["q_is_nash"],
+    "all_pure_nash": [list(p) for p in result["all_pure_nash"]],
+    "classical_nash_profiles": [list(p) for p in result["classical_nash_profiles"]],
+    "deviation_check": {
+        f"player{player}_{alt}": info
+        for (player, alt), info in result["deviation_check"].items()
+    },
+}
+(run_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+results_io.write_metadata(
+    run_dir,
+    "month2_n3_advantage",
+    params={"N": N, "V": DEFAULT_V, "C": DEFAULT_C, "GAMMA": GAMMA,
+            "entangler": "ghz_entangler", "strategy_set": ["D", "H", "Q"]},
+)
+print(f"  Results written to {run_dir}\n")
 
 if result["advantage"] <= 0:
     print("  CHECKPOINT FAILED: advantage <= 0.")

@@ -18,6 +18,16 @@ Worked example (N=2):
 
 This matches Statevector.probabilities() output directly — no reordering needed.
 Use index_to_bitstring(i, N) in game/payoffs.py for human-readable labels.
+
+CPU USAGE
+=========
+The entry-point scripts (and pytest, via conftest.py) import cpu_limit first,
+which caps the BLAS/OpenMP thread pools so a run does not saturate every core.
+Default is a single thread: the matrices here are tiny, so BLAS multithreading
+is pure overhead (single-threaded benchmarked ~2x faster than 14 threads).
+Raise the cap with the QHD_THREADS env var, e.g.
+  PYTHONPATH=src QHD_THREADS=4 python scripts/topology_sweep.py
+See src/cpu_limit.py.
 """
 
 import math

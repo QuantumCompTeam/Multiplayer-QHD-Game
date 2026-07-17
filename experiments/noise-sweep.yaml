@@ -1,0 +1,46 @@
+# =============================================================================
+# Month-4 RQ3 run: depolarizing-noise robustness per entanglement topology.
+#
+#   PYTHONPATH=src python scripts/run_experiment.py --config experiments/noise-sweep.yaml
+#
+# Sweeps noise p over the README §5.1 grid (0.0 → 0.05) for the RQ3 comparison
+# set — GHZ vs W (the headline) plus ring (the cheapest pairwise topology) — at
+# N = 2..5. Deliverables: per-topology 3D advantage surfaces (plots/noise/), a
+# per-(topology, N) noise-threshold p* table, and the measured GHZ-vs-W ordering
+# in report.md. Star and fully-connected at larger N are a separate long job
+# (Month-4 spec §9).
+#
+# p = 0.0 is always included: those cells run the exact noiseless statevector
+# path and must reproduce the Month-3 numbers (the correctness anchor).
+#
+# See experiments/config.yaml for full per-field documentation.
+# =============================================================================
+
+experiment:
+  name: "noise-robustness"
+  description: >-
+    RQ3: quantum advantage under a depolarizing channel (p on u, p on cx in the
+    pinned {u, cx} basis) for GHZ / W / ring, N = 2..5, V=4, C=3, gamma=pi/2.
+    All entanglers exact gate-level circuits (W via the T8 conjugation
+    construction).
+
+sweep:
+  N: [2, 3, 4, 5]
+  topologies: ["ghz", "w", "ring"]
+  strategy_names: ["D", "H", "Q"]
+  # Noise requires "fixed" (spec D4): the cooperative/nash optimizer runs on the
+  # noiseless path and would silently mismatch a noisy score.
+  strategy_mode: "fixed"
+
+game:
+  # Canonical paper parameters (README §9 headline results use V=4, C=3).
+  V: 4.0
+  C: 3.0
+  gamma: "pi/2"
+
+noise:
+  # README §5.1: p swept 0.0 → 0.05; 11 points, step 0.005.
+  p: [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035, 0.040, 0.045, 0.050]
+
+output:
+  formats: ["md", "json", "csv", "plots"]

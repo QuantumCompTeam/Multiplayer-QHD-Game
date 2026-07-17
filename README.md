@@ -60,7 +60,7 @@ The Q strategy is the key quantum insight: when both players play Q, neither can
 
 ### 3.3 Why N-Player Extension Is Non-Trivial
 
-With 2 players there is exactly 1 entanglement link and the geometry is trivially fixed. With N players, there are multiple possible connectivity patterns — and each topology produces qualitatively different interference structures, different per-player payoff distributions, and different Nash equilibria. The GHZ state creates all-or-nothing correlations; the W state distributes entanglement pairwise; ring, star, and fully-connected topologies interpolate between local and global correlation structures. Each topology corresponds to a different market architecture and generates a distinct quantum game. The landscape of how topology interacts with player count, strategy space, and noise to determine quantum advantage has not been mapped in the Hawk-Dove trading context. Charting this landscape — and identifying which topology yields the most robust cooperative equilibrium — is the central contribution of this project.
+With 2 players there is exactly 1 entanglement link and the geometry is trivially fixed. With N players, there are multiple possible connectivity patterns — and each topology produces qualitatively different interference structures, different per-player payoff distributions, and different Nash equilibria. The GHZ state creates all-or-nothing correlations; the W state distributes entanglement pairwise; ring, star, and fully-connected topologies interpolate between local and global correlation structures. Each topology corresponds to a different market architecture and generates a distinct quantum game. The landscape of how topology interacts with player count, strategy space, and noise to determine quantum advantage has not been mapped in the Hawk-Dove trading context. Charting this landscape is the central contribution of this project.
 
 ---
 
@@ -93,7 +93,7 @@ With 2 players there is exactly 1 entanglement link and the geometry is triviall
 - **Market analogy:** Circular commodity futures trading pit — each participant only interacts bilaterally with their immediate neighbours, and information propagates around the ring
 - **Key properties:**
   - Hardware-cheap: requires only N entangling gates (one per edge)
-  - Moderate noise robustness: no single-point failure, but entanglement is local rather than global
+  - No single-point failure, but entanglement is local rather than global
   - Slow information propagation: correlations between non-adjacent players are mediated through intermediate nodes
 
 ### 4.4 Star Topology
@@ -112,7 +112,7 @@ With 2 players there is exactly 1 entanglement link and the geometry is triviall
 - **Key properties:**
   - Maximum pairwise entanglement: every pair of players shares a direct entanglement channel
   - Requires O(N²) entangling gates; quadratic circuit depth growth
-  - Most noise-sensitive topology due to gate count and accumulated error
+  - Most noise-sensitive topology at its natural gate budget — a gate-count effect (O(N²) edges), not a per-gate structural one (per-gate decay rates match the other pairwise topologies; see the §9 controls bullet)
   - Most hardware-expensive; likely infeasible on near-term devices beyond N=5
 
 ---
@@ -149,7 +149,7 @@ This layer computes equilibria and produces all result figures:
 | Qiskit | Quantum circuit construction and statevector simulation | Already used in QAE project |
 | Qiskit Aer | Noise model simulation (depolarizing channel) | Month 4 noise sweep |
 | TKET (Quantinuum) | Circuit compilation to IBM heavy-hex topology | Optional; used for hardware gate count analysis |
-| Nashpy | N-player Nash equilibrium computation | `pip install nashpy` |
+| Nashpy | Reserved for 2-player cross-validation; not used in the N≥3 path, which uses direct best-response enumeration (spec §2.3) | `pip install nashpy` |
 | NetworkX | Entanglement topology graph definition → auto circuit generation | Ring/star/FC graph → Rxx gates |
 | NumPy / SciPy | Payoff tensor construction, matrix operations | Standard |
 | Matplotlib | 2D heatmaps and 3D surface plots | Key result figures |
@@ -181,20 +181,80 @@ cd entangled-equilibria
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install dependencies
-pip install qiskit qiskit-aer nashpy networkx numpy scipy matplotlib
+# Install dependencies — versions PINNED to match pyproject.toml.
+# Unpinned installs pull qiskit 2.x, which is incompatible with this code
+# (targets qiskit==1.3.2); the sign/basis conventions differ.
+pip install "qiskit==1.3.2" "qiskit-aer==0.14.2" "nashpy==0.0.19" \
+            "networkx==3.3" "numpy==1.26.4" "scipy==1.13.1" \
+            "matplotlib==3.9.2" "pyyaml>=6.0" "pylatexenc>=2.10"
 
-# Run the 2-player validation (Month 1 checkpoint)
-python src/validation/two_player_ewl.py
+# Validate the codebase — the real validation is the test suite
+  pytest tests/ -v
+# Expected: all tests pass
 
-# Run the full topology sweep (Month 3)
-python src/analysis/topology_sweep.py --n_min 2 --n_max 6
+# Run the Month 2 result (N=3 quantum advantage)
+python scripts/n3_advantage.py
+# Expected: advantage = 1.0, (Q₃,Q₃,Q₃) is the unique pure Nash equilibrium
 
-# Run the noise analysis (Month 4)
-python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
+# Month 4 — noise robustness (RQ3): depolarizing p swept 0.0 → 0.05
+PYTHONPATH=src python scripts/run_experiment.py --config experiments/noise-sweep.yaml
+# Writes results/noise-robustness/<UTC-timestamp>/ with the p* table,
+# GHZ-vs-W ordering, and per-topology 3D advantage surfaces (plots/noise/)
 ```
 
-> **Note:** Scripts are placeholders until each month's work is complete. The repo will be updated as the project progresses.
+### 8.1 Configurable Experiment Harness (tweak → run → read)
+
+For exploratory runs you don't have to edit any Python. Tweak one config file,
+run one command, and read a self-contained report.
+
+1. **Tweak** `experiments/config.yaml` — set the players `N`, the entanglement
+   `topologies` (`ghz`, `ring`, `star`, `fully-connected`, `w`), the game
+   parameters `V`/`C`/`gamma`, and which `output` formats to write. Any field
+   given as a *list* becomes a sweep axis; the run evaluates the full cartesian
+   product (e.g. `gamma: ["pi/2", "pi/4"]` sweeps entanglement strength).
+
+2. **Run**:
+   ```bash
+   PYTHONPATH=src python scripts/run_experiment.py
+   # or point at a different config:
+   PYTHONPATH=src python scripts/run_experiment.py --config experiments/config.yaml
+   ```
+
+3. **Read** the timestamped run under `results/<name>/<UTC-timestamp>/`:
+   - `report.md` — human-readable summary table, an auto-generated **Findings**
+     section, and per-cell deviation tables (with per-player vectors for
+     asymmetric topologies like star).
+   - `results.json` / `results.csv` — machine-readable results.
+   - `plots/advantage_vs_N.png`, `plots/topology_heatmap.png`.
+   - `plots/topologies/*.png` — **qubit-topology diagrams** (one per topology,
+     across the swept N) and the EWL circuit per N. Embedded under the report's
+     **Entanglement topologies** section so you can see exactly which topology
+     each result used. GHZ/W (global N-body entanglers) are drawn with a distinct
+     shaded depiction, never as a plain complete graph.
+   - `config.snapshot.yaml` + `metadata.json` — exact parameters and git
+     provenance for reproducibility.
+
+   A non-positive advantage or a non-Nash `(Q,...,Q)` is reported as a **finding,
+   not a bug** — the harness surfaces it rather than hiding it.
+
+> This harness generalizes `scripts/n3_advantage.py` (one fixed N=3 GHZ run) and
+> `scripts/topology_sweep.py` (a fixed topology × N matrix) into a single
+> parameter-driven entry point with a readable report.
+
+### 8.2 Visualize a topology on demand
+
+To draw a single entanglement topology (and/or its EWL circuit) without running a
+full sweep:
+
+```bash
+PYTHONPATH=src python scripts/draw_topology.py --topology star --N 5
+PYTHONPATH=src python scripts/draw_topology.py --topology ghz --N 4 --what both
+PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6 --out /tmp/diag
+```
+
+`--topology` accepts the harness aliases (`full` → `fully-connected`, etc.),
+`--what` is `graph`, `circuit`, or `both` (default), and output defaults to a
+`results/topology_diagrams/<UTC-timestamp>/` folder.
 
 ---
 
@@ -202,12 +262,213 @@ python src/analysis/noise_sweep.py --p_max 0.05 --steps 10
 
 | Result | Status | Notes |
 |---|---|---|
-| 2-player EWL validation | 🔄 In Progress | Reproducing Khan et al. (2025) baseline |
-| N=3 GHZ quantum advantage | ⏳ Pending | Month 2 |
-| Full topology × N heatmap | ⏳ Pending | Month 3 |
-| Noise robustness surface | ⏳ Pending | Month 4 |
-| IBM hardware validation | ⏳ Pending | Month 5 (optional) |
-| arXiv preprint | ⏳ Pending | Month 6 |
+| 2-player EWL validation | Complete | Q is Nash @ payoff (2,2) for V=4, C=3; 21/21 tests pass |
+| N=3 GHZ quantum advantage | Complete | Advantage = 1.0 (4/3 quantum NE vs 1/3 classical NE); Q_N = U(0,π/N,π/N) |
+| Full topology × N heatmap | Complete | 5 topologies × N=2–6; GHZ/ring/FC/W symmetric, star asymmetric for N≥4; advantage matrix + heatmap regression-tested (`scripts/topology_sweep.py`, `tests/test_topology_sweep.py`) |
+| Noise robustness surface | Complete | Depolarizing p=0→0.05, GHZ/W/ring, N=2–5; measured p* per (topology, N) + 3D surfaces; two criteria diverge — GHZ's cooperative equilibrium loses pure-NE status at finite p at N=3 (the only N≥3 where (Q,…,Q) is a pure NE at p=0; the N=4,5 † thresholds are advantage-zero crossings), while GHZ keeps the *largest* mean advantage at small N and W keeps a positive-but-small mean advantage across the grid (exact gate-level W, T8); orderings are properties of the production circuits at their gate budgets (see the controls bullet in the findings); 22 collected noise tests (`experiments/noise-sweep.yaml`, `tests/test_noise.py`) |
+| IBM hardware validation | Complete | N=3 GHZ Q-profile on **ibm_fez** (Heron r2), 4096 shots: measured advantage **0.9978** vs 1.0 ideal; 3911/4096 shots in \|000⟩. Hand-built J keeps it to 6 two-qubit gates. `results/hardware-n3/2026-07-16T013912Z/` |
+| Hardware scaling N=3–5 + error mitigation | Complete | One pinned chain on **ibm_fez**, one batch job: measured advantage (raw/ZNE) **0.992/0.994** (N=3), **0.739/0.740** (N=4), **0.584/0.589** (N=5) vs ideals 1.0/0.75/0.6. Readout-mitigation (tensored, M3-style) + ZNE (cz folding); device-model + fit-one-predict-two depolarizing predictions (p_eff=0.0018 fit at N=3 predicts N=4 to 0.004, N=5 to 0.010 — the registered primary prediction; its N=5 miss is ≈−5σ and reproduced in run 2, and the registered cz-exponential baseline leads the five-model competition in both runs, scores 7.4 and 10.0 (`results/hardware-scaling/repeat-judgments.json`)). `results/hardware-scaling/2026-07-16T074134Z/`, `experiments/hardware_scaling.py` |
+| arXiv preprint | Pending | Month 6 |
+
+### Month 2 — N=3 Quantum Advantage
+
+- Quantum strategy generalises: **Q_N = U(0, π/N, π/N)** (not fixed U(0, π/2, π/2))
+- (Q₃, Q₃, Q₃) payoff: **4/3 per player** — unique pure Nash equilibrium
+- Classical NE payoff: **1/3 per player** (all-Hawk tragedy)
+- Quantum advantage: **1.0 per player** (NE-vs-NE framing)
+- Scientific claim: quantum makes cooperation (4/3) the *only* equilibrium.
+  Classical cooperation is achievable but unstable; quantum cooperation is self-enforcing.
+
+### Month 4 — Noise Robustness (RQ3)
+
+Depolarizing sweep p = 0 → 0.05 (11 points) on the gate-level noisy path
+(pinned {u, cx} basis, exact density-matrix simulation; p on every `u`, p on
+every `cx`), GHZ / W / ring at N = 2–5, V=4, C=3, γ=π/2, fixed Q strategy.
+All entanglers are exact gate-level circuits — W via the T8 conjugation
+construction (prep-cascade + anti-controlled RX; 44 cx per J at N=4, 68 at
+N=5, vs 100/444 for the retired transpiled-unitary fallback).
+Full run: `results/noise-robustness/2026-07-03T0213Z/` (config:
+`experiments/noise-sweep.yaml`).
+
+Throughout this section "advantage" means the **mean over players** (the
+§5.2 metric averaged across the N players). Depolarizing noise breaks player
+symmetry for **every N ≥ 3 cell (all three topologies) and for N=2 W**, so for
+those cells the mean can stay positive while some individual players fall below
+classical — see the per-player caveat in the findings. It does **not** break
+symmetry for **N=2 GHZ and N=2 ring**, which stay player-symmetric at every
+noisy p (identical per-player payoffs, spread 0): by the same gate-ordering
+mechanism as the ring N=5 finding below, their N=2 noisy circuits load noise
+equally on both qubits, whereas W's directional prep circuit does not.
+(`symmetric` is a tolerance test — `np.allclose(vec, vec[0], atol=1e-8)` in
+`game/nash.py` — so these `True` flags are genuine symmetry, not a
+floating-point near-miss registering as equal.)
+
+**Measured noise thresholds p\*** — smallest p at which a series loses its
+mean advantage (advantage ≤ 0, linearly interpolated) or (Q,…,Q) stops being a
+pure Nash equilibrium, whichever first:
+
+| topology | N=2 | N=3 | N=4 | N=5 |
+|---|---|---|---|---|
+| GHZ | > 0.05 | 0.0450 | 0.0197 † | 0.0098 † |
+| ring | > 0.05 | > 0.05 | 0.0000 † | > 0.05 † |
+| W | > 0.05 † | > 0.05 † | > 0.05 † | > 0.05 † |
+
+† = (Q,…,Q) is not a pure NE at any swept p for that series with the fixed
+GHZ-derived Q — a Month-3 finding about the topology, not noise fragility; for
+those series p* reflects the advantage criterion alone. (Ring N=4's p*=0 is the
+known noiseless zero-advantage dip, not a noise effect.)
+
+Findings (measured, with caveats):
+
+- **Topology-vs-implementation controls (2026-07-16): the orderings below are
+  largely circuit architecture, not entanglement topology.** Gate-count-matched
+  and compilation-varied controls (`scripts/topology_noise_controls.py`, data
+  `results/topology-controls/2026-07-16T172737Z/`) show the per-cx advantage
+  decay rates are indistinguishable across GHZ/ring/star/fully-connected
+  (λ/cx ≈ 2.1–2.7 at every N), so their robustness ordering tracks the
+  2q-gate budget of the chosen synthesis; the N≥4 advantage cliffs are
+  classical-NE switches whose timing moves with compilation (GHZ N=4 at
+  p=0.02: −0.03 production vs +0.44 at opt-level 3, same unitary). W is the
+  genuine structural outlier — ~2.5× more robust *per gate* (λ/cx ≈ 0.8–1.0),
+  inverting its last-place absolute standing — and the measured p\* values are
+  budget-dependent, not topology constants. Read "X is more robust than Y"
+  below as "X's production circuit at its natural gate budget is more robust
+  than Y's". Per-claim verdicts:
+  `docs/findings/2026-07-16-topology-vs-implementation-controls.md`.
+- **Two criteria give different orderings — state which you mean.** Under the
+  *Nash-equilibrium* criterion, GHZ's cooperative equilibrium is fragile:
+  (Q,…,Q) is a pure NE at p=0 only for GHZ N=2,3, and at N=3 it stops being
+  one at finite noise (between p=0.04 and 0.045). At N=4,5 (Q,…,Q) is not a
+  pure NE even at p=0 (the Month-3 finding; † rows), so the GHZ p* values
+  there (≈0.0197, ≈0.0098) are advantage-zero crossings, not equilibrium
+  losses. For W and
+  ring the fixed GHZ-derived Q is *never* a strict pure NE, even at p=0, so the
+  Nash criterion does not apply to them (the † rows). Under the
+  *advantage-magnitude* criterion the picture flips: at N=3 GHZ retains the most
+  mean advantage at p=0.05 (0.333 — 33% of its noiseless value) versus ring
+  0.200 (20%) and W 0.047 (9%). So "GHZ degrades fastest" (the §4.1 hypothesis)
+  holds for the *equilibrium*, not for advantage magnitude at small N.
+- **W keeps a positive mean advantage across the whole grid, but the mean hides
+  per-player losses.** W's mean advantage decays monotonically (N=4: 0.375 →
+  0.011; N=5: 0.300 → 0.0013 across p=0 → 0.05) and never crosses zero. But
+  noise breaks symmetry, so at N=5 two of the five players have *negative*
+  advantage from p=0.01 on (worst −0.077 at p=0.015): the surviving "W
+  advantage" is a mean over winners and losers, not a per-player guarantee. Ring
+  N=5 likewise has one player just negative (−0.003) at p=0.05, and that
+  disadvantaged player is **position-locked** — a confirmed gate-ordering effect,
+  not a bug. A wiring-permutation test (`scripts/asymmetry_diagnostics.py`, ring
+  N=5) shows the loser follows the entangler's *circuit position*: cyclically
+  shifting the wiring rigidly permutes the whole per-player payoff vector with it
+  (deviation ≈1e-16), and applying the same depolarizing weight to the *ideal
+  final state* instead of per-gate collapses the per-player spread to ~0. So the
+  asymmetry lives on the gate-level implementation (gate ordering), not on the
+  ideal state or the player label — consistent with the Week-1 permutation-test
+  finding.
+- **Mechanism at N ≥ 4:** noise kills GHZ's mean advantage mainly by *raising
+  the classical baseline* — at N=4 the best classical NE payoff jumps from 0.47
+  to 0.98 between p=0.015 and p=0.02 (the classical equilibrium set restructures
+  under noise), flipping the advantage negative rather than the quantum payoff
+  merely decaying.
+- **A retired-circuit artifact, superseded.** The earlier run
+  (`results/noise-robustness/2026-07-02T1212Z/`, transpiled-unitary W, 100–444
+  cx per J at N=4–5) reported "W saturates to the maximally-mixed payoff" and a
+  W N=5 threshold p\*=0.0294. Both were artifacts of that synthesis circuit: the
+  p\*=0.0294 was interpolated between mean advantages of +1.5e-10 and −2.0e-11
+  on a fully depolarized state (numerical noise, not a physical crossing). With
+  the exact T8 circuit (44–68 cx) W does not saturate; that run is superseded by
+  the cited `2026-07-03T0213Z`.
+- **Ring holds the largest positive mean advantage at N=5:** 0.60 → 0.059 across
+  the grid, mean strictly positive throughout (per-player caveat above applies
+  at p=0.05), while GHZ N=5's mean goes negative from p≈0.01 and W N=5 decays to
+  ≈0.001.
+- GHZ retains the largest absolute mean advantage under noise at small N: 0.73
+  (N=2) and 0.33 (N=3) at p=0.05; (Q,Q,Q) stays a pure NE for GHZ N=3 through
+  p=0.04 and loses it at p=0.045 (the Nash-flip resolution is the 0.005 grid
+  step, not interpolated).
+
+#### Exploratory follow-up — T9 adaptation & fairness (PROVISIONAL, not a locked result)
+
+A pilot asks whether letting each player **adapt** their strategy under noise
+restores the per-player fairness that the fixed (Q,…,Q) profile loses. For W
+N=4 the answer is **no**: independent best-response adaptation equalizes only by
+collapsing welfare (p=0: mean 1.00→0.51), fails to converge into a limit cycle
+(p=0.02), or barely moves anything (p=0.05) — consistent with the disadvantage
+being a *structural* property of the entangler (cf. the position-locked ring N=5
+result above), not a coordination failure players adapt away. The adaptation
+rule is a provisional modeling choice pending review, so this is **kept out of
+the results table above**. Full writeup:
+[`docs/findings/2026-07-05-t9-adaptation-fairness.md`](docs/findings/2026-07-05-t9-adaptation-fairness.md).
+
+### Month 5 — Hardware Validation (N=3 GHZ)
+
+The N=3 GHZ quantum advantage reproduces on a **real quantum computer**, not just
+in simulation. The validated Q-profile circuit was run on **ibm_fez** (an IBM
+Heron r2, 156-qubit superconducting device) with 4096 shots:
+
+- **Measured advantage = 0.9978** against the noiseless ideal of 1.0 — a gap of
+  just 0.0022, attributable to device noise.
+- **3911 / 4096 shots (95.5%) landed in \|000⟩**, exactly the output the ideal
+  (Q,Q,Q) profile should produce; the largest error bin was \|011⟩ at 2.8%.
+- Per-player payoffs `[1.351, 1.340, 1.303]` (ideal V/N = 1.333); the small
+  spread is per-qubit error-rate variation on the physical device.
+- The **hand-built J** decomposition keeps the entangler to **6 two-qubit gates**
+  (vs ~35 for generic QSD synthesis), which is what makes a result this clean
+  achievable on NISQ hardware.
+
+Verified end-to-end: two safety gates (an 8×8 circuit-identity assertion and a
+noiseless Aer dry-run reproducing advantage = 1.0) run before any submission, so
+credits are never spent on a wrong circuit. Result artifact + figure:
+`results/hardware-n3/2026-07-16T013912Z/` (`result.json`, `plots/`). Pipeline:
+`experiments/hardware_n3_ghz.py --hardware`; recover a queued job by ID with
+`experiments/fetch_result.py <job_id>`.
+
+![N=3 GHZ hardware validation on ibm_fez](results/hardware-n3/2026-07-16T013912Z/plots/hardware_n3_validation.png)
+
+### Month 5/6 — Hardware Scaling (N=3,4,5) with Error Mitigation
+
+The scaling curve on real hardware, all three N on prefixes of ONE pinned
+5-qubit chain ([59,75,74,73,79] on ibm_fez, chosen by calibration error), in a
+single 11-pub batch job (readout calibrations + cz-fold ZNE circuits):
+
+| N | ideal advantage | measured raw | readout-mit + ZNE | P(\|0…0⟩) |
+|---|---|---|---|---|
+| 3 | 1.00 | 0.9919 | 0.9938 | 0.938 |
+| 4 | 0.75 | 0.7386 | 0.7403 | 0.922 |
+| 5 | 0.60 | 0.5837 | 0.5887 | 0.868 |
+
+Findings (runs 1–2; repeats accumulate cross-day error bars):
+
+- **Fit-one-predict-two:** a single depolarizing p_eff = 0.0018 fitted to the
+  N=3 mitigated point alone predicts N=4 to 0.004 and N=5 to 0.010 of the
+  measured advantage. p_eff is the registered primary prediction
+  (`results/hardware-scaling/preregistration.json`), but its N=5 miss
+  (−0.010, ≈−5σ of the registered predictive interval) is statistically
+  significant and reproduced in run 2; in the registered five-model
+  competition the cz-exponential baseline leads both runs (scores 7.4 and
+  10.0) with p_eff third — p_eff serves as the physical interpretation of
+  the per-gate decay, not the headline law (protocol:
+  `docs/findings/2026-07-16-preregistered-baseline-competitors.md`; outcomes:
+  `results/hardware-scaling/repeat-judgments.json`).
+- **The advantage is far more noise-robust than the state.** P(|0…0⟩) drops
+  ~3× faster than the advantage because the mean-payoff observable is
+  first-order insensitive to single bit-flips from |0…0⟩: a one-Hawk outcome
+  still has mean payoff V/N. Readout mitigation therefore barely moves the mean
+  (it mainly redistributes per-player payoffs); ZNE, which targets the
+  correlated cz errors that create ≥2-Hawk outcomes, improves all three N.
+- **Honesty:** advantage = cooperative (Q,…,Q) payoff minus the analytic
+  noiseless classical NE (1/3, 1/4, 1/5); (Q,…,Q) is a pure NE **only at N=3**
+  (at N=4,5 a unilateral Hawk deviation profits in the noiseless game — the
+  Month-3 finding). The hardware curve measures the cooperative profile, not an
+  equilibrium claim at N=4,5.
+
+Pipeline gates (all must pass before any submission): per-N circuit-identity
+assertion vs the dense J†·(U⊗…⊗U)·J reference, noiseless Aer dry-run
+reproducing `compute_advantage(N)` exactly, and a full dress rehearsal of the
+batch + mitigation analysis on the device noise model. Repeat protocol:
+`python experiments/hardware_scaling.py --hardware` on later days;
+`scripts/plot_hardware_scaling.py` aggregates every run (mean ± std).
+
+![N=3,4,5 hardware scaling on ibm_fez](results/hardware-scaling/2026-07-16T074134Z/plots/hardware_scaling.png)
 
 ---
 
