@@ -2,6 +2,26 @@
 
 Deferred work with enough context to pick up cold. Ordered newest-first.
 
+## Item-11 residue: ibm_marrakesh attribution on the N=3 gate counts
+
+Two docstrings still attribute the N=3 entangler two-qubit-gate counts to
+ibm_marrakesh:
+
+- `experiments/hardware_n3_ghz.py:62` — "6 two-qubit gates on ibm_marrakesh vs
+  35 for generic QSD"
+- `experiments/hand_built_j.py:8` — "cutting the ibm_marrakesh CZ count
+  (35 QSD -> 6)"
+
+**Deliberately not edited.** The N=3 GHZ validation run went to ibm_fez
+(c0a141f), but the files do not settle whether these counts were genuinely
+measured against marrakesh during early prototyping — in which case the
+attribution is correct and merely predates the move to fez — or whether the
+backend name is stale. Resolving it needs the early transpile record.
+
+Surfaced 2026-07-17 by a repo-wide `marrakesh` grep during the run-2 findings
+writeup. `docs/` is clean; the only other hits are vendored qiskit
+`fake_provider` files under `.venv-win/`.
+
 ## Device-noise (T1/T2) version of the topology controls
 
 **What:** Re-run the topology-vs-implementation control study
