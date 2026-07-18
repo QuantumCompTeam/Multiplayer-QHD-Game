@@ -150,3 +150,15 @@ conda run -n entangled-equilibria python scripts/topology_noise_controls.py
 Gates: locked-CSV anchor (12 cells), dense-unitary equivalence for every
 realization variant, exact nulls for mapping and depth. `--smoke` runs an
 N=3-only version in ~2 minutes.
+
+---
+
+**Editorial note (2026-07-18, item-11 stale-claim audit):** the L2 verdict
+header quotes the locked claim as "NE-criterion thresholds (GHZ p\* = 0.045
+at N=3, 0.0197 at N=4, 0.0098 at N=5)". That is the pre-correction README
+§9 phrasing this study audited, quoted verbatim. Corrected framing (see
+`docs/findings/2026-07-17-item11-stale-claim-audit.md`): with the fixed
+GHZ-derived Q, (Q,…,Q) is a pure NE at N=2,3 only, so the N=4/5 values are
+advantage-zero crossings (the Nash-flip criterion is inert there); only the
+N=3 value 0.045 is an NE-criterion threshold. The study body is unaffected —
+its own L2 analysis already scopes NE language to N=3.

@@ -300,8 +300,9 @@ p^{*}=\min\Big\{\,p:\ \text{advantage}(p)\le 0\ \text{(linear interpolation)}
 $$
 
 A series that survives the whole grid reports `p* > p_max`; a series that was
-never Nash at any swept `p` (fixed-mode `Q_GHZ` on a non-GHZ topology) reports
-`p*` from the advantage criterion alone, with the never-Nash fact footnoted.
+never Nash at any swept `p` (fixed-mode `Q_GHZ` on a non-GHZ topology, and GHZ
+itself at N ≥ 4) reports `p*` from the advantage criterion alone, with the
+never-Nash fact footnoted.
 
 ---
 

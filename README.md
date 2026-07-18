@@ -444,9 +444,9 @@ Findings (runs 1–2; repeats accumulate cross-day error bars):
   (`results/hardware-scaling/preregistration.json`), but its N=5 miss
   (−0.010, ≈−5σ of the registered predictive interval) is statistically
   significant and reproduced in run 2; in the registered five-model
-  competition the cz-exponential baseline leads both runs (scores 7.4 and
-  10.0) with p_eff third — p_eff serves as the physical interpretation of
-  the per-gate decay, not the headline law (protocol:
+  competition the cz-exponential baseline leads both runs (scores 10.0 and
+  7.4 in runs 1 and 2) with p_eff third — p_eff serves as the physical
+  interpretation of the per-gate decay, not the headline law (protocol:
   `docs/findings/2026-07-16-preregistered-baseline-competitors.md`; outcomes:
   `results/hardware-scaling/repeat-judgments.json`).
 - **The advantage is far more noise-robust than the state.** P(|0…0⟩) drops
@@ -507,7 +507,7 @@ This project is licensed under the MIT License.
   title        = {Entangled Equilibria: Entanglement Topology and Nash Equilibria in N-Player Financial Markets},
   author       = {Prithvi Raghu and Aasa Singh Bhui},
   year         = {2026},
-  note         = {Undergraduate research project, VIT Chennai. arXiv preprint forthcoming.},
+  note         = {Undergraduate research project, VIT Vellore. arXiv preprint forthcoming.},
   url          = {https://github.com/YOUR_USERNAME/entangled-equilibria}
 }
 ```

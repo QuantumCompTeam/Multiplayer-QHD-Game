@@ -385,7 +385,7 @@ def reduce_noise_model(nm: NoiseModel, active: list[int]) -> NoiseModel:
     return NoiseModel.from_dict({"errors": kept})
 
 
-# ── predictions (independent of the hardware counts) ───────────────────────────
+# ── predictions (computed without reference to the N=4/5 counts being predicted) ──
 
 
 def device_predictions(plan: dict, backend, refs: dict,

@@ -86,7 +86,7 @@ Q: StrategyParams = (0.0, math.pi / 2, math.pi / 2)  # N=2 quantum Nash strategy
 
 
 def q_strategy(N: int) -> StrategyParams:
-    """Return the N-player quantum Nash equilibrium strategy Q_N = U(0, pi/N, pi/N).
+    """Return the N-player GHZ-derived quantum strategy Q_N = U(0, pi/N, pi/N).
 
     Under the J_N(pi/2) entangler (X^(x)N formula), the symmetric strategy that
     collapses the post-J state back to |00...0> after J_dag is the phase-only gate
@@ -104,14 +104,15 @@ def q_strategy(N: int) -> StrategyParams:
       preserved up to global phase, and J_N_dag recovers |00...0>.
 
     Payoff: all-Dove outcome with probability 1 -> V/N per player.
-    This is a Nash equilibrium: any unilateral deviation to D or H yields
-    strictly less than V/N (verified numerically by compute_advantage).
+    This is a pure Nash equilibrium at N=2,3 only: for N >= 4 a unilateral
+    Hawk deviation beats V/N (2.0 vs 1.0 at N=4, 2.618 vs 0.8 at N=5 —
+    Month-3 finding, verified numerically by compute_advantage).
 
     Scales as: N=2 -> U(0, pi/2, pi/2) = Q (the classic EWL result).
                N=3 -> U(0, pi/3, pi/3)
                N=k -> U(0, pi/k, pi/k)
 
-    FINDING (paper-worthy): the quantum Nash strategy scales as pi/N.
+    FINDING (paper-worthy): the quantum strategy scales as pi/N.
     The N=2 strategy Q is not universal — it fails for N>2 under the X^(x)N
     entangler because 2*(pi/2) = pi but 3*(pi/2) ≠ pi. This was discovered
     during Month-2 simulation (simulation result, not prior assumption).
