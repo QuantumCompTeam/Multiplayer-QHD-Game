@@ -7,6 +7,7 @@ __pycache__/
 # Virtual environments
 venv/
 .venv/
+.venv-win/
 env/
 .env
 .env.*
@@ -38,6 +39,10 @@ htmlcov/
 .idea/
 *.swp
 *.swo
+
+# Agent tooling / local session state
+.claude/
+.context/
 
 # OS cruft
 .DS_Store
