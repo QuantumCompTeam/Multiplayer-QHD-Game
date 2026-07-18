@@ -9,13 +9,13 @@ path uses direct best-response enumeration (see find_pure_nash). Nashpy remains 
 pinned dependency, reserved for future 2-player cross-validation (spec §2.3).
 
 The "Q" label in strategy_names refers to q_strategy(N) = U(0, pi/N, pi/N),
-the N-appropriate quantum Nash strategy, NOT the fixed U(0, pi/2, pi/2) which
+the N-appropriate quantum strategy, NOT the fixed U(0, pi/2, pi/2) which
 is only valid at N=2.  See ewl.q_strategy for the derivation.
 
 Public API:
   build_payoff_tensor  -- evaluate all strategy profiles, return payoff dict
   find_pure_nash       -- identify pure Nash equilibria by best-response check
-  compute_advantage    -- quantum NE payoff vs classical NE payoff (RQ1)
+  compute_advantage    -- Q-profile payoff vs classical NE payoff (RQ1)
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ def _strategy_map(
 ) -> dict[str, StrategyParams]:
     """Map strategy names to (theta, alpha, beta) parameter tuples for N players.
 
-    "Q" is q_strategy(N) = U(0, pi/N, pi/N), the N-appropriate quantum Nash
+    "Q" is q_strategy(N) = U(0, pi/N, pi/N), the N-appropriate quantum
     strategy for the GHZ entangler.  Classical strategies D and H are
     N-independent.
 

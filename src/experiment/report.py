@@ -265,9 +265,10 @@ def _noise_findings(results: list[CellResult]) -> list[str]:
         lines += [
             "",
             "† (Q,…,Q) is not a pure Nash equilibrium at ANY swept p for this "
-            "series — with the fixed GHZ-derived Q this is a Month-3 finding "
-            "about the topology, not noise fragility. The Nash-flip criterion "
-            "is inert; p* reflects the advantage ≤ 0 criterion only.",
+            "series — with the fixed GHZ-derived Q this is a Month-3 fixed-mode "
+            "finding (non-GHZ topologies, and GHZ itself at N >= 4), not noise "
+            "fragility. The Nash-flip criterion is inert; p* reflects the "
+            "advantage ≤ 0 criterion only.",
         ]
 
     # GHZ-vs-W ordering — the RQ3 headline, read off the measured p* values.
@@ -278,7 +279,9 @@ def _noise_findings(results: list[CellResult]) -> list[str]:
     if ns_both:
         lines += [
             "",
-            "**GHZ vs W noise robustness (RQ3 headline — measured, not assumed):**",
+            "**GHZ vs W noise robustness (RQ3 headline — measured, not assumed; "
+            "at production gate budgets — see "
+            "docs/findings/2026-07-16-topology-vs-implementation-controls.md):**",
         ]
         for n in ns_both:
             g, w = by_canon[("ghz", n)], by_canon[("w", n)]
@@ -403,7 +406,7 @@ def _cell_detail(r: CellResult) -> list[str]:
     lines += [
         f"- {_profile_str(q)} mean per-player payoff: **{res['q_payoff_per_player']:.6f}**",
         f"- Classical NE mean payoff: **{res['classical_ne_payoff']:.6f}**",
-        f"- Advantage (QNE − CNE, mean): **{res['advantage']:.6f}**",
+        f"- Advantage (Q-profile − classical NE, mean): **{res['advantage']:.6f}**",
         f"- {_profile_str(q)} is pure Nash: **{res['q_is_nash']}**",
         f"- Player-symmetric: **{res['symmetric']}**",
         "",

@@ -107,7 +107,7 @@ def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> s
                 alpha=0.8, markersize=6, zorder=style["zorder"])
     ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
     ax.set_xlabel("N (players)")
-    ax.set_ylabel("quantum advantage (QNE − CNE)")
+    ax.set_ylabel("quantum advantage (Q-profile − classical NE)")
     ax.set_title("Quantum advantage vs N")
     _legend_outside(ax)
     ax.grid(True, alpha=0.3)
@@ -199,7 +199,7 @@ def _advantage_vs_gamma(ok: list[CellResult], vary: dict[str, bool], out: Path) 
     ax.set_xticks(ticks, [f"{t / math.pi:.2f}π" for t in ticks])
     ax.set_xlim(left=0.0)  # start the γ axis at the origin (no-entanglement baseline)
     ax.set_xlabel("entanglement γ (radians)")
-    ax.set_ylabel("quantum advantage (QNE − CNE)")
+    ax.set_ylabel("quantum advantage (Q-profile − classical NE)")
     ax.set_title("Quantum advantage vs entanglement γ\n(filled = (Q,..,Q) is Nash)")
     _legend_outside(ax)
     ax.grid(True, alpha=0.3)
@@ -270,8 +270,9 @@ def extract_pstar(
     whichever happens at the smaller p. A series that was never Nash at any
     swept p has nothing to "stop" being — the Nash criterion is inert there and
     p* is governed by the advantage crossing alone (the caller should surface
-    the never-Nash fact separately; it is a Month-3 fixed-mode finding, not
-    noise fragility). Returns None when the advantage survives the whole grid
+    the never-Nash fact separately; it is a Month-3 fixed-mode finding
+    (non-GHZ topologies, and GHZ itself at N >= 4), not noise fragility).
+    Returns None when the advantage survives the whole grid
     (report as "> p_max", a finding, not a failure).
 
     Pure logic on already-computed series; feeds the published p* table. The
@@ -381,7 +382,7 @@ def _per_player_advantage(ok: list[CellResult], plots_dir: Path) -> list[str]:
         ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
         ax.set_xticks(x, [str(n) for n in ns])
         ax.set_xlabel("N (players)")
-        ax.set_ylabel("quantum advantage (QNE − CNE)")
+        ax.set_ylabel("quantum advantage (Q-profile − classical NE)")
         ax.set_title(
             f"Per-player advantage — {topo} (asymmetric: hub vs leaf)"
         )

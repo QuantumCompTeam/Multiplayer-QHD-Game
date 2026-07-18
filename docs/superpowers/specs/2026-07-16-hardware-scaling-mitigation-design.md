@@ -13,8 +13,8 @@ pipeline.
 
 1. **Scaling:** measured (Q,…,Q) cooperative-profile payoff and advantage at
    N = 3, 4, 5 (GHZ) on real hardware, on one pinned qubit chain.
-2. **Prediction:** two simulation predictions per N, computed from data
-   *independent of the hardware counts*:
+2. **Prediction:** two simulation predictions per N, computed without
+   reference to the N=4/5 counts being predicted:
    (a) device noise model (qiskit-aer `NoiseModel.from_backend`, reduced to the
    executed qubits) and (b) the repo's Month-4 depolarizing path with a single
    effective p fitted at N=3 only → predicts N=4,5 (fit-one-predict-two).
@@ -84,3 +84,12 @@ result is the *decay curve matching prediction*, not survival alone.
   intercept of synthetic linear/exponential decay; chain scorer picks the known
   best path on a toy graph.
 - Full existing suite must stay green (94+ tests).
+
+---
+
+**Changelog:** 2026-07-17 (item-11 stale-claim audit) — §1 Goal 2 corrected.
+As approved (2026-07-16) it read "computed from data *independent of the
+hardware counts*"; prediction (b) is fit-one-predict-two, fitted to the run's
+own N=3 hardware point, so it is independent only of the N=4/5 counts it
+predicts. Corrected to "computed without reference to the N=4/5 counts being
+predicted".

@@ -3,7 +3,7 @@
 Runs compute_advantage(N=3) and prints:
   - (Q,Q,Q) per-player payoff  [Q = q_strategy(3) = U(0, pi/3, pi/3)]
   - classical Nash equilibrium payoff  [from restricted {D,H}^3 game]
-  - advantage = quantum NE - classical NE
+  - advantage = Q-profile - classical NE
   - whether (Q,Q,Q) is a pure Nash equilibrium
   - all pure Nash equilibria in {D,H,Q}^3
   - classical pure NE profiles found in {D,H}^3
@@ -38,7 +38,7 @@ print("=" * 60)
 
 print(f"\n  (Q,Q,Q) per-player payoff  : {result['q_payoff_per_player']:.6f}")
 print(f"  Classical NE payoff        : {result['classical_ne_payoff']:.6f}")
-print(f"  Advantage (QNE - CNE)      : {result['advantage']:.6f}")
+print(f"  Advantage (Q-profile - CNE): {result['advantage']:.6f}")
 print(f"  (Q,Q,Q) is pure Nash       : {result['q_is_nash']}")
 
 print(f"\n  Classical pure NE profiles in {{D,H}}^{N}:")
