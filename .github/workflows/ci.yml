@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 3.10 matches the canonical entangled-equilibria conda env (3.10.20).
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      # Install the pinned stack FROM pyproject.toml rather than a duplicated
+      # list here, so the pins cannot drift between the two files.
+      - name: Install pinned dependencies
+        run: |
+          pip install tomli
+          python -c "import tomli; d = tomli.load(open('pyproject.toml', 'rb')); open('ci-reqs.txt', 'w').write('\n'.join(d['project']['dependencies']))"
+          pip install -r ci-reqs.txt pytest
+      # The suite includes the N=4/N=5 NE regression guard (tests/test_ne_guard.py,
+      # G9) and the doc-anchor checker (tests/test_doc_anchors.py, G13).
+      - name: Run test suite
+        env:
+          MPLBACKEND: Agg
+        run: pytest -q
