@@ -60,6 +60,10 @@ recover with `--from-job <id>`.
   distinct execution, NOT a distinct calibration day. Before counting a
   future run toward the 3–5 cross-day target, check its calibration stamp
   differs (the judge flags `distinct_calibration_vs_previous_runs`).
+  As of item 16 (2026-07-19), submission writes
+  `pending-<jobid>-calibration.json` and the run dir gains
+  `calibration_at_submit.json`; use that stamp for cross-day counting, not
+  the analysis-time `calibration.json` (G15).
 
 **Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
 variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.
