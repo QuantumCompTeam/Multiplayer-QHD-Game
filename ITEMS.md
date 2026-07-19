@@ -29,5 +29,5 @@ item.
 | 15 | Locale and cp1252 | open — test fix done (3c5c39a); phase-1 line-ending report recorded 2026-07-19 | — | TODOS.md, "Pre-existing: test_gamma_sweep locale failure" |
 | 16 | Results-save hardening + environment provenance | code landed 2026-07-19; validate on run 3 | G15, G16 | env-block template: results/hardware-scaling/preregistration.json |
 | 17 | One-command repro + artifact provenance | open | G1, G2, G3, G4, G5, G10, G12 (G12 may defer to 19) | — |
-| 18 | CI + N=4/N=5 NE regression guard | open | G9 | tests/test_doc_anchors.py enforces in this CI for free once it exists |
+| 18 | CI + N=4/N=5 NE regression guard | code landed 2026-07-19; workflow validates on first push | G9 | guard: tests/test_ne_guard.py; workflow: .github/workflows/ci.yml (also enforces tests/test_doc_anchors.py) |
 | 19 | Repo presentation | open | — | — |
