@@ -17,13 +17,13 @@ item.
 | 3 | Cross-day calibration target | open — 1 of 3–5 calibration days | — | TODOS.md, "Hardware scaling repeat runs (cross-day error bars)" |
 | 4 | Registered model comparison (five-model scores_z2 ranking) | open — accumulates per repeat run | — | docs/findings/2026-07-17-run2-repeat-judgment.md, "Five-model ranking"; results/hardware-scaling/preregistration-baselines.json |
 | 5B | 1q/2q noise attribution | decided 2026-07-19: no new model; run 3 submits under the existing four registered models | — | docs/findings/2026-07-16-preregistered-baseline-competitors.md, "Item-5A addendum" |
-| 6 | — (parallel track) | open — no scope recorded; not blocking the paper | — | — |
+| 6 | — (parallel track) | closed 2026-07-19 — never scoped; no G-defect, finding, data artifact, or paper `\todo` traces to it; not blocking the paper | — | — |
 | 7 | — (completed before this index; title not reconstructed) | done | — | — |
-| 8 | — (parallel track) | open — no scope recorded; not blocking the paper | — | — |
+| 8 | — (parallel track) | closed 2026-07-19 — never scoped; no G-defect, finding, data artifact, or paper `\todo` traces to it; not blocking the paper | — | — |
 | 9 | W-topology hardware + wiring-permutation controls | open | separates player-4 position effect into wiring vs hardware | docs/findings/2026-07-17-run2-repeat-judgment.md, "Player index 4" |
 | 10 | T9 learning rule | blocked on Aasa | — | TODOS.md, "T9 adaptation & fairness pilot"; docs/findings/2026-07-05-t9-adaptation-fairness.md |
 | 11 | Stale-claim audit | done (124c09d, 2996528) | — | docs/findings/2026-07-17-item11-stale-claim-audit.md |
-| 12 | Forgiving-observable disclosure | open | — | — |
+| 12 | Forgiving-observable disclosure | closed 2026-07-19 — never scoped; "forgiving" appears nowhere in the repo outside this row; no G-defect, finding, or paper `\todo` traces to it; not blocking the paper | — | — |
 | 13 | Retire-vs-regenerate (corrected 5-directory old-convention set) | done 2026-07-19 — 7 old n-scaling dirs retired-with-note (RETIRED.md each + results/README); advantage map regenerated fixed-mode V=4/C=3 (2026-07-19T0901Z); gamma-sweep accepted from same-day pytest regen; 2 nash pytest dirs deleted | F3 | item-11 audit, "Item-13 handoff" section; results/README.md "Retired old-convention runs" |
 | 14 | Start the paper | open | — (must respect scope facts G17, G18, G19, G20) | — |
 | 15 | Locale and cp1252 | open — test fix done (3c5c39a); phase-1 line-ending report recorded 2026-07-19 | — | TODOS.md, "Pre-existing: test_gamma_sweep locale failure" |

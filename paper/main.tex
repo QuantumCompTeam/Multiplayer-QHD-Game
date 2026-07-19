@@ -139,9 +139,27 @@ Our contributions:
 \section{Background and Related Work}\label{sec:background}
 
 \subsection{The Hawk--Dove trading game}
-\todo{2×2 payoff matrix (README \S3.1); financial mapping Hawk=Short,
-Dove=Long; V=4, C=3 conventions; classical mixed NE pays less than
-cooperation.}
+% payoff matrix + financial mapping: README §3.1
+Two traders compete over a single asset of value $V$; conflict costs $C$.
+Hawk is the aggressive position (a short: it captures the full value if
+unopposed but destroys value in symmetric conflict); Dove is the cooperative
+position (a long: it shares value reliably). The payoff matrix is
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{l|cc}
+ & \textbf{opp.\ Dove (long)} & \textbf{opp.\ Hawk (short)}\\
+\hline
+\textbf{you Dove (long)} & $V/2,\ V/2$ & $0,\ V$\\
+\textbf{you Hawk (short)} & $V,\ 0$ & $(V{-}C)/2,\ (V{-}C)/2$\\
+\end{tabular}
+\end{center}
+We fix $V{=}4,\ C{=}3$ throughout (the repo's live convention,
+\texttt{src/config.py}). The two pure Nash equilibria --- one Hawk, one Dove
+--- are asymmetric and unstable, requiring coordination on who takes which
+role. The symmetric classical outcome is a mixed equilibrium in which each
+player plays Hawk with probability $V/C$; its expected payoff is strictly
+below the mutual-Dove payoff $V/2$. When everyone plays Hawk, both pay
+$(V{-}C)/2$: value destruction every participant at once.
 
 \subsection{The EWL protocol and its $N$-player extension}
 The EWL quantization~\cite{eisert1999} embeds strategies in SU(2) and
@@ -158,26 +176,48 @@ maps $\ket{0}^{\otimes N}$ back to $\ket{0}^{\otimes N}$ exactly, so the ideal
 output is a single computational basis state at every $N$.
 
 \subsection{Relation to prior $N$-player hardware work}
-\todo{One honest paragraph differentiating from
-Varsamis et al.~\cite{varsamis2025}: they study entanglement operators and
-scalability generically; we study a fixed financial game's advantage landscape
-(topology dichotomy, fairness, predictive noise model) and validate the
-predictions on hardware. Also position vs.\ Flitney--Abbott GHZ/W
-comparison~\cite{flitney2002}.}
+Varsamis et al.~\cite{varsamis2025} study $N$-player entanglement operators
+and their scalability on IBM hardware generically --- characterising the
+operators themselves across devices. We instead fix a single game (the
+financial Hawk--Dove) and map its \emph{advantage landscape}: the
+topology-dependent equilibrium/payoff dichotomy, the noise-induced
+position-locked unfairness, and a registered predictive noise model whose
+out-of-sample predictions we test on hardware. Flitney and
+Abbott~\cite{flitney2002} compared GHZ and W entanglement in $N$-player
+quantum games in an EPR setting, but in simulation and without a financial
+payoff structure or a hardware validation; our contribution is to carry that
+GHZ-versus-W question through a concrete trading game to a noise-model-tested
+result on a real device.
 
 % =============================================================================
 \section{Model and Methods}\label{sec:model}
 
 \subsection{$N$-player Hawk--Dove payoffs}
-\todo{Aasa: payoff tensor definition for k Hawks among N (docs/formulae.md);
-classical pure NE = all-Hawk with payoff $1/N$ at $V{=}4,C{=}3$; cooperative
-payoff $V/N$; hence ideal advantage $3/N$ and the constant $4\times$ ratio.}
+% payoff tensor: docs/formulae.md §5; classical NE/advantage: §6
+For $N$ players the payoff generalises as a Benjamin--Hayden
+tensor~\cite{benjamin2001}: let $k$ of the $N$ players play Hawk. A Hawk
+player receives $V/k$ for $0<k<N$ and $(V{-}C)/N$ when $k=N$ (all Hawk); a
+Dove player receives $V/N$ when $k=0$ (all Dove) and $0$ otherwise. The best
+classical pure Nash equilibrium is all-Hawk, paying $1/N$ per player at
+$V{=}4,\ C{=}3$; the cooperative quantum profile pays $V/N$. The ideal
+advantage is therefore $(V{-}1)/N=3/N$, a constant $4\times$ the classical
+payoff. The full tensor (a per-player payoff for each of the $2^N$ pure
+outcomes) feeds the best-response Nash analysis of Sec.~\ref{sec:results}.
 
 \subsection{Entanglement topologies}
-\todo{Five topologies + market analogies (README \S4); gate-level entanglers:
-GHZ as H-conjugated CX-ladder parity rotation ($2(N{-}1)$ CX per $J$); W via
-the exact prep-conjugated construction; pairwise topologies via
-$R_{XX}(-\gamma)$ per edge.}
+% topologies + market analogies: README §4; gate-level entanglers: docs/formulae.md §8
+We study five entanglement patterns, each mapping to a market architecture:
+\textbf{GHZ} (maximal all-to-all correlation; a fully centralised order
+book), \textbf{W} (single-excitation entanglement robust to one-qubit loss;
+a partial-information market), \textbf{ring} (each player entangled with its
+two neighbours; a circular trading pit), \textbf{star} (a central hub
+connected to all leaves; a market-maker / dealer model), and
+\textbf{fully-connected} (every pair entangled; a dense interbank network).
+Each entangler is realised gate-natively in the pinned $\{u,cx\}$ basis:
+GHZ as a Hadamard-conjugated CNOT-ladder parity rotation ($2(N{-}1)$ CX per
+$J$), W via the exact prep-conjugated construction (a prep cascade $+$
+anti-controlled $\mathrm{RX}$; T8 spec), and the pairwise topologies (ring,
+star, fully-connected) via one $R_{XX}(-\gamma)$ per edge.
 
 \subsection{Advantage metric and honesty conventions}
 Advantage $= $ mean $(Q_N,\dots,Q_N)$ payoff $-$ best classical pure-NE payoff
@@ -188,9 +228,14 @@ separately from advantage magnitude --- the two criteria diverge under noise
 (Sec.~\ref{sec:noise}).
 
 \subsection{Noise model and simulation paths}
-\todo{Depolarizing p on u, p on cx in the pinned \{u, cx\} basis;
-density-matrix simulation; exact gate-level entanglers for all topologies
-(T8); noiseless statevector path for the tensor.}
+% noise model + paths: README §9 (Month-4), docs/formulae.md §8
+Noise is a depolarizing channel of strength $p$ applied to every gate in the
+pinned $\{u,cx\}$ basis --- $p$ on each single-qubit $u$ and $p$ on each
+two-qubit $cx$ (two-qubit ratio $r{=}1$). Noisy expectation values are
+computed by exact density-matrix simulation on the gate-level circuits (all
+five topologies use their exact gate-level entanglers, W via the T8
+construction); noiseless reference payoffs use a statevector path. The
+noiseless payoff tensor and Nash analysis run on the statevector path.
 
 % =============================================================================
 \section{Simulation Results: the Advantage Landscape}\label{sec:sim}
@@ -243,26 +288,104 @@ theoretical $3/N$ everywhere; the single dark cell is the ring at $N=4$
 % source: results/n-scaling-advantage/2026-07-19T0901Z/plots/topology_heatmap.png
 \end{figure}
 
-\todo{Aasa: gamma-sweep thresholds (where the advantage crosses zero as
-$\gamma$ is reduced from $\pi/2$); star hub/spoke asymmetry figure
-(\texttt{per\_player\_advantage\_star.png}).}
+% gamma-sweep data: results/gamma-sweep/N2..N6 (V=4/C=3, fixed mode, noiseless)
+Sweeping the entanglement angle $\gamma$ from $0$ to $\pi/2$ maps how much
+entanglement the quantum equilibrium actually needs. At $N{=}2$ every
+topology's advantage is already positive from $\gamma{=}0$ and $(Q,Q)$ becomes
+a pure Nash equilibrium from $\gamma=0.3\pi$ (W excepted --- never Nash in
+range). At $N{=}3$ the vertex-transitive topologies (GHZ, fully-connected,
+ring) hold the full advantage $1.0$ flat across the whole sweep and become
+Nash at $\gamma=0.3\pi$--$0.4\pi$; the star and W never reach a pure
+equilibrium. At $N{=}4$ (Fig.~\ref{fig:gamma}) the topologies split: GHZ and
+star hold the full $0.75$ at every $\gamma$, fully-connected dips to $0.40$
+mid-sweep and recovers, W decays monotonically to $0.375$, and the ring
+collapses to exactly zero at $\gamma=\pi/2$ --- the period-4 interference dip.
+No series crosses zero advantage except that ring endpoint.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{advantage_vs_gamma_N4.png}
+\caption{Quantum advantage versus entanglement angle $\gamma$ at $N{=}4$
+($V{=}4, C{=}3$, noiseless). GHZ and star hold the full $0.75$ flat;
+fully-connected dips and recovers; W decays monotonically; the ring falls to
+zero at $\gamma=\pi/2$. Data:
+\texttt{results/gamma-sweep/N4}.}
+\label{fig:gamma}
+\end{figure}
+
+% star per-player data: results/n-scaling-advantage/2026-07-19T0901Z/plots/per_player_advantage_star.png
+The star is the only topology that breaks player symmetry at zero noise. For
+$N\ge4$ the advantage is real but unevenly shared
+(Fig.~\ref{fig:star}): at $N{=}4$ the three leaves gain $1.0$ each while the
+hub gains nothing ($0.0$); by $N{=}6$ the hub gains $0.952$ against the
+leaves' $0.366$. The mean stays close to the theoretical $3/N$ until $N{=}6$,
+where the hub--leaf split pulls it to $0.463$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{per_player_advantage_star.png}
+\caption{Star-topology per-player advantage (hub player 0 vs.\ each leaf) at
+$\gamma=\pi/2$, $V{=}4, C{=}3$, noiseless, for $N=2\ldots6$. The leaves
+capture the advantage at small $N$; the hub captures it at large $N$; the
+mean (dashed) tracks $3/N$ until $N{=}6$. Data:
+\texttt{results/n-scaling-advantage/2026-07-19T0901Z}.}
+\label{fig:star}
+\end{figure}
 
 \subsection{Noise robustness: two criteria disagree}\label{sec:noise}
-\todo{Port README \S9 Month-4 findings (as corrected 2026-07-17): p* table
---- GHZ NE-loss at finite p at N=3 only (0.045); the N=4/5 values
-0.0197/0.0098 are advantage-zero crossings, $(Q,\dots,Q)$ is not a pure NE
-there even at p=0; GHZ keeps largest mean advantage at small N
-(0.33 at N=3, p=0.05) with the gate-budget qualification from the
-topology-vs-implementation controls; W keeps positive-but-small mean
-advantage everywhere; the mean-hides-losers caveat (W N=5: 2/5 players
-negative from p=0.01).}
+% ported from README §9 (Month-4, corrected 2026-07-17); data results/noise-robustness/2026-07-03T0213Z
+Sweeping the depolarizing strength $p$ from $0$ to $0.05$ on the gate-level
+noisy path, two natural ``robustness'' criteria give different orderings, so
+we state which we mean. Under the \emph{Nash-equilibrium} criterion, the GHZ
+cooperative profile is fragile: $(Q,\dots,Q)$ is a pure equilibrium at $p=0$
+only for GHZ $N{=}2,3$, and at $N{=}3$ it loses equilibrium status between
+$p=0.04$ and $0.045$. For $N{=}4,5$ the GHZ thresholds $p^*\approx0.0197$
+and $0.0098$ are \emph{advantage-zero crossings}, not equilibrium losses ---
+$(Q,\dots,Q)$ is not a pure equilibrium there even at $p=0$. For W and ring
+the fixed GHZ-derived $Q$ is never a strict pure equilibrium even at $p=0$,
+so the equilibrium criterion does not apply.
+
+Under the \emph{advantage-magnitude} criterion the picture flips: at $N{=}3$
+GHZ retains the most mean advantage at $p=0.05$ ($0.333$, $33\%$ of its
+noiseless value) versus ring $0.200$ and W $0.047$. So ``GHZ degrades
+fastest'' holds for the equilibrium, not for advantage magnitude at small
+$N$. This ordering is a property of the production circuits at their gate
+budgets: gate-count-matched controls show per-$cx$ advantage decay rates are
+indistinguishable across GHZ/ring/star/fully-connected ($\lambda/cx\approx
+2.1$--$2.7$), while W is the genuine structural outlier at $\approx2.5\times$
+more robust \emph{per gate} ($\lambda/cx\approx0.8$--$1.0$). W keeps a
+positive-but-small mean advantage across the whole grid, but the mean hides
+per-player losses: at $N{=}5$ two of the five players have negative
+advantage from $p=0.01$ (worst $-0.077$ at $p=0.015$). All entanglers here
+are exact gate-level circuits; W uses the T8 construction (44 and 68 $cx$
+per $J$ at $N{=}4,5$, versus $100$/$444$ for the retired transpiled-unitary
+fallback).
 
 \subsection{Position-locked unfairness and the adaptation pilot}
-\todo{Wiring-permutation result (asymmetry follows circuit position;
-deviation $\sim$1e-16; ideal-state depolarizing collapses spread to 0) and the
-T9 pilot: independent best response equalizes only by collapsing welfare
-(mean 1.00$\to$0.51 at p=0), limit-cycles at p=0.02 --- provisional pending
-adaptation-rule review.}
+% wiring-permutation: README §9 Month-4 findings; T9 pilot: docs/findings/2026-07-05-t9-adaptation-fairness.md
+The noise-induced per-player asymmetry is not a property of the player labels
+or the ideal state. A wiring-permutation test on the ring at $N{=}5$
+(\texttt{scripts/asymmetry\_diagnostics.py}) cyclically shifts the
+qubit-to-player wiring and the whole per-player payoff vector permutes
+rigidly with it (deviation $\sim10^{-16}$); and applying the same depolarizing
+weight to the \emph{ideal final state} instead of per-gate collapses the
+per-player spread to $\sim0$. The disadvantage therefore follows the
+entangler's \emph{circuit position} (gate ordering), not the ideal state or
+the player identity.
+
+An exploratory W-state pilot ($N{=}4$) then asks whether letting each player
+independently best-respond under the same noisy circuit repairs the
+unfairness. It does not beneficially do so at any noise level tested: at
+$p{=}0$ adaptation equalizes only by collapsing collective welfare (mean
+$1.00\rightarrow0.51$); at $p{=}0.02$ the best-response dynamics fail to
+converge, settling on a payoff limit cycle whose time-averaged state is both
+less fair (spread $0.014\rightarrow0.036$) and lower-welfare (mean
+$0.98\rightarrow0.88$) than the fixed cooperative baseline; at $p{=}0.05$ it
+converges but changes almost nothing. The adaptation rule (independent
+round-robin best response) is provisional pending game-theory sign-off, so
+this is a directional finding, not a locked result --- but it is consistent
+with the position-locked mechanism: the fairness loss is structural to the
+circuit, not a coordination failure that self-interested play adapts away.
 
 % =============================================================================
 \section{Hardware Validation on IBM Heron r2}\label{sec:hardware}
@@ -313,8 +436,19 @@ $4.5\%$.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{hardware_n3_validation.pdf}
-  \caption{\todo{paste caption from
-  results/hardware-n3/2026-07-16T013912Z/plots/caption.md}}
+  \caption{Hardware validation of the $N{=}3$ GHZ EWL quantum advantage on
+  ibm\_fez (IBM Heron r2). The validated $(Q,Q,Q)$ circuit --- entangler $J$
+  decomposed to 6 native cz gates --- was executed with 4096 shots.
+  \textbf{(A)} Measured output distribution over the eight
+  computational-basis states (blue) versus the noiseless ideal (grey); error
+  bars are binomial shot noise. $3911/4096$ shots (95.5\%) fall in
+  $|0\ldots0\rangle$, the ideal $(Q,Q,Q)$ output. \textbf{(B)} Measured
+  per-player payoff (blue) against the analytic classical-Nash baseline
+  ($0.333$, noiseless) and the quantum ideal $V/N=1.333$; error bars
+  propagate shot noise. The measured mean payoff $1.331$ gives advantage
+  $0.9978$ vs the ideal $1.0$. Physical qubits $\{136,143,142\}$ (calibration
+  2026-07-15): readout error 0.38--0.40\%, cz error 136--143: 0.17\%,
+  143--142: 0.23\%.}
   \label{fig:n3}
 \end{figure}
 
@@ -348,8 +482,24 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{hardware_scaling.pdf}
-  \caption{\todo{paste caption from
-  results/hardware-scaling/2026-07-16T074134Z/plots/caption.md}}
+  \caption{Scaling of the $N$-player GHZ EWL quantum advantage on ibm\_fez
+  (IBM Heron r2), physical chain $[59,75,74,73,79]$, 4096 shots.
+  \textbf{(A)} Measured cooperative-profile advantage (mean $(Q,\ldots,Q)$
+  payoff minus the analytic noiseless classical-Nash payoff) at $N=3,4,5$:
+  raw (open) and readout-mitigated $+$ ZNE (filled), against the noiseless
+  ideal ($1.0, 0.75, 0.6$), the device noise-model prediction (diamonds), and
+  a single-parameter depolarizing model with $p_{\mathrm{eff}}=0.0018$ fitted
+  to the $N{=}3$ point alone --- its $N{=}4,5$ values are predictions, not
+  fits. Error bars: multinomial shot noise (raw) and weighted-fit standard
+  error (ZNE). \textbf{(B)} ZNE mechanics: readout-mitigated payoff vs cz
+  fold factor ($\lambda=1,3,5$) with the weighted linear fit extrapolated to
+  $\lambda=0$ (stars). \textbf{(C)} Ground-state probability
+  $P(|0\ldots0\rangle)$: the state fidelity decays several times faster than
+  the advantage because the mean-payoff observable is first-order insensitive
+  to single bit-flips from $|0\ldots0\rangle$. $(Q,\ldots,Q)$ is a pure Nash
+  equilibrium only at $N{=}3$; at $N{=}4,5$ the profile is the cooperative
+  quantum profile, not an equilibrium. Calibration 2026-07-16; job
+  d9c8fpn550hc73dl1tcg.}
   \label{fig:scaling}
 \end{figure*}
 
@@ -401,10 +551,29 @@ mean, is the quantity a mechanism designer should optimize.
 % =============================================================================
 \section{Discussion}\label{sec:discussion}
 
-\todo{Market-architecture interpretation (README \S10): which topology for
-which market; carbon trading; MEV/DeFi. Tie the two-criteria dichotomy to a
-design rule: pick topology by whether the mechanism needs the *equilibrium* or
-the *payoff*.}
+% market interpretation: README §10
+The topology sweep is a market-design map: each entanglement pattern
+corresponds to a connectivity architecture, and the results say which
+architecture sustains cooperation. A centralised order book is a star; OTC
+derivatives and interdealer networks are ring or partially-connected; a dense
+interbank market is fully-connected. The two-criteria dichotomy of
+Sec.~\ref{sec:noise} yields a concrete design rule: choose the topology by
+whether the mechanism needs the \emph{equilibrium} or the \emph{payoff}. If
+the goal is a self-enforcing cooperative equilibrium that survives noise, GHZ
+at small $N$ is the only topology that delivers one --- but it is fragile,
+losing equilibrium status at finite $p$. If the goal is a large, durable
+cooperative payoff (accepting a fixed protocol rather than an equilibrium),
+GHZ again leads at small $N$ on advantage magnitude, while W's superior
+per-gate robustness makes it the choice when two-qubit gates --- not
+entanglement structure --- are the binding constraint. Two applications make
+the mapping concrete. In carbon markets (an $N$-player Hawk--Dove between
+emission reduction and allowance purchase), the topology that maximises
+cooperative payoff at a given noise budget is the optimal architecture for a
+quantum-enhanced trading mechanism. In DeFi, where front-running (MEV) is an
+$N$-player Hawk--Dove that destroys value, entangling wallet interactions via
+a smart-contract-controlled quantum channel could enforce cooperative
+outcomes without a trusted intermediary --- the entanglement graph maps
+directly onto the contract-interaction graph.
 
 \textbf{Limitations.} Discrete strategy set $\{D,H,Q_N\}$ (mixed/continuous
 deviations are future work); the fixed GHZ-derived $Q_N$ is not

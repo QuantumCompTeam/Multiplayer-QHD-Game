@@ -15,13 +15,13 @@ Locally: `latexmk -pdf main.tex` (needs a TeX distribution with IEEEtran).
 
 - All numbers already in `main.tex` are REAL, sourced from `results/`
   artifacts (each has a `% comment` naming its run dir + job id).
-- `\todo{...}` markers (red in the PDF) are unwritten prose:
-  - Prithvi: intro narrative, error-budget paragraph, robustness-mechanism
-    link to fairness, conclusion.
-  - Aasa: payoff-tensor section, zero-noise landscape section (advantage map
-    regenerated at V=4/C=3 fixed-mode under item 13 on 2026-07-19 — see Figures
-    below; gamma-sweep N2–N6 also current-convention), Month-4 noise-findings
-    port from README §9.
+- The prose draft is complete: every `\todo` section is now filled (2026-07-19),
+  all Aasa-tagged sections drafted by Prithvi from the data artifacts
+  (payoff tensor, zero-noise landscape + gamma-sweep + star asymmetry,
+  Month-4 noise port, wiring-permutation + T9 pilot, both hardware captions,
+  market-architecture discussion). Aasa to review/sign off when back.
+- One `\todo{email}` remains — author email addresses not recorded anywhere in
+  the repo; to be filled by the authors.
 - `references.bib` has two metadata TODOs (varsamis2025, flitney2002 year).
 - Table II (scaling) gains cross-day error bars automatically as repeat runs
   accumulate (`TODOS.md` protocol); regenerate `figs/hardware_scaling.pdf`

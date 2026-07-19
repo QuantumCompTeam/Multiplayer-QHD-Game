@@ -63,8 +63,8 @@ the `\includegraphics` + caption.
 - **Item 19** (repo presentation) — partially done 2026-07-19 (`results/
   topology/` committed, the force-add fix). Remainder: `results/README`
   wording + coverage-gap scope.
-- **Decisions (yours):** item 15 phase-2 `.gitattributes`; items 6 / 8 / 12
-  (scope, none started, none blocking the paper).
+- **Decisions (yours):** item 15 phase-2 `.gitattributes`. Items 6 / 8 / 12
+  closed 2026-07-19 — never scoped, nothing traces to them, not blocking.
 - **Item 9** (W-topology hardware + wiring-permutation controls) — open.
 
 ## Waiting on Aasa (out of the picture until first draft)
