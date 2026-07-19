@@ -32,6 +32,8 @@ Locally: `latexmk -pdf main.tex` (needs a TeX distribution with IEEEtran).
 - `figs/hardware_n3_validation.pdf` — from `results/hardware-n3/2026-07-16T013912Z/plots/`
 - `figs/hardware_scaling.pdf` — from `results/hardware-scaling/2026-07-17T014458Z/plots/`
   (2-run aggregate; refreshed 2026-07-19).
-- Advantage map: regenerated at V=4/C=3 (fixed) — `results/n-scaling-advantage/2026-07-19T0901Z`
-  (`plots/advantage_vs_N.png`, `topology_heatmap.png`); gamma-sweep N2–N6 current-convention.
-  `figs/` embed still TODO (copy the advantage-map figure in + caption from report.md).
+- Advantage map: embedded at `main.tex` (Figs. `fig:advmap` + `fig:heat`) from
+  `figs/advantage_vs_N.png` + `figs/topology_heatmap.png` — the V=4/C=3 fixed-mode
+  regen `results/n-scaling-advantage/2026-07-19T0901Z`; gamma-sweep N2–N6
+  current-convention. Star per-player figure (`per_player_advantage_star.png`)
+  and gamma-sweep prose remain Aasa `\todo`s in the same subsection.

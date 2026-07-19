@@ -196,10 +196,56 @@ density-matrix simulation; exact gate-level entanglers for all topologies
 \section{Simulation Results: the Advantage Landscape}\label{sec:sim}
 
 \subsection{Scaling and topology at zero noise}
-\todo{Aasa: advantage map figure (regenerate at V=4,C=3), gamma-sweep
-thresholds, ring N=4 zero-advantage dip, star hub/spoke asymmetry. Include the
-N-scaling table: ideal advantage $3/N$; $(Q_N,\dots,Q_N)$ pure NE only at
-$N=3$ --- deviation payoffs 2.0 vs 1.0 ($N{=}4$), 2.618 vs 0.8 ($N{=}5$).}
+% data: results/n-scaling-advantage/2026-07-19T0901Z/ (fixed mode, V=4/C=3;
+% 25 cells N=2..6 x five topologies; per-cell tables in report.md)
+At zero noise the GHZ-family cooperative profile $(Q_N,\dots,Q_N)$ pays
+exactly $V/N=4/N$ per player against the best classical pure Nash payoff
+$1/N$ --- the ideal advantage $3/N$ (Fig.~\ref{fig:advmap}). Its equilibrium
+status, however, changes with $N$: a unilateral Hawk deviation from the
+cooperative profile pays $2+2\cos(2\pi/N)$, so at $V=4$ the profile is a
+pure Nash equilibrium only at $N\le3$ --- it pays $2.0$ against the
+cooperative $1.0$ at $N=4$, and $\varphi^2\approx2.618$ against $0.8$ at
+$N=5$, with the measured equilibrium boundary agreeing with
+$2+2\cos(2\pi/N)\le V/N$ at every $N$ from 2 to 8. For $N\ge4$ we therefore
+report $(Q_N,\dots,Q_N)$ as a \emph{fixed cooperative protocol} whose large
+measurable advantage the noise and hardware sections test --- not as an
+equilibrium prediction. The landscape carries two further zero-noise
+signatures: the ring's advantage collapses to exactly zero at $N=4$
+(period-4 interference of the closed XX chain), and the star's advantage is
+real but asymmetric --- at $N=4$ the three leaves gain $1.0$ each while the
+hub gains nothing.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{advantage_vs_N.png}
+\caption{Zero-noise quantum advantage of the cooperative profile
+$(Q_N,\dots,Q_N)$ over the best classical pure Nash payoff, at
+$\gamma=\pi/2$ and $V{=}4, C{=}3$, versus player count $N$ for the five
+entanglement topologies. The GHZ-family ideal $3/N$ (star markers) is
+attained by GHZ and fully connected at every $N$; the ring dips to zero
+advantage at $N=4$; the star shows a weaker $N{=}6$ deviation
+($0.463$ vs.\ $0.5$); W tracks below throughout. Filled markers indicate
+$(Q_N,\dots,Q_N)$ is a pure Nash equilibrium --- the fully symmetric case
+holds only at $N\le3$.}
+\label{fig:advmap}
+% source: results/n-scaling-advantage/2026-07-19T0901Z/plots/advantage_vs_N.png
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{topology_heatmap.png}
+\caption{Advantage heatmap across the $(N,\text{topology})$ grid at
+$V{=}4, C{=}3$ (mean per-player payoff of $(Q_N,\dots,Q_N)$ minus best
+classical pure Nash payoff). The GHZ/fully-connected row holds the
+theoretical $3/N$ everywhere; the single dark cell is the ring at $N=4$
+(advantage exactly $0$).}
+\label{fig:heat}
+% source: results/n-scaling-advantage/2026-07-19T0901Z/plots/topology_heatmap.png
+\end{figure}
+
+\todo{Aasa: gamma-sweep thresholds (where the advantage crosses zero as
+$\gamma$ is reduced from $\pi/2$); star hub/spoke asymmetry figure
+(\texttt{per\_player\_advantage\_star.png}).}
 
 \subsection{Noise robustness: two criteria disagree}\label{sec:noise}
 \todo{Port README \S9 Month-4 findings (as corrected 2026-07-17): p* table
