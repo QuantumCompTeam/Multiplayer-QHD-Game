@@ -16,7 +16,7 @@ item.
 | 2 | — (completed before this index; title not reconstructed) | done | — | — |
 | 3 | Cross-day calibration target | open — 1 of 3–5 calibration days | — | TODOS.md, "Hardware scaling repeat runs (cross-day error bars)" |
 | 4 | Registered model comparison (five-model scores_z2 ranking) | open — accumulates per repeat run | — | docs/findings/2026-07-17-run2-repeat-judgment.md, "Five-model ranking"; results/hardware-scaling/preregistration-baselines.json |
-| 5B | 1q/2q noise attribution | open — any new model must register before run 3 | — | — |
+| 5B | 1q/2q noise attribution | decided 2026-07-19: no new model; run 3 submits under the existing four registered models | — | docs/findings/2026-07-16-preregistered-baseline-competitors.md, "Item-5A addendum" |
 | 6 | — (parallel track) | open — no scope recorded; not blocking the paper | — | — |
 | 7 | — (completed before this index; title not reconstructed) | done | — | — |
 | 8 | — (parallel track) | open — no scope recorded; not blocking the paper | — | — |

@@ -66,9 +66,29 @@ error mitigation, quantum finance
 % =============================================================================
 \section{Introduction}\label{sec:intro}
 
-\todo{Opening: financial markets as N-player Hawk--Dove games; crashes as
-all-Hawk tragedies; quantum correlation as a coordination resource that
-replaces trust/regulation. 2--3 paragraphs, seeded from README \S3 and \S10.}
+Financial markets are coordination problems with adversarial payoffs. When
+traders compete over a scarce asset, each chooses between an aggressive
+position --- capturing the full value if unopposed --- and a cooperative one
+that shares value reliably. The Hawk--Dove game formalizes this tension: the
+aggressive pure equilibria are asymmetric and unstable, the symmetric mixed
+equilibrium pays strictly less than mutual cooperation, and the all-Hawk
+outcome destroys value for every participant at once. Market crashes are the
+macroscopic version of that last cell --- a tragedy of the commons in which
+individually rational aggression, played by everyone, leaves each player worse
+off than cooperation would have. Classical remedies are external to the game:
+trust between counterparties, a trusted intermediary, or regulation that taxes
+defection.
+
+Quantum game theory offers a different lever. In the
+Eisert--Wilkens--Lewenstein (EWL) protocol~\cite{eisert1999}, strategies live
+in SU(2) and players' qubits are entangled before any move is made; the
+correlation structure of the shared state then changes what is
+self-enforcing. The celebrated two-player result is a quantum Nash equilibrium
+that is simultaneously symmetric and Pareto-optimal: cooperation pays the same
+as mutual trust but is enforced by interference rather than by an
+institution. For market mechanisms --- carbon-trading schemes, order-book
+architectures, DeFi protocols --- this suggests replacing a regulatory cost
+with a physical correlation.
 
 Khan et al.~\cite{khan2025} demonstrated a quantum Nash-equilibrium advantage
 for the two-player trading game on ion-trap hardware. Two players, however,
