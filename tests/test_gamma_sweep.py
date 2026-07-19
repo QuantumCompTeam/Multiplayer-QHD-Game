@@ -185,7 +185,7 @@ def test_gamma_subfolders_and_topology(gamma_run, topology_folder) -> None:
         assert (n_dir / "plots" / "advantage_vs_gamma.png").stat().st_size > 0, (
             f"N{n} advantage_vs_gamma.png missing"
         )
-        report = (n_dir / "report.md").read_text()
+        report = (n_dir / "report.md").read_text(encoding="utf-8")
         assert "Entanglement (γ) thresholds" in report
     # Shared topology folder has individual topology images (not in the run folders).
     assert list(topology_folder.glob("*/*.png")), "results/topology/ has no graphs"
