@@ -30,4 +30,4 @@ item.
 | 16 | Results-save hardening + environment provenance | code landed 2026-07-19; validate on run 3 | G15, G16 | env-block template: results/hardware-scaling/preregistration.json |
 | 17 | One-command repro + artifact provenance | done 2026-07-19 — G1 (results/ un-ignored), G12 (graphify-out/ untracked), G4+G5 (.venv-win deleted), G10 (PYTHONPATH=src prefix stripped from 25 conda lines; 3 .sh helpers repointed to conda). G2/G3 swept earlier. | G1–G5, G10, G12 | docs/VERIFIED-FACTS.md, A5 + G-section; .gitignore; runTests.sh/runGammaSweep.sh/runAsymmetricTest.sh |
 | 18 | CI + N=4/N=5 NE regression guard | done — validated on Actions 2026-07-19 (run 29670675020, dev push: 512 passed, 3 skipped) | G9 | guard: tests/test_ne_guard.py; workflow: .github/workflows/ci.yml (also enforces tests/test_doc_anchors.py) |
-| 19 | Repo presentation | open | — | — |
+| 19 | Repo presentation | done 2026-07-19 — results/README wording + coverage-gap scope mapped (noise×{star,FC}, noise at N=6, hardware beyond GHZ, cross-day variance) | — | results/README.md "Coverage" section |

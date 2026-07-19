@@ -60,9 +60,9 @@ the `\includegraphics` + caption.
 
 ## Open, unblocked
 
-- **Item 19** (repo presentation) — partially done 2026-07-19 (`results/
-  topology/` committed, the force-add fix). Remainder: `results/README`
-  wording + coverage-gap scope.
+- **Item 19** (repo presentation) — done 2026-07-19. `results/README` wording
+  tightened + coverage-gap scope mapped (noise×{star,FC}, noise at N=6,
+  hardware beyond GHZ, cross-day variance).
 - **Decisions (yours):** item 15 phase-2 `.gitattributes`. Items 6 / 8 / 12
   closed 2026-07-19 — never scoped, nothing traces to them, not blocking.
 - **Item 9** (W-topology hardware + wiring-permutation controls) — open.

@@ -1,9 +1,9 @@
 # Results
 
-Generated experiment outputs. Each run lives in its own **timestamped** folder
-under a per-experiment directory, so every result is labelled and reproducible.
-These artifacts are committed to git as part of the research record
-(`git add -f`, since `results/` is blanket-ignored for convenience).
+Generated experiment outputs, committed to git as part of the research record.
+Each run lives in its own **timestamped** folder under a per-experiment
+directory, so every result is labelled and reproducible. (`results/` is
+blanket-ignored for convenience, so artifacts are committed with `git add -f`.)
 
 ## Layout
 
@@ -21,6 +21,36 @@ Hardware runs (`hardware-scaling/`, `hardware-n3/`) record `result.json` +
 created_utc / git fields. The cross-day hardware-scaling state
 (`pending_jobs.txt`, `preregistration.json`, `preregistration-baselines.json`,
 `repeat-judgments.json`) lives at `results/hardware-scaling/` root.
+
+## Coverage — what's actually here, and the gaps
+
+Not every (N × topology × noise) cell has a committed run. This is the honest
+map so a reader never mistakes absence for coverage. All payoff runs are at the
+live convention V=4/C=3 unless marked retired.
+
+| Experiment | N | Topologies | Noise | Status |
+|---|---|---|---|---|
+| `n-scaling-advantage/` | 2–6 | all 5 | 0 | **current** run `2026-07-19T0901Z` (+ 7 retired, see below) |
+| `gamma-sweep/N2..N6` | 2–6 | all 5 | 0 | current-convention (V=4/C=3, fixed), regen 2026-07-19 |
+| `noise-robustness/` | 2–5 | **GHZ, W, ring only** | p = 0→0.05 | current `2026-07-03T0213Z` (+ 1 retired `2026-07-02T1212Z`) |
+| `topology-controls/` | 2–5 | GHZ, ring, star, FC | p = 0→0.05 | one control run `2026-07-16T172737Z` |
+| `topology/` | per-topology | all 5 | 0 | per-topology reference runs |
+| `hardware-n3/` | 3 | GHZ | device | one run `2026-07-16T013912Z` |
+| `hardware-scaling/` | 3–5 | GHZ | device | 2 of 3–5 cross-day runs so far |
+| `t9-pilot/` | 4 | W | 0 / 0.02 / 0.05 | adaptation pilot (provisional) |
+
+**Known coverage gaps** (unrun cells, not failures — see `src/experiment/report.py`,
+which lists skipped cells explicitly per run):
+
+- **Noise × {star, fully-connected}** — the Month-4 noise sweep covers only
+  GHZ/W/ring. Star and fully-connected under depolarizing noise are unrun; the
+  paper's noise claims are scoped to the three swept topologies.
+- **Noise at N=6** — the noise sweep stops at N=5 (cost); the N=6 row exists
+  only at zero noise.
+- **Hardware beyond GHZ** — only the GHZ cooperative profile has been run on
+  device; W/other topologies on hardware are item 9 (open).
+- **Cross-day hardware variance** — hardware-scaling has 2 of the 3–5 planned
+  calibration-day repeats (item 3, blocked on a fresh ibm_fez calibration).
 
 ## Regenerate
 
