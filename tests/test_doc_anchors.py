@@ -102,6 +102,18 @@ _CASES = [(doc, t) for doc in DOCS for t in _extract(doc)]
 def test_anchor_resolves(doc: Path, cite: tuple[str, str, str]) -> None:
     target_rel, literal, repr_ = cite
     targets = _candidates(target_rel)
+    if not targets:
+        # Citations into gitignored paths (e.g. VERIFIED-FACTS.md's records of
+        # .venv-win/pyvenv.cfg) are machine-local facts: correct where written,
+        # absent in other checkouts and on CI. Skip visibly rather than fail.
+        ignored = subprocess.run(
+            ["git", "check-ignore", "-q", target_rel], cwd=REPO
+        ).returncode == 0
+        if ignored:
+            pytest.skip(
+                f"{target_rel} is gitignored (machine-local record); "
+                f"not verifiable in this checkout"
+            )
     assert targets, (
         f"{doc.relative_to(REPO)} cites {repr_}: no such file exists "
         f"(checked repo-relative and by filename against tracked files)"
