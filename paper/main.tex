@@ -236,9 +236,33 @@ before result polling, making runs crash-safe and recoverable.
 The validated $Q_3$ circuit (entangler decomposed to 6 native cz gates) run
 with 4096 shots on ibm\_fez measured advantage $0.9978$ against the ideal
 $1.0$, with $3911/4096$ shots in $\ket{000}$
-(Fig.~\ref{fig:n3}).\todo{one paragraph: error budget consistency
-(naive calibration budget predicts $\sim$0.974 vs measured 0.955 ground-state
-probability --- measured slightly below budget, as expected).}
+(Fig.~\ref{fig:n3}).
+
+The error budget is consistent with an independent-error picture once the
+observable's structure is taken into account. Multiplying the three
+calibrated single-shot readout fidelities ($0.9960$, $0.9961$, $0.9962$) by
+the six two-qubit-gate fidelities (edge errors $0.17\%$ and $0.23\%$ over
+the entangler's two edges) predicts a ground-state probability of
+$\approx 0.977$, modestly above the measured $0.955$; the per-edge split of
+the six \textsc{cz} gates moves this by less than $0.002$.
+% run: results/hardware-n3/2026-07-16T013912Z job d9br6l66hjac73fg3g7g;
+% readout_error 136/143/142, twoq_gate_error 136_143 / 143_142;
+% p_naive = prod(1-r_i) * (1-g_a)^4 (1-g_b)^2 = 0.9771 (4+2), 0.9765 (3+3)
+What the naive budget does not predict is the payoff: the same run's mean
+payoff is $0.9978$ of ideal, not $95\%$ of it. The measured counts show why.
+Of the $185$ shots outside $\ket{000}$, $176$ ($95\%$ of the error weight)
+land on one- and two-Hawk outcomes, whose per-player payoffs still average
+$V/N$ --- the Hawk captures $V$ in full, so the mean is unchanged --- and
+only the $9$ all-Hawk shots ($0.22\%$) reduce the mean, to $(V-C)/N$.
+% counts: k=0:3911, k=1:53, k=2:123, k=3:9 (result.json counts block);
+% k<3 mean V/N, k=3 mean (V-C)/N -> reconstructed mean 1.331136 = measured
+The mean-payoff observable is therefore first-order insensitive to single
+bit-flips from the ideal outcome: errors that flip one qubit redistribute
+payoff between players without lowering its mean. This is the structural
+mechanism behind the scaling section's central observation --- the advantage
+decays several times slower than the state fidelity --- and it is why the
+$N{=}3$ advantage survives at $0.998$ while $P(\ket{000})$ has already lost
+$4.5\%$.
 
 \begin{figure}[t]
   \centering
