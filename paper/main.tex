@@ -369,10 +369,43 @@ the T9 adaptation rule is provisional.
 
 % =============================================================================
 \section{Conclusion}\label{sec:conclusion}
-\todo{Half page: the landscape is charted, the dichotomy is real, the
-registered model comparison favors per-gate decay (with the depolarizing fit
-as its physical interpretation), and the mean-payoff robustness mechanism
-suggests quantum market mechanisms degrade gracefully on NISQ devices.}
+We asked whether the two-player quantum Hawk--Dove advantage survives the
+transition to real $N$-player networks --- topologies, noise, and hardware.
+The landscape is now charted, and the answer is yes, with sharper edges than
+the two-player picture suggests. At $N{=}3$ the GHZ cooperative profile is a
+genuine symmetric pure Nash equilibrium, and it reproduces on superconducting
+hardware within $0.2\%$ of the noiseless ideal ($0.9978$ of ideal, job
+\texttt{d9br6l66hjac73fg3g7g}).
+% results/hardware-n3/2026-07-16T013912Z/result.json (measured_advantage 0.9978)
+At $N{=}4,5$ the same profile ceases to be an equilibrium --- a unilateral
+Hawk deviation profits --- yet its cooperative payoff retains a large,
+measurable advantage over the analytic classical baseline on the same device
+($0.739 / 0.584$ of the ideal $0.75 / 0.60$).
+% results/hardware-scaling/2026-07-16T074134Z and 2026-07-17T014458Z
+The dichotomy --- equilibrium at $N{=}3$, cooperative profile beyond --- is
+real, and it is a feature of the game, not a defect of the experiment.
+
+Three structural findings carry the design weight. First, the mean-payoff
+observable is first-order insensitive to single bit-flips, so the advantage
+decays several times slower than the state fidelity: quantum market
+mechanisms degrade gracefully on NISQ devices. Second, the same flip terms
+that spare the mean concentrate loss on individual players --- a fairness
+cost that self-interested adaptation does not repair --- so the quantity a
+mechanism should optimize is the per-player floor, not the mean. Third, the
+scaling of the advantage with $N$ is set not by a fitted depolarizing
+strength but by per-two-qubit-gate decay: in the registered five-model
+comparison an exponential-retention law in the transpiled \textsc{cz} count
+leads both hardware runs, with the depolarizing fit surviving as its physical
+interpretation.
+% results/hardware-scaling/repeat-judgments.json
+
+The limitations are the same honesty notes threaded through the text: the
+$N{=}4,5$ curve measures a fixed cooperative protocol, not an equilibrium;
+the hardware numbers are single-calibration-day results with cross-day
+repeats in progress; and the fairness link rests on an exploratory adaptation
+rule. Within those bounds the design implication is concrete --- entanglement
+topology is a market-design variable whose noise cost is budgeted per
+two-qubit gate, and its benefit should be read at the per-player floor.
 
 \section*{Reproducibility}
 All circuits, harnesses, per-run calibration snapshots, and analysis code are
