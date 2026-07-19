@@ -60,6 +60,10 @@ recover with `--from-job <id>`.
   distinct execution, NOT a distinct calibration day. Before counting a
   future run toward the 3–5 cross-day target, check its calibration stamp
   differs (the judge flags `distinct_calibration_vs_previous_runs`).
+  As of item 16 (2026-07-19), submission writes
+  `pending-<jobid>-calibration.json` and the run dir gains
+  `calibration_at_submit.json`; use that stamp for cross-day counting, not
+  the analysis-time `calibration.json` (G15).
 
 **Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
 variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.
@@ -80,13 +84,19 @@ to run if preregistration.json differs from HEAD). Then regenerate the
 scaling figure (`PYTHONPATH=src python scripts/plot_hardware_scaling.py`),
 which auto-aggregates all runs. Commit the run dir + judgments + plots.
 
-## Pre-existing: test_gamma_sweep locale failure on Windows
+## Pre-existing: test_gamma_sweep locale failure on Windows — test fix DONE
 
-`tests/test_gamma_sweep.py::test_gamma_subfolders_and_topology` reads report.md
-via `Path.read_text()` with no encoding; on cp1252 consoles the UTF-8 "γ" reads
-as mojibake and the assert fails. Passes with `PYTHONUTF8=1`. Fix is a one-word
-change (`read_text(encoding="utf-8")`) — not applied yet because it predates the
-hardware-scaling work (surfaced 2026-07-16 during full-suite verification).
+`tests/test_gamma_sweep.py::test_gamma_subfolders_and_topology` read report.md
+via `Path.read_text()` with no encoding; on cp1252 consoles the UTF-8 "γ" read
+as mojibake and the assert failed. Passed with `PYTHONUTF8=1`. The one-word fix
+(`read_text(encoding="utf-8")`) was applied in 3c5c39a (2026-07-19); the full
+gamma suite passes in the conda env without PYTHONUTF8 (151 passed). Surfaced
+2026-07-16 during full-suite verification.
+
+**Item 15 phase 1 report (2026-07-19):** `core.autocrlf` = true, set at system
+level (`C:/Program Files/Git/etc/gitconfig`); no `.gitattributes` exists in the
+repo; of the 50 tracked files under `results/`, 34 are all-CRLF text and 16 are
+binary — zero files with mixed line endings on disk.
 
 ## T9 adaptation & fairness pilot — DONE (provisional); follow-ups open
 
