@@ -332,9 +332,25 @@ flips. Readout mitigation consequently moves the mean very little (it mainly
 repairs \emph{per-player} fairness), while ZNE --- targeting the correlated cz
 errors that create $\ge$2-Hawk outcomes --- improves every series. This
 structural robustness is a property of the game's payoff geometry, not of the
-device.\todo{connect to the per-player asymmetry findings of
-Sec.~\ref{sec:noise}: the same single-flip terms that leave the mean invariant
-are what create winners and losers.}
+device.
+
+The same single-flip terms that leave the mean invariant are what create
+winners and losers. Under the all-Dove branch each one-Hawk outcome transfers
+$V$ to a single player and zero to the rest: the mean is protected, the
+individual player is not, and under gate-level noise the disadvantaged
+position is locked to the entangler's circuit layout rather than to any
+coordination failure (Sec.~\ref{sec:noise}).
+% docs/findings/2026-07-05-t9-adaptation-fairness.md; ring N=5 permutation
+% test scripts/asymmetry_diagnostics.py (README \S9 Month-4 findings)
+An exploratory W-state pilot finds the asymmetry is not repaired by
+self-interested play: letting each player independently best-respond either
+equalizes only by collapsing the group mean ($1.00 \rightarrow 0.51$ at
+$p{=}0$) or fails to converge at all (a payoff limit cycle at $p{=}0.02$).
+The adaptation rule is provisional and this is not a locked finding, but the
+direction is consistent --- the fairness loss is structural to the circuit,
+not an artifact players adapt away. The advantage we report is therefore a
+mean over players who do not share it equally; the per-player floor, not the
+mean, is the quantity a mechanism designer should optimize.
 
 % =============================================================================
 \section{Discussion}\label{sec:discussion}
