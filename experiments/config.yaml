@@ -3,7 +3,7 @@
 # =============================================================================
 #
 # Run it from the repo root with:
-#     PYTHONPATH=src python scripts/run_experiment.py
+#     PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py
 #
 # Output goes to:  results/<experiment.name>/<UTC-timestamp>/
 #     report.md  results.json  results.csv  plots/  config.snapshot.yaml

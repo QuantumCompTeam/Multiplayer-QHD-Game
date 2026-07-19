@@ -15,8 +15,8 @@ run dir.
       is first-order insensitive to single bit-flips from |0..0>).
 
 Usage:
-  PYTHONPATH=src python scripts/plot_hardware_scaling.py            # all runs
-  PYTHONPATH=src python scripts/plot_hardware_scaling.py <run_dir> [<run_dir>..]
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py            # all runs
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py <run_dir> [<run_dir>..]
 """
 
 import glob

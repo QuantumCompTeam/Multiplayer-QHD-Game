@@ -20,8 +20,8 @@ Two tests (elevation-report validation plan):
      the implementation, not the state" story is wrong -- stop and rethink.
 
 Run from repo root:
-  PYTHONPATH=src python scripts/asymmetry_diagnostics.py             # ring N=5 p=0.02
-  PYTHONPATH=src python scripts/asymmetry_diagnostics.py w 5 0.02    # topology N p
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/asymmetry_diagnostics.py             # ring N=5 p=0.02
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/asymmetry_diagnostics.py w 5 0.02    # topology N p
 """
 
 import os

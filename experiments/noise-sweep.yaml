@@ -1,7 +1,7 @@
 # =============================================================================
 # Month-4 RQ3 run: depolarizing-noise robustness per entanglement topology.
 #
-#   PYTHONPATH=src python scripts/run_experiment.py --config experiments/noise-sweep.yaml
+#   PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/noise-sweep.yaml
 #
 # Sweeps noise p over the README §5.1 grid (0.0 → 0.05) for the RQ3 comparison
 # set — GHZ vs W (the headline) plus ring (the cheapest pairwise topology) — at

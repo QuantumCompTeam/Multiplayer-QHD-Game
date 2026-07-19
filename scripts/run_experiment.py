@@ -1,8 +1,8 @@
 """Run a parameterized experiment sweep and write a readable report.
 
 Tweak experiments/config.yaml, then run from the repo root:
-  PYTHONPATH=src python scripts/run_experiment.py
-  PYTHONPATH=src python scripts/run_experiment.py --config path/to.yaml
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py --config path/to.yaml
 
 Writes a timestamped run directory under results/<name>/<UTC-timestamp>/
 (via results_io, the project-standard run-folder convention) containing:

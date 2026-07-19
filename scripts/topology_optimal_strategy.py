@@ -14,8 +14,8 @@ tool that answers "does C_4 have a real quantum advantage under its OWN optimal
 strategy, or was advantage=0 just an artifact of the GHZ strategy?"
 
 Run from repo root:
-  PYTHONPATH=src python scripts/topology_optimal_strategy.py            # ring, N=2..4
-  PYTHONPATH=src python scripts/topology_optimal_strategy.py ring 2 5   # topo, Nmin Nmax
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/topology_optimal_strategy.py            # ring, N=2..4
+  PYTHONPATH=src conda run -n entangled-equilibria python scripts/topology_optimal_strategy.py ring 2 5   # topo, Nmin Nmax
 """
 
 import math
