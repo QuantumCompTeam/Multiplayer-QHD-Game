@@ -36,6 +36,7 @@ Honesty notes carried into every saved result:
 import argparse
 import json
 import os
+import platform
 import subprocess
 import sys
 import warnings
@@ -574,11 +575,36 @@ def git_provenance() -> dict:
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
                                          text=True).strip()
-        dirty = bool(subprocess.check_output(["git", "status", "--porcelain"],
-                                             text=True).strip())
+        porcelain = subprocess.check_output(["git", "status", "--porcelain"],
+                                            text=True).strip()
+        dirty = bool(porcelain)
     except Exception:  # noqa: BLE001
-        commit, dirty = None, None
-    return {"commit": commit, "dirty": dirty}
+        commit, dirty, porcelain = None, None, ""
+    out = {"commit": commit, "dirty": dirty}
+    if dirty:
+        # G16: "dirty": true alone leaves the code unidentifiable; at least
+        # enumerate what was dirty at save time.
+        out["dirty_files"] = porcelain.splitlines()
+    return out
+
+
+def environment_provenance() -> dict:
+    """Same block preregister_peff.py records (item 16 / G16), plus the runtime
+    version (this is the submission path) and the OS (G20: committed artifacts
+    have come from interpreters on other operating systems)."""
+    env = {
+        "python": platform.python_version(),
+        "qiskit": __import__("qiskit").__version__,
+        "qiskit_aer": __import__("qiskit_aer").__version__,
+        "numpy": __import__("numpy").__version__,
+        "scipy": __import__("scipy").__version__,
+        "platform": platform.platform(),
+    }
+    try:
+        env["qiskit_ibm_runtime"] = __import__("qiskit_ibm_runtime").__version__
+    except Exception:  # noqa: BLE001  (absent only on sim-only installs)
+        env["qiskit_ibm_runtime"] = None
+    return env
 
 
 def chain_calibration(backend, chain: list[int]) -> dict:
@@ -601,7 +627,7 @@ def chain_calibration(backend, chain: list[int]) -> dict:
 
 
 def save_run(analysis: dict, predictions: dict, plan: dict, job_info: dict,
-             cal: dict, shots: int) -> str:
+             cal: dict, shots: int, cal_submit: dict | None = None) -> str:
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     out_dir = os.path.join(os.path.dirname(__file__), "..", "results",
                            "hardware-scaling", ts)
@@ -610,6 +636,7 @@ def save_run(analysis: dict, predictions: dict, plan: dict, job_info: dict,
         "experiment": "hardware-scaling-n345",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "git": git_provenance(),
+        "environment": environment_provenance(),
         "job": job_info,
         "shots": shots,
         "gamma": "pi/2",
@@ -624,6 +651,13 @@ def save_run(analysis: dict, predictions: dict, plan: dict, job_info: dict,
         json.dump(payload, fh, indent=2)
     with open(os.path.join(out_dir, "calibration.json"), "w", encoding="utf-8") as fh:
         json.dump(cal, fh, indent=2)
+    if cal_submit is not None:
+        # G15: calibration.json above is fetched at analysis time; this one was
+        # snapshotted at submission and identifies the calibration the cross-day
+        # count should use.
+        with open(os.path.join(out_dir, "calibration_at_submit.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(cal_submit, fh, indent=2)
     print(f"\nsaved: {os.path.relpath(os.path.join(out_dir, 'result.json'))}")
     return out_dir
 
@@ -636,6 +670,12 @@ def _save_pending_job_id(job_id: str, backend_name: str) -> None:
     with open(os.path.join(out_dir, "pending_jobs.txt"), "a",
               encoding="utf-8") as fh:
         fh.write(f"{stamp}\t{backend_name}\t{job_id}\n")
+
+
+def _submit_cal_path(job_id: str) -> str:
+    return os.path.join(os.path.dirname(__file__), "..", "results",
+                        "hardware-scaling",
+                        f"pending-{job_id}-calibration.json")
 
 
 def analyze_and_save(counts_per_pub: list[dict], plan: dict, refs: dict,
@@ -652,7 +692,13 @@ def analyze_and_save(counts_per_pub: list[dict], plan: dict, refs: dict,
           f"{predictions['effective_p']['4']['advantage']:.4f}, N=5: "
           f"{predictions['effective_p']['5']['advantage']:.4f}")
     cal = chain_calibration(backend, plan["chain"])
-    save_run(analysis, predictions, plan, job_info, cal, shots)
+    cal_submit = None
+    sub_path = _submit_cal_path(job_info.get("job_id", ""))
+    if job_info.get("job_id") and os.path.exists(sub_path):
+        with open(sub_path, encoding="utf-8") as fh:
+            cal_submit = json.load(fh)
+    save_run(analysis, predictions, plan, job_info, cal, shots,
+             cal_submit=cal_submit)
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
@@ -733,6 +779,10 @@ def main() -> None:
               f"{args.shots} shots on {backend.name} ===")
         job = Sampler(mode=backend).run(plan["pubs"], shots=args.shots)
         _save_pending_job_id(job.job_id(), backend.name)
+        # G15: snapshot calibration NOW; the copy fetched at analysis time may
+        # describe a later calibration than the one the job ran under.
+        with open(_submit_cal_path(job.job_id()), "w", encoding="utf-8") as fh:
+            json.dump(chain_calibration(backend, plan["chain"]), fh, indent=2)
         print(f"submitted job {job.job_id()} -- waiting (recover with: "
               f"python experiments/hardware_scaling.py --from-job "
               f"{job.job_id()})")
