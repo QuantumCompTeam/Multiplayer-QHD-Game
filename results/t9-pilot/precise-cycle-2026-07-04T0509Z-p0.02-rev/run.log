@@ -1,0 +1,33 @@
+=== T9 cycle characterization: topology=w N=4 p=0.02 rounds=20 (V=4, C=3, gamma=pi/2, reverse_order=True) ===
+Baseline (fixed Q_4): [0.989837 0.975589 0.976809 0.977211]
+  mean=0.979861  spread=0.014248
+  anchor vs locked report: match
+  round  1: max_gain=3.734e-01  mean=0.877483  spread=0.057417
+  round  2: max_gain=6.285e-03  mean=0.879677  spread=0.045464
+  round  3: max_gain=5.343e-03  mean=0.881525  spread=0.037568
+  round  4: max_gain=1.200e-02  mean=0.881711  spread=0.036662
+  round  5: max_gain=4.819e-03  mean=0.881340  spread=0.036951
+  round  6: max_gain=5.976e-04  mean=0.881607  spread=0.037039
+  round  7: max_gain=8.377e-04  mean=0.880605  spread=0.036964
+  round  8: max_gain=1.665e-03  mean=0.879948  spread=0.040168
+  round  9: max_gain=3.609e-03  mean=0.880165  spread=0.036606
+  round 10: max_gain=6.166e-03  mean=0.882035  spread=0.039752
+  round 11: max_gain=5.872e-03  mean=0.879651  spread=0.041711
+  round 12: max_gain=1.203e-03  mean=0.881528  spread=0.039435
+  round 13: max_gain=4.100e-04  mean=0.881066  spread=0.037642
+  round 14: max_gain=8.350e-04  mean=0.880395  spread=0.041301
+  round 15: max_gain=1.953e-03  mean=0.879976  spread=0.045795
+  round 16: max_gain=4.781e-03  mean=0.881085  spread=0.038587
+  round 17: max_gain=9.972e-03  mean=0.882579  spread=0.036916
+  round 18: max_gain=5.069e-03  mean=0.881571  spread=0.037829
+  round 19: max_gain=6.545e-04  mean=0.882227  spread=0.036629
+  round 20: max_gain=5.939e-04  mean=0.881062  spread=0.037365
+Cycle analysis (one full period = rounds 14..20):
+  does not converge to a fixed point; oscillates on a ~period-7 limit cycle
+  period match residual (L2, vs previous period): 4.94e-03
+  time-averaged mean payoff: 0.881271  (range within cycle: 0.879976 .. 0.882579)
+  time-averaged spread:      0.039203  (range within cycle: 0.036629 .. 0.045795)
+  per-player time-averaged payoffs: [0.907753 0.872006 0.871401 0.873923]
+  residual unilateral gain over the period: 5.94e-04 .. 9.97e-03
+
+Saved: C:\Users\prith\Multiplayer-QHD-Game\results\t9-pilot\precise-cycle-2026-07-04T0509Z-p0.02-rev/results.json

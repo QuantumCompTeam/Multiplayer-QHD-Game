@@ -1,0 +1,284 @@
+experiment:
+  name: n-scaling-advantage
+  description: Quantum advantage across N and entanglement topologies (RQ1/RQ2)
+generated_at: 2026-07-02T0538Z
+output:
+  formats:
+  - md
+  - plots
+cells:
+- N: 2
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 2
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 2
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 2
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 2
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 3
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 3
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 3
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 3
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 3
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 5
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 5
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 5
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 5
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 5
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 6
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 6
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 6
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 6
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash
+- N: 6
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 1000.0
+  C: 550.0
+  gamma: 1.5707963267948966
+  gamma_label: pi/2
+  strategy_mode: nash

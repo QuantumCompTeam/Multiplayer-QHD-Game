@@ -18,11 +18,10 @@ Locally: `latexmk -pdf main.tex` (needs a TeX distribution with IEEEtran).
 - `\todo{...}` markers (red in the PDF) are unwritten prose:
   - Prithvi: intro narrative, error-budget paragraph, robustness-mechanism
     link to fairness, conclusion.
-  - Aasa: payoff-tensor section, zero-noise landscape section (needs the
-    advantage map regenerated at V=4, C=3 — every n-scaling-advantage run to
-    date, 2026-07-02 through 2026-07-16, and every gamma-sweep run used
-    V=1000/C=550; verified against the runs' config.snapshot.yaml),
-    Month-4 noise-findings port from README §9.
+  - Aasa: payoff-tensor section, zero-noise landscape section (advantage map
+    regenerated at V=4/C=3 fixed-mode under item 13 on 2026-07-19 — see Figures
+    below; gamma-sweep N2–N6 also current-convention), Month-4 noise-findings
+    port from README §9.
 - `references.bib` has two metadata TODOs (varsamis2025, flitney2002 year).
 - Table II (scaling) gains cross-day error bars automatically as repeat runs
   accumulate (`TODOS.md` protocol); regenerate `figs/hardware_scaling.pdf`
@@ -31,6 +30,8 @@ Locally: `latexmk -pdf main.tex` (needs a TeX distribution with IEEEtran).
 ## Figures
 
 - `figs/hardware_n3_validation.pdf` — from `results/hardware-n3/2026-07-16T013912Z/plots/`
-- `figs/hardware_scaling.pdf` — from `results/hardware-scaling/2026-07-16T074134Z/plots/`
-- Simulation figures (advantage map, noise surfaces): TODO after the V=4,C=3
-  regeneration; captions to be drawn from the runs' report.md files.
+- `figs/hardware_scaling.pdf` — from `results/hardware-scaling/2026-07-17T014458Z/plots/`
+  (2-run aggregate; refreshed 2026-07-19).
+- Advantage map: regenerated at V=4/C=3 (fixed) — `results/n-scaling-advantage/2026-07-19T0901Z`
+  (`plots/advantage_vs_N.png`, `topology_heatmap.png`); gamma-sweep N2–N6 current-convention.
+  `figs/` embed still TODO (copy the advantage-map figure in + caption from report.md).

@@ -1,0 +1,3800 @@
+{
+  "experiment": {
+    "name": "gamma-sweep-N4",
+    "description": "Quantum advantage vs entanglement \u03b3 at N=4 across ['fully-connected', 'ghz', 'ring', 'star', 'w']; \u03b3 swept 0\u03c0\u21920.5\u03c0 (config.game.gamma)"
+  },
+  "generated_at": "2026-07-19T0821Z",
+  "cells": [
+    {
+      "N": 4,
+      "topology": "fully-connected",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.0,
+      "gamma_label": "0\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "fully-connected",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.3141592653589793,
+      "gamma_label": "0.1\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.6996431528137084,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.9496431528137084,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.6996431528137084, 0.6996431528137083, 0.6996431528137084, 0.6996431528137081]",
+      "q_payoff_vector": "[0.9496431528137084, 0.9496431528137083, 0.9496431528137084, 0.9496431528137081]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.9496431528137084,
+        "q_payoff_vector": [
+          0.9496431528137084,
+          0.9496431528137083,
+          0.9496431528137084,
+          0.9496431528137081
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.6996431528137084,
+        "advantage_vector": [
+          0.6996431528137084,
+          0.6996431528137083,
+          0.6996431528137084,
+          0.6996431528137081
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.738208494309686,
+            "q_payoff": 0.9496431528137084,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.9586335805662864,
+            "q_payoff": 0.9496431528137084,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.7382084943096859,
+            "q_payoff": 0.9496431528137083,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.9586335805662864,
+            "q_payoff": 0.9496431528137083,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.738208494309686,
+            "q_payoff": 0.9496431528137084,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.958633580566287,
+            "q_payoff": 0.9496431528137084,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.7382084943096858,
+            "q_payoff": 0.9496431528137081,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.958633580566287,
+            "q_payoff": 0.9496431528137081,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "fully-connected",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.6283185307179586,
+      "gamma_label": "0.2\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.40484903468629324,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.654849034686293,
+      "classical_ne_payoff": 0.24999999999999972,
+      "advantage_vector": "[0.40484903468629324, 0.40484903468629313, 0.40484903468629324, 0.40484903468629324]",
+      "q_payoff_vector": "[0.654849034686293, 0.6548490346862929, 0.654849034686293, 0.654849034686293]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.654849034686293,
+        "q_payoff_vector": [
+          0.654849034686293,
+          0.6548490346862929,
+          0.654849034686293,
+          0.654849034686293
+        ],
+        "classical_ne_payoff": 0.24999999999999972,
+        "classical_ne_payoff_vector": [
+          0.24999999999999972,
+          0.24999999999999972,
+          0.24999999999999972,
+          0.24999999999999972
+        ],
+        "advantage": 0.40484903468629324,
+        "advantage_vector": [
+          0.40484903468629324,
+          0.40484903468629313,
+          0.40484903468629324,
+          0.40484903468629324
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "H"
+          ],
+          [
+            "H",
+            "Q",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.426267063022116,
+            "q_payoff": 0.654849034686293,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 1.557067082804409,
+            "q_payoff": 0.654849034686293,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.426267063022116,
+            "q_payoff": 0.6548490346862929,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 1.5570670828044089,
+            "q_payoff": 0.6548490346862929,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.42626706302211603,
+            "q_payoff": 0.654849034686293,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 1.557067082804409,
+            "q_payoff": 0.654849034686293,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.42626706302211603,
+            "q_payoff": 0.654849034686293,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 1.5570670828044093,
+            "q_payoff": 0.654849034686293,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "fully-connected",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.9424777960769379,
+      "gamma_label": "0.3\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.4048490346862934,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.6548490346862934,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.4048490346862934, 0.4048490346862934, 0.4048490346862934, 0.4048490346862934]",
+      "q_payoff_vector": "[0.6548490346862934, 0.6548490346862934, 0.6548490346862934, 0.6548490346862934]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.6548490346862934,
+        "q_payoff_vector": [
+          0.6548490346862934,
+          0.6548490346862934,
+          0.6548490346862934,
+          0.6548490346862934
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.4048490346862934,
+        "advantage_vector": [
+          0.4048490346862934,
+          0.4048490346862934,
+          0.4048490346862934,
+          0.4048490346862934
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "D",
+            "Q",
+            "Q",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "H"
+          ],
+          [
+            "H",
+            "Q",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "D",
+            "Q",
+            "Q"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "Q",
+            "D",
+            "Q"
+          ],
+          [
+            "Q",
+            "Q",
+            "Q",
+            "D"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.076486496691281,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 0.8438770409180598,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.0764864966912813,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 0.8438770409180596,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.0764864966912813,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 0.8438770409180598,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.0764864966912813,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 0.8438770409180598,
+            "q_payoff": 0.6548490346862934,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "fully-connected",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.2566370614359172,
+      "gamma_label": "0.4\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.6996431528137075,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.9496431528137075,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.6996431528137074, 0.6996431528137076, 0.6996431528137077, 0.6996431528137077]",
+      "q_payoff_vector": "[0.9496431528137074, 0.9496431528137076, 0.9496431528137077, 0.9496431528137077]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.9496431528137075,
+        "q_payoff_vector": [
+          0.9496431528137074,
+          0.9496431528137076,
+          0.9496431528137077,
+          0.9496431528137077
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.6996431528137075,
+        "advantage_vector": [
+          0.6996431528137074,
+          0.6996431528137076,
+          0.6996431528137077,
+          0.6996431528137077
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.1451498784588783,
+            "q_payoff": 0.9496431528137074,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 1.2754085648064415,
+            "q_payoff": 0.9496431528137074,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.1451498784588783,
+            "q_payoff": 0.9496431528137076,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 1.2754085648064415,
+            "q_payoff": 0.9496431528137076,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.145149878458878,
+            "q_payoff": 0.9496431528137077,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 1.275408564806441,
+            "q_payoff": 0.9496431528137077,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.1451498784588783,
+            "q_payoff": 0.9496431528137077,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 1.2754085648064415,
+            "q_payoff": 0.9496431528137077,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "fully-connected",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.5707963267948966,
+      "gamma_label": "0.5\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000004,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.0000000000000013,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000004,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.0000000000000013,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000004,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.0000000000000013,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000004,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.0000000000000013,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ghz",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.0,
+      "gamma_label": "0\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ghz",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.3141592653589793,
+      "gamma_label": "0.1\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.9641906864453034,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.80901699437495,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.9641906864453034,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.80901699437495,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.9641906864453034,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.80901699437495,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.9641906864453034,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.80901699437495,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ghz",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.6283185307179586,
+      "gamma_label": "0.2\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.24999999999999994,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.24999999999999994,
+        "classical_ne_payoff_vector": [
+          0.24999999999999994,
+          0.24999999999999994,
+          0.24999999999999994,
+          0.24999999999999994
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "H"
+          ],
+          [
+            "H",
+            "Q",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.8704406864453029,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.309016994374949,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.8704406864453029,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.309016994374949,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.8704406864453029,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.309016994374949,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.8704406864453029,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.309016994374949,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ghz",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.9424777960769379,
+      "gamma_label": "0.3\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.7545593135546976,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.690983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.7545593135546976,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.690983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.7545593135546976,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.690983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.7545593135546976,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.690983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ghz",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.2566370614359172,
+      "gamma_label": "0.4\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.6608093135546977,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.190983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.6608093135546977,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.190983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.6608093135546977,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.190983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.6608093135546977,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.190983005625054,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ghz",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.5707963267948966,
+      "gamma_label": "0.5\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000002,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.000000000000001,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000002,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.000000000000001,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000002,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.000000000000001,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.6250000000000002,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.000000000000001,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ring",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.0,
+      "gamma_label": "0\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ring",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.3141592653589793,
+      "gamma_label": "0.1\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.7251940108703361,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.9751940108703361,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.7251940108703361, 0.7251940108703361, 0.7251940108703361, 0.7251940108703361]",
+      "q_payoff_vector": "[0.9751940108703361, 0.9751940108703361, 0.9751940108703361, 0.9751940108703361]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.9751940108703361,
+        "q_payoff_vector": [
+          0.9751940108703361,
+          0.9751940108703361,
+          0.9751940108703361,
+          0.9751940108703361
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.7251940108703361,
+        "advantage_vector": [
+          0.7251940108703361,
+          0.7251940108703361,
+          0.7251940108703361,
+          0.7251940108703361
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.9057834432867347,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.1893200184178534,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.9057834432867347,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.1893200184178534,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.9057834432867342,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.1893200184178516,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.9057834432867342,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.1893200184178525,
+            "q_payoff": 0.9751940108703361,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ring",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.6283185307179586,
+      "gamma_label": "0.2\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.5049391088561785,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.7549391088561783,
+      "classical_ne_payoff": 0.24999999999999983,
+      "advantage_vector": "[0.5049391088561785, 0.5049391088561783, 0.5049391088561785, 0.5049391088561785]",
+      "q_payoff_vector": "[0.7549391088561783, 0.7549391088561782, 0.7549391088561783, 0.7549391088561783]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.7549391088561783,
+        "q_payoff_vector": [
+          0.7549391088561783,
+          0.7549391088561782,
+          0.7549391088561783,
+          0.7549391088561783
+        ],
+        "classical_ne_payoff": 0.24999999999999983,
+        "classical_ne_payoff_vector": [
+          0.24999999999999983,
+          0.24999999999999983,
+          0.24999999999999983,
+          0.24999999999999983
+        ],
+        "advantage": 0.5049391088561785,
+        "advantage_vector": [
+          0.5049391088561785,
+          0.5049391088561783,
+          0.5049391088561785,
+          0.5049391088561785
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "H"
+          ],
+          [
+            "H",
+            "Q",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.7110246193890495,
+            "q_payoff": 0.7549391088561783,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 1.6885339609569585,
+            "q_payoff": 0.7549391088561783,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.7110246193890496,
+            "q_payoff": 0.7549391088561782,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 1.6885339609569585,
+            "q_payoff": 0.7549391088561782,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.7110246193890496,
+            "q_payoff": 0.7549391088561783,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 1.688533960956959,
+            "q_payoff": 0.7549391088561783,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.7110246193890497,
+            "q_payoff": 0.7549391088561783,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 1.6885339609569585,
+            "q_payoff": 0.7549391088561783,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ring",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.9424777960769379,
+      "gamma_label": "0.3\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.16836067662966536,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.41836067662966536,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.16836067662966542, 0.16836067662966536, 0.16836067662966536, 0.16836067662966536]",
+      "q_payoff_vector": "[0.4183606766296654, 0.41836067662966536, 0.41836067662966536, 0.41836067662966536]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.41836067662966536,
+        "q_payoff_vector": [
+          0.4183606766296654,
+          0.41836067662966536,
+          0.41836067662966536,
+          0.41836067662966536
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.16836067662966536,
+        "advantage_vector": [
+          0.16836067662966542,
+          0.16836067662966536,
+          0.16836067662966536,
+          0.16836067662966536
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "H"
+          ],
+          [
+            "H",
+            "Q",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.697243900463267,
+            "q_payoff": 0.4183606766296654,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 0.638804981582152,
+            "q_payoff": 0.4183606766296654,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.6972439004632672,
+            "q_payoff": 0.41836067662966536,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 0.638804981582152,
+            "q_payoff": 0.41836067662966536,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.697243900463267,
+            "q_payoff": 0.41836067662966536,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 0.6388049815821522,
+            "q_payoff": 0.41836067662966536,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.697243900463267,
+            "q_payoff": 0.41836067662966536,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 0.6388049815821519,
+            "q_payoff": 0.41836067662966536,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ring",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.2566370614359172,
+      "gamma_label": "0.4\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.013615578643822235,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.26361557864382223,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.01361557864382218, 0.013615578643822235, 0.01361557864382218, 0.013615578643822235]",
+      "q_payoff_vector": "[0.2636155786438222, 0.26361557864382223, 0.2636155786438222, 0.26361557864382223]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.26361557864382223,
+        "q_payoff_vector": [
+          0.2636155786438222,
+          0.26361557864382223,
+          0.2636155786438222,
+          0.26361557864382223
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.013615578643822235,
+        "advantage_vector": [
+          0.01361557864382218,
+          0.013615578643822235,
+          0.01361557864382218,
+          0.013615578643822235
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "Q"
+          ],
+          [
+            "H",
+            "Q",
+            "Q",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "Q",
+            "Q",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.9545027243609513,
+            "q_payoff": 0.2636155786438222,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 0.1395910390430417,
+            "q_payoff": 0.2636155786438222,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.9545027243609513,
+            "q_payoff": 0.26361557864382223,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 0.13959103904304168,
+            "q_payoff": 0.26361557864382223,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.9545027243609514,
+            "q_payoff": 0.2636155786438222,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 0.1395910390430417,
+            "q_payoff": 0.2636155786438222,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.9545027243609514,
+            "q_payoff": 0.26361557864382223,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 0.13959103904304168,
+            "q_payoff": 0.26361557864382223,
+            "q_dominates": true
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "ring",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.5707963267948966,
+      "gamma_label": "0.5\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.0,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 0.25,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.0, 0.0, 0.0, 0.0]",
+      "q_payoff_vector": "[0.25, 0.25, 0.25, 0.25]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.25,
+        "q_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.0,
+        "advantage_vector": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "Q"
+          ],
+          [
+            "H",
+            "Q",
+            "Q",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "Q",
+            "Q",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 6.358965684381954e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 6.358965684381953e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 5.502609166123764e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 5.502609166123762e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "star",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.0,
+      "gamma_label": "0\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "star",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.3141592653589793,
+      "gamma_label": "0.1\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.7500000000000009,
+      "q_is_nash": false,
+      "symmetric": false,
+      "q_payoff_per_player": 1.0000000000000009,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[1.0022796567773498, 0.665906781074218, 0.665906781074218, 0.665906781074218]",
+      "q_payoff_vector": "[1.2522796567773498, 0.915906781074218, 0.915906781074218, 0.915906781074218]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000009,
+        "q_payoff_vector": [
+          1.2522796567773498,
+          0.915906781074218,
+          0.915906781074218,
+          0.915906781074218
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.7500000000000009,
+        "advantage_vector": [
+          1.0022796567773498,
+          0.665906781074218,
+          0.665906781074218,
+          0.665906781074218
+        ],
+        "symmetric": false,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.1232917738330122,
+            "q_payoff": 1.2522796567773498,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.4626547401561605,
+            "q_payoff": 1.2522796567773498,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.8724210224267493,
+            "q_payoff": 0.915906781074218,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.3419923220832324,
+            "q_payoff": 0.915906781074218,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.8724210224267489,
+            "q_payoff": 0.915906781074218,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.34199232208323,
+            "q_payoff": 0.915906781074218,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.8724210224267489,
+            "q_payoff": 0.915906781074218,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.34199232208323,
+            "q_payoff": 0.915906781074218,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "star",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.6283185307179586,
+      "gamma_label": "0.2\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": false,
+      "q_payoff_per_player": 0.9999999999999999,
+      "classical_ne_payoff": 0.2499999999999999,
+      "advantage_vector": "[1.3388580890038617, 0.5537139703320462, 0.5537139703320461, 0.553713970332046]",
+      "q_payoff_vector": "[1.5888580890038617, 0.8037139703320461, 0.803713970332046, 0.8037139703320458]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 0.9999999999999999,
+        "q_payoff_vector": [
+          1.5888580890038617,
+          0.8037139703320461,
+          0.803713970332046,
+          0.8037139703320458
+        ],
+        "classical_ne_payoff": 0.2499999999999999,
+        "classical_ne_payoff_vector": [
+          0.2499999999999999,
+          0.2499999999999999,
+          0.2499999999999999,
+          0.2499999999999999
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          1.3388580890038617,
+          0.5537139703320462,
+          0.5537139703320461,
+          0.553713970332046
+        ],
+        "symmetric": false,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.2767307447094591,
+            "q_payoff": 1.5888580890038617,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.3632691186718153,
+            "q_payoff": 1.5888580890038617,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.6764743718188543,
+            "q_payoff": 0.8037139703320461,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.0096829529426574,
+            "q_payoff": 0.8037139703320461,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.6764743718188542,
+            "q_payoff": 0.803713970332046,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.009682952942657,
+            "q_payoff": 0.803713970332046,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.6764743718188542,
+            "q_payoff": 0.8037139703320458,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.009682952942657,
+            "q_payoff": 0.8037139703320458,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "star",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.9424777960769379,
+      "gamma_label": "0.3\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.7500000000000007,
+      "q_is_nash": false,
+      "symmetric": false,
+      "q_payoff_per_player": 1.0000000000000007,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[1.1070953432226522, 0.6309682189257833, 0.6309682189257833, 0.6309682189257833]",
+      "q_payoff_vector": "[1.3570953432226522, 0.8809682189257833, 0.8809682189257833, 0.8809682189257833]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000007,
+        "q_payoff_vector": [
+          1.3570953432226522,
+          0.8809682189257833,
+          0.8809682189257833,
+          0.8809682189257833
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.7500000000000007,
+        "advantage_vector": [
+          1.1070953432226522,
+          0.6309682189257833,
+          0.6309682189257833,
+          0.6309682189257833
+        ],
+        "symmetric": false,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "H"
+          ],
+          [
+            "H",
+            "Q",
+            "H",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.2019035386669896,
+            "q_payoff": 1.3570953432226522,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 1.506095259843844,
+            "q_payoff": 1.3570953432226522,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.671524290073252,
+            "q_payoff": 0.8809682189257833,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 1.10592434458344,
+            "q_payoff": 0.8809682189257833,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.6715242900732521,
+            "q_payoff": 0.8809682189257833,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 1.1059243445834395,
+            "q_payoff": 0.8809682189257833,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.6715242900732521,
+            "q_payoff": 0.8809682189257833,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 1.1059243445834395,
+            "q_payoff": 0.8809682189257833,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "star",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.2566370614359172,
+      "gamma_label": "0.4\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.7500000000000004,
+      "q_is_nash": false,
+      "symmetric": false,
+      "q_payoff_per_player": 1.0000000000000004,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.3955169109961384, 0.8681610296679545, 0.8681610296679545, 0.8681610296679545]",
+      "q_payoff_vector": "[0.6455169109961384, 1.1181610296679545, 1.1181610296679545, 1.1181610296679545]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000004,
+        "q_payoff_vector": [
+          0.6455169109961384,
+          1.1181610296679545,
+          1.1181610296679545,
+          1.1181610296679545
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.7500000000000004,
+        "advantage_vector": [
+          0.3955169109961384,
+          0.8681610296679545,
+          0.8681610296679545,
+          0.8681610296679545
+        ],
+        "symmetric": false,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.0015895677905409,
+            "q_payoff": 0.6455169109961384,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 1.1054808813281847,
+            "q_payoff": 0.6455169109961384,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.8205959406811457,
+            "q_payoff": 1.1181610296679545,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 0.9382337137240089,
+            "q_payoff": 1.1181610296679545,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.8205959406811458,
+            "q_payoff": 1.1181610296679545,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 0.938233713724009,
+            "q_payoff": 1.1181610296679545,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.8205959406811458,
+            "q_payoff": 1.1181610296679545,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 0.9382337137240091,
+            "q_payoff": 1.1181610296679545,
+            "q_dominates": true
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "star",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.5707963267948966,
+      "gamma_label": "0.5\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.7500000000000009,
+      "q_is_nash": false,
+      "symmetric": false,
+      "q_payoff_per_player": 1.0000000000000009,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[2.220446049250313e-16, 1.000000000000001, 1.000000000000001, 1.000000000000001]",
+      "q_payoff_vector": "[0.2500000000000002, 1.250000000000001, 1.250000000000001, 1.250000000000001]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000009,
+        "q_payoff_vector": [
+          0.2500000000000002,
+          1.250000000000001,
+          1.250000000000001,
+          1.250000000000001
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.7500000000000009,
+        "advantage_vector": [
+          2.220446049250313e-16,
+          1.000000000000001,
+          1.000000000000001,
+          1.000000000000001
+        ],
+        "symmetric": false,
+        "q_is_nash": false,
+        "all_pure_nash": [],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.9062500000000007,
+            "q_payoff": 0.2500000000000002,
+            "q_dominates": false
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 1.0000000000000007,
+            "q_payoff": 0.2500000000000002,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.9062500000000007,
+            "q_payoff": 1.250000000000001,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 1.0000000000000007,
+            "q_payoff": 1.250000000000001,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.9062500000000007,
+            "q_payoff": 1.250000000000001,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 1.0000000000000007,
+            "q_payoff": 1.250000000000001,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.9062500000000007,
+            "q_payoff": 1.250000000000001,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 1.0000000000000007,
+            "q_payoff": 1.250000000000001,
+            "q_dominates": true
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "w",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.0,
+      "gamma_label": "0\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.75,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0,
+      "classical_ne_payoff": 0.25,
+      "advantage_vector": "[0.75, 0.75, 0.75, 0.75]",
+      "q_payoff_vector": "[1.0, 1.0, 1.0, 1.0]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0,
+        "q_payoff_vector": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.75,
+        "advantage_vector": [
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 1.0,
+            "q_payoff": 1.0,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 4.0,
+            "q_payoff": 1.0,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "w",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.3141592653589793,
+      "gamma_label": "0.1\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.7316461936106831,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0000000000000004,
+      "classical_ne_payoff": 0.2683538063893174,
+      "advantage_vector": "[0.7316461936106831, 0.7316461936106831, 0.7316461936106831, 0.7316461936106831]",
+      "q_payoff_vector": "[1.0000000000000004, 1.0000000000000004, 1.0000000000000004, 1.0000000000000004]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000004,
+        "q_payoff_vector": [
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004
+        ],
+        "classical_ne_payoff": 0.2683538063893174,
+        "classical_ne_payoff_vector": [
+          0.26835380638931733,
+          0.26835380638931733,
+          0.2683538063893174,
+          0.2683538063893174
+        ],
+        "advantage": 0.7316461936106831,
+        "advantage_vector": [
+          0.7316461936106831,
+          0.7316461936106831,
+          0.7316461936106831,
+          0.7316461936106831
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.9646398360572722,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.9449385808320505,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.9646398360572722,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.9449385808320505,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.9646398360572722,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.9449385808320514,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.9646398360572722,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.9449385808320514,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "w",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.6283185307179586,
+      "gamma_label": "0.2\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.678381372890606,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0000000000000004,
+      "classical_ne_payoff": 0.3216186271093945,
+      "advantage_vector": "[0.678381372890606, 0.678381372890606, 0.678381372890606, 0.678381372890606]",
+      "q_payoff_vector": "[1.0000000000000004, 1.0000000000000004, 1.0000000000000004, 1.0000000000000004]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000004,
+        "q_payoff_vector": [
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004
+        ],
+        "classical_ne_payoff": 0.3216186271093945,
+        "classical_ne_payoff_vector": [
+          0.3216186271093945,
+          0.3216186271093945,
+          0.3216186271093945,
+          0.3216186271093945
+        ],
+        "advantage": 0.678381372890606,
+        "advantage_vector": [
+          0.678381372890606,
+          0.678381372890606,
+          0.678381372890606,
+          0.678381372890606
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.877279656777349,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.785144118671818,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.877279656777349,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.785144118671818,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.877279656777349,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.785144118671818,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.877279656777349,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.785144118671818,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "w",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 0.9424777960769379,
+      "gamma_label": "0.3\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.595419469609678,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0000000000000004,
+      "classical_ne_payoff": 0.4045805303903225,
+      "advantage_vector": "[0.595419469609678, 0.595419469609678, 0.595419469609678, 0.595419469609678]",
+      "q_payoff_vector": "[1.0000000000000004, 1.0000000000000004, 1.0000000000000004, 1.0000000000000004]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000004,
+        "q_payoff_vector": [
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004
+        ],
+        "classical_ne_payoff": 0.4045805303903225,
+        "classical_ne_payoff_vector": [
+          0.4045805303903225,
+          0.4045805303903225,
+          0.40458053039032255,
+          0.40458053039032255
+        ],
+        "advantage": 0.595419469609678,
+        "advantage_vector": [
+          0.595419469609678,
+          0.595419469609678,
+          0.595419469609678,
+          0.595419469609678
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.7864195007223689,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.536258408829034,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.7864195007223689,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.536258408829034,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.786419500722369,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.536258408829034,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.7864195007223689,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.536258408829034,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "w",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.2566370614359172,
+      "gamma_label": "0.4\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.49088137289060607,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0000000000000009,
+      "classical_ne_payoff": 0.5091186271093948,
+      "advantage_vector": "[0.49088137289060607, 0.49088137289060607, 0.49088137289060585, 0.49088137289060585]",
+      "q_payoff_vector": "[1.0000000000000009, 1.0000000000000009, 1.0000000000000007, 1.0000000000000007]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000009,
+        "q_payoff_vector": [
+          1.0000000000000009,
+          1.0000000000000009,
+          1.0000000000000007,
+          1.0000000000000007
+        ],
+        "classical_ne_payoff": 0.5091186271093948,
+        "classical_ne_payoff_vector": [
+          0.5091186271093948,
+          0.5091186271093948,
+          0.5091186271093948,
+          0.5091186271093948
+        ],
+        "advantage": 0.49088137289060607,
+        "advantage_vector": [
+          0.49088137289060607,
+          0.49088137289060607,
+          0.49088137289060585,
+          0.49088137289060585
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.7503325974414412,
+            "q_payoff": 1.0000000000000009,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 3.222644118671819,
+            "q_payoff": 1.0000000000000009,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.7503325974414412,
+            "q_payoff": 1.0000000000000009,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 3.222644118671819,
+            "q_payoff": 1.0000000000000009,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.7503325974414412,
+            "q_payoff": 1.0000000000000007,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 3.222644118671819,
+            "q_payoff": 1.0000000000000007,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.7503325974414412,
+            "q_payoff": 1.0000000000000007,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 3.222644118671819,
+            "q_payoff": 1.0000000000000007,
+            "q_dominates": false
+          }
+        ]
+      }
+    },
+    {
+      "N": 4,
+      "topology": "w",
+      "strategy_names": "D,H,Q",
+      "V": 4.0,
+      "C": 3.0,
+      "gamma": 1.5707963267948966,
+      "gamma_label": "0.5\u03c0",
+      "noise_p": 0.0,
+      "status": "ok",
+      "advantage": 0.37500000000000033,
+      "q_is_nash": false,
+      "symmetric": true,
+      "q_payoff_per_player": 1.0000000000000004,
+      "classical_ne_payoff": 0.6250000000000001,
+      "advantage_vector": "[0.37500000000000033, 0.37500000000000033, 0.37500000000000033, 0.37500000000000033]",
+      "q_payoff_vector": "[1.0000000000000004, 1.0000000000000004, 1.0000000000000004, 1.0000000000000004]",
+      "strategy_mode": "fixed",
+      "strategy_params": null,
+      "strategy_nash_gap": null,
+      "strategy_is_nash": null,
+      "message": "",
+      "detail": {
+        "q_payoff_per_player": 1.0000000000000004,
+        "q_payoff_vector": [
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004,
+          1.0000000000000004
+        ],
+        "classical_ne_payoff": 0.6250000000000001,
+        "classical_ne_payoff_vector": [
+          0.6250000000000001,
+          0.6250000000000001,
+          0.6250000000000001,
+          0.6250000000000001
+        ],
+        "advantage": 0.37500000000000033,
+        "advantage_vector": [
+          0.37500000000000033,
+          0.37500000000000033,
+          0.37500000000000033,
+          0.37500000000000033
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": [
+          {
+            "player": 0,
+            "alt": "D",
+            "deviation_payoff": 0.8125000000000004,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 0,
+            "alt": "H",
+            "deviation_payoff": 2.875000000000001,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 1,
+            "alt": "D",
+            "deviation_payoff": 0.8125000000000004,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 1,
+            "alt": "H",
+            "deviation_payoff": 2.875000000000001,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 2,
+            "alt": "D",
+            "deviation_payoff": 0.8125000000000004,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 2,
+            "alt": "H",
+            "deviation_payoff": 2.875000000000001,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          },
+          {
+            "player": 3,
+            "alt": "D",
+            "deviation_payoff": 0.8125000000000002,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": true
+          },
+          {
+            "player": 3,
+            "alt": "H",
+            "deviation_payoff": 2.875000000000001,
+            "q_payoff": 1.0000000000000004,
+            "q_dominates": false
+          }
+        ]
+      }
+    }
+  ]
+}

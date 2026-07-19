@@ -1,0 +1,33 @@
+{
+  "experiment": "n-scaling-advantage",
+  "created_utc": "2026-07-02T05:38:05.013725+00:00",
+  "git": {
+    "commit": "4beed82afc6f9854799175754b81f1b183e7e149",
+    "dirty": true
+  },
+  "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+  "params": {
+    "source": "pytest (tests/test_config_experiment.py)",
+    "description": "Quantum advantage across N and entanglement topologies (RQ1/RQ2)",
+    "n_cells": 25,
+    "topologies": [
+      "fully-connected",
+      "ghz",
+      "ring",
+      "star",
+      "w"
+    ],
+    "N_values": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "per_cell_profile_budget": 10000,
+    "formats": [
+      "md",
+      "plots"
+    ]
+  }
+}

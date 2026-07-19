@@ -24,10 +24,10 @@ item.
 | 10 | T9 learning rule | blocked on Aasa | — | TODOS.md, "T9 adaptation & fairness pilot"; docs/findings/2026-07-05-t9-adaptation-fairness.md |
 | 11 | Stale-claim audit | done (124c09d, 2996528) | — | docs/findings/2026-07-17-item11-stale-claim-audit.md |
 | 12 | Forgiving-observable disclosure | open | — | — |
-| 13 | Retire-vs-regenerate (corrected 5-directory old-convention set) | open | F3 | item-11 audit, "Item-13 handoff" section |
+| 13 | Retire-vs-regenerate (corrected 5-directory old-convention set) | done 2026-07-19 — 7 old n-scaling dirs retired-with-note (RETIRED.md each + results/README); advantage map regenerated fixed-mode V=4/C=3 (2026-07-19T0901Z); gamma-sweep accepted from same-day pytest regen; 2 nash pytest dirs deleted | F3 | item-11 audit, "Item-13 handoff" section; results/README.md "Retired old-convention runs" |
 | 14 | Start the paper | open | — (must respect scope facts G17, G18, G19, G20) | — |
 | 15 | Locale and cp1252 | open — test fix done (3c5c39a); phase-1 line-ending report recorded 2026-07-19 | — | TODOS.md, "Pre-existing: test_gamma_sweep locale failure" |
 | 16 | Results-save hardening + environment provenance | code landed 2026-07-19; validate on run 3 | G15, G16 | env-block template: results/hardware-scaling/preregistration.json |
-| 17 | One-command repro + artifact provenance | interpreter-convention sweep done 2026-07-19 (G2, G3); G1/G4/G5/G10/G12 remain | G1, G2, G3, G4, G5, G10, G12 (G12 may defer to 19) | docs/VERIFIED-FACTS.md, A5 (conventions) + G-section |
+| 17 | One-command repro + artifact provenance | done 2026-07-19 — G1 (results/ un-ignored), G12 (graphify-out/ untracked), G4+G5 (.venv-win deleted), G10 (PYTHONPATH=src prefix stripped from 25 conda lines; 3 .sh helpers repointed to conda). G2/G3 swept earlier. | G1–G5, G10, G12 | docs/VERIFIED-FACTS.md, A5 + G-section; .gitignore; runTests.sh/runGammaSweep.sh/runAsymmetricTest.sh |
 | 18 | CI + N=4/N=5 NE regression guard | done — validated on Actions 2026-07-19 (run 29670675020, dev push: 512 passed, 3 skipped) | G9 | guard: tests/test_ne_guard.py; workflow: .github/workflows/ci.yml (also enforces tests/test_doc_anchors.py) |
 | 19 | Repo presentation | open | — | — |

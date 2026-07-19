@@ -1,0 +1,48 @@
+=== T9 cycle characterization: topology=w N=4 p=0.02 rounds=35 (V=4, C=3, gamma=pi/2, reverse_order=False) ===
+Baseline (fixed Q_4): [0.989837 0.975589 0.976809 0.977211]
+  mean=0.979861  spread=0.014248
+  anchor vs locked report: match
+  round  1: max_gain=4.426e-01  mean=0.881326  spread=0.037727
+  round  2: max_gain=7.196e-03  mean=0.882696  spread=0.019378
+  round  3: max_gain=1.633e-02  mean=0.881143  spread=0.036518
+  round  4: max_gain=2.117e-03  mean=0.880427  spread=0.041789
+  round  5: max_gain=5.080e-03  mean=0.880024  spread=0.044796
+  round  6: max_gain=5.907e-03  mean=0.881177  spread=0.042625
+  round  7: max_gain=5.339e-03  mean=0.881826  spread=0.022438
+  round  8: max_gain=1.142e-02  mean=0.881171  spread=0.034808
+  round  9: max_gain=1.963e-03  mean=0.880291  spread=0.035752
+  round 10: max_gain=4.043e-03  mean=0.879549  spread=0.038037
+  round 11: max_gain=5.108e-03  mean=0.880072  spread=0.036787
+  round 12: max_gain=6.076e-03  mean=0.881163  spread=0.038170
+  round 13: max_gain=9.515e-03  mean=0.881481  spread=0.031339
+  round 14: max_gain=4.836e-03  mean=0.880635  spread=0.040330
+  round 15: max_gain=4.245e-03  mean=0.880072  spread=0.043480
+  round 16: max_gain=5.910e-03  mean=0.880644  spread=0.042888
+  round 17: max_gain=6.777e-03  mean=0.881797  spread=0.039130
+  round 18: max_gain=1.127e-02  mean=0.881846  spread=0.018652
+  round 19: max_gain=1.255e-02  mean=0.880411  spread=0.035518
+  round 20: max_gain=3.962e-03  mean=0.879563  spread=0.037921
+  round 21: max_gain=5.104e-03  mean=0.879996  spread=0.036457
+  round 22: max_gain=6.223e-03  mean=0.881197  spread=0.039189
+  round 23: max_gain=9.760e-03  mean=0.881520  spread=0.030178
+  round 24: max_gain=5.835e-03  mean=0.880672  spread=0.040089
+  round 25: max_gain=4.116e-03  mean=0.880085  spread=0.043237
+  round 26: max_gain=5.906e-03  mean=0.880578  spread=0.043220
+  round 27: max_gain=6.873e-03  mean=0.881875  spread=0.040531
+  round 28: max_gain=1.176e-02  mean=0.882114  spread=0.015538
+  round 29: max_gain=1.452e-02  mean=0.880396  spread=0.035451
+  round 30: max_gain=4.002e-03  mean=0.879557  spread=0.037957
+  round 31: max_gain=5.104e-03  mean=0.880014  spread=0.036543
+  round 32: max_gain=6.191e-03  mean=0.881189  spread=0.038967
+  round 33: max_gain=9.718e-03  mean=0.881510  spread=0.030466
+  round 34: max_gain=5.585e-03  mean=0.880662  spread=0.040153
+  round 35: max_gain=4.151e-03  mean=0.880082  spread=0.043303
+Cycle analysis (one full period = rounds 26..35):
+  does not converge to a fixed point; oscillates on a ~period-10 limit cycle
+  period match residual (L2, vs previous period): 5.44e-04
+  time-averaged mean payoff: 0.880798  (range within cycle: 0.879557 .. 0.882114)
+  time-averaged spread:      0.036213  (range within cycle: 0.015538 .. 0.043303)
+  per-player time-averaged payoffs: [0.904466 0.87103  0.871504 0.876191]
+  residual unilateral gain over the period: 4.00e-03 .. 1.45e-02
+
+Saved: C:\Users\prith\Multiplayer-QHD-Game\results\t9-pilot\precise-cycle-2026-07-04T0509Z-p0.02/results.json

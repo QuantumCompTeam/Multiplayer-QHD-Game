@@ -1,0 +1,372 @@
+experiment:
+  name: gamma-sweep-N4
+  description: "Quantum advantage vs entanglement \u03B3 at N=4 across ['fully-connected',\
+    \ 'ghz', 'ring', 'star', 'w']; \u03B3 swept 0\u03C0\u21920.5\u03C0 (config.game.gamma)"
+generated_at: 2026-07-19T0821Z
+output:
+  formats:
+  - md
+  - json
+  - csv
+  - plots
+cells:
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.0
+  gamma_label: "0\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.3141592653589793
+  gamma_label: "0.1\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.6283185307179586
+  gamma_label: "0.2\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.9424777960769379
+  gamma_label: "0.3\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.2566370614359172
+  gamma_label: "0.4\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: fully-connected
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.5707963267948966
+  gamma_label: "0.5\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.0
+  gamma_label: "0\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.3141592653589793
+  gamma_label: "0.1\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.6283185307179586
+  gamma_label: "0.2\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.9424777960769379
+  gamma_label: "0.3\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.2566370614359172
+  gamma_label: "0.4\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ghz
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.5707963267948966
+  gamma_label: "0.5\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.0
+  gamma_label: "0\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.3141592653589793
+  gamma_label: "0.1\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.6283185307179586
+  gamma_label: "0.2\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.9424777960769379
+  gamma_label: "0.3\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.2566370614359172
+  gamma_label: "0.4\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: ring
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.5707963267948966
+  gamma_label: "0.5\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.0
+  gamma_label: "0\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.3141592653589793
+  gamma_label: "0.1\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.6283185307179586
+  gamma_label: "0.2\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.9424777960769379
+  gamma_label: "0.3\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.2566370614359172
+  gamma_label: "0.4\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: star
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.5707963267948966
+  gamma_label: "0.5\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.0
+  gamma_label: "0\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.3141592653589793
+  gamma_label: "0.1\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.6283185307179586
+  gamma_label: "0.2\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 0.9424777960769379
+  gamma_label: "0.3\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.2566370614359172
+  gamma_label: "0.4\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0
+- N: 4
+  topology: w
+  strategy_names:
+  - D
+  - H
+  - Q
+  V: 4.0
+  C: 3.0
+  gamma: 1.5707963267948966
+  gamma_label: "0.5\u03C0"
+  strategy_mode: fixed
+  noise_p: 0.0

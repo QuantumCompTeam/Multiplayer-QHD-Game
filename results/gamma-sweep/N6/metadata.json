@@ -1,0 +1,36 @@
+{
+  "experiment": "gamma-sweep-N6",
+  "created_utc": "2026-07-19T08:23:03.029405+00:00",
+  "git": {
+    "commit": "9dd49fde877ad8debec466eb64a2b4a3563f6f0c",
+    "dirty": true
+  },
+  "python": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
+  "params": {
+    "source": "pytest gamma-sweep (tests/test_gamma_sweep.py)",
+    "linked_to": "experiments/config.yaml",
+    "N": 6,
+    "gamma_bounds": [
+      0.0,
+      1.5707963267948966
+    ],
+    "gamma_values": [
+      0.0,
+      0.3141592653589793,
+      0.6283185307179586,
+      0.9424777960769379,
+      1.2566370614359172,
+      1.5707963267948966
+    ],
+    "gamma_steps": 6,
+    "topologies": [
+      "fully-connected",
+      "ghz",
+      "ring",
+      "star",
+      "w"
+    ],
+    "V": 4.0,
+    "C": 3.0
+  }
+}
