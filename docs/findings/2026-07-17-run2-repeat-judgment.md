@@ -89,7 +89,9 @@ unchanged despite the ibm_fez maintenance window that fell between the two
 submissions. The first submission of this batch, job d9chh0qneu4c739lvgb0,
 failed backend-side during that maintenance (error 9603, RF hardware, 0 quantum
 seconds billed) and was resubmitted as the job judged here; that history is
-recorded in `TODOS.md` L38-42, not in the JSON.
+recorded in `TODOS.md`, under the heading "## Hardware scaling repeat runs
+(cross-day error bars)" in the Run 2 progress bullet containing
+"d9chh0qneu4c739lvgb0 failed backend-side" — not in the JSON.
 
 So against the 3-5 cross-day target, the count stands at **1 of 3-5 calibration
 days**. What run 2 establishes is execution-level repeatability of the deficit
@@ -122,9 +124,11 @@ figures are computed from the vectors above. The position does not move between
 runs.
 
 This echoes the position-locked asymmetry described in
-`docs/findings/2026-07-05-t9-adaptation-fairness.md` L87-91, which reads the
-per-player disadvantage under noise as a "structural feature of the entangler
-circuit" rather than a coordination failure. That finding came from noiseless
+`docs/findings/2026-07-05-t9-adaptation-fairness.md`, under the heading
+"## Interpretation (provisional)" in the paragraph containing "not a
+coordination failure that self-interested players", which reads the per-player
+disadvantage under noise as a "structural feature of the entangler circuit"
+rather than a coordination failure. That finding came from noiseless
 simulation; the hardware repeats now point at the same position. Neither source
 settles whether the effect is wiring or hardware, and this document does not
 claim it does. Item 9's wiring-permutation controls are the registered test that
