@@ -11,7 +11,7 @@ ready-to-paste caption under plots/:
       reference lines, error bars propagating shot noise through the payoff.
 
 Usage:
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/plot_hardware_result.py \
+  conda run -n entangled-equilibria python scripts/plot_hardware_result.py \
       results/hardware-n3/2026-07-16T013912Z/result.json
 """
 

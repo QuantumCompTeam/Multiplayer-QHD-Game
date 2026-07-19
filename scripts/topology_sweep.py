@@ -13,7 +13,7 @@ All artifacts (CSV matrices, per-player JSON, heatmap, metadata) are written to
 results/month3_topology_sweep/<UTC-timestamp>/.
 
 Run from repo root:
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/topology_sweep.py
+  conda run -n entangled-equilibria python scripts/topology_sweep.py
 """
 
 import csv

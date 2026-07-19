@@ -48,8 +48,8 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Results
-results/
+# Results are research record and are tracked in git (see results/README.md).
+# (results/ is intentionally NOT ignored.)
 
 # graphify removal
 graphify-out/

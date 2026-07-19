@@ -26,8 +26,8 @@ profiles is attributable to noise.
 Additive pilot -- touches nothing in src/ and no Week-1 files.
 
 Run from repo root (entangled-equilibria env):
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/t9_adaptation_pilot.py               # w 4, p in {0, 0.02, 0.05}
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/t9_adaptation_pilot.py ring 4 0.02   # topology N p [p ...]
+  conda run -n entangled-equilibria python scripts/t9_adaptation_pilot.py               # w 4, p in {0, 0.02, 0.05}
+  conda run -n entangled-equilibria python scripts/t9_adaptation_pilot.py ring 4 0.02   # topology N p [p ...]
 """
 
 import json

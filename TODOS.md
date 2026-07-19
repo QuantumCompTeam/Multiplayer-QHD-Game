@@ -81,7 +81,7 @@ applies the registered conditional test, tracks whether the N=5 deficit
 (run 1: −0.0101, z=−5.2) reproduces, reports per-player vectors/worst/spread,
 and regenerates `results/hardware-scaling/repeat-judgments.json` (it refuses
 to run if preregistration.json differs from HEAD). Then regenerate the
-scaling figure (`PYTHONPATH=src conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py`),
+scaling figure (`conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py`),
 which auto-aggregates all runs. Commit the run dir + judgments + plots.
 
 ## Pre-existing: test_gamma_sweep locale failure on Windows — test fix DONE

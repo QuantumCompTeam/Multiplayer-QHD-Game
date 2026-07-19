@@ -197,7 +197,7 @@ python scripts/n3_advantage.py
 # Expected: advantage = 1.0, (Q₃,Q₃,Q₃) is the unique pure Nash equilibrium
 
 # Month 4 — noise robustness (RQ3): depolarizing p swept 0.0 → 0.05
-PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/noise-sweep.yaml
+conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/noise-sweep.yaml
 # Writes results/noise-robustness/<UTC-timestamp>/ with the p* table,
 # GHZ-vs-W ordering, and per-topology 3D advantage surfaces (plots/noise/)
 ```
@@ -215,9 +215,9 @@ run one command, and read a self-contained report.
 
 2. **Run**:
    ```bash
-   PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py
+   conda run -n entangled-equilibria python scripts/run_experiment.py
    # or point at a different config:
-   PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/config.yaml
+   conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/config.yaml
    ```
 
 3. **Read** the timestamped run under `results/<name>/<UTC-timestamp>/`:
@@ -247,9 +247,9 @@ To draw a single entanglement topology (and/or its EWL circuit) without running 
 full sweep:
 
 ```bash
-PYTHONPATH=src conda run -n entangled-equilibria python scripts/draw_topology.py --topology star --N 5
-PYTHONPATH=src conda run -n entangled-equilibria python scripts/draw_topology.py --topology ghz --N 4 --what both
-PYTHONPATH=src conda run -n entangled-equilibria python scripts/draw_topology.py --topology full --N 6 --out /tmp/diag
+conda run -n entangled-equilibria python scripts/draw_topology.py --topology star --N 5
+conda run -n entangled-equilibria python scripts/draw_topology.py --topology ghz --N 4 --what both
+conda run -n entangled-equilibria python scripts/draw_topology.py --topology full --N 6 --out /tmp/diag
 ```
 
 `--topology` accepts the harness aliases (`full` → `fully-connected`, etc.),
@@ -468,7 +468,7 @@ batch + mitigation analysis on the device noise model. Repeat protocol:
 `python experiments/hardware_scaling.py --hardware` on later days;
 `scripts/plot_hardware_scaling.py` aggregates every run (mean ± std).
 
-![N=3,4,5 hardware scaling on ibm_fez](results/hardware-scaling/2026-07-16T074134Z/plots/hardware_scaling.png)
+![N=3,4,5 hardware scaling on ibm_fez](results/hardware-scaling/2026-07-17T014458Z/plots/hardware_scaling.png)
 
 ---
 

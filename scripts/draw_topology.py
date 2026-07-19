@@ -1,9 +1,9 @@
 """Draw a single entanglement topology and/or its EWL circuit on demand.
 
 Examples (from repo root):
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/draw_topology.py --topology star --N 5
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/draw_topology.py --topology ghz --N 4 --what both
-  PYTHONPATH=src conda run -n entangled-equilibria python scripts/draw_topology.py --topology ring --N 6 --out /tmp/diag
+  conda run -n entangled-equilibria python scripts/draw_topology.py --topology star --N 5
+  conda run -n entangled-equilibria python scripts/draw_topology.py --topology ghz --N 4 --what both
+  conda run -n entangled-equilibria python scripts/draw_topology.py --topology ring --N 6 --out /tmp/diag
 
 Topology names accept the same aliases as the experiment harness (e.g. "full" ->
 "fully-connected"). Writes PNG(s) to --out, or to a results_io run folder by default.

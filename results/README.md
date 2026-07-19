@@ -28,9 +28,22 @@ From the repo root, in the pinned conda env (`entangled-equilibria`; see
 README setup):
 
 ```bash
-PYTHONPATH=src conda run -n entangled-equilibria python scripts/run_experiment.py
-PYTHONPATH=src conda run -n entangled-equilibria python scripts/topology_sweep.py
+conda run -n entangled-equilibria python scripts/run_experiment.py
+conda run -n entangled-equilibria python scripts/topology_sweep.py
 ```
 
 Each invocation creates a fresh timestamped run folder; existing runs are never
 overwritten.
+
+## Retired old-convention runs (V=1000/C=550)
+
+Seven `n-scaling-advantage/` runs — 2026-07-02T0444Z/0525Z/0538Z/1247Z/1757Z and
+2026-07-16T0736Z/0738Z — used the superseded payoff convention V=1000/C=550 (a
+bounded `experiments/config.yaml` default regression, fixed 2026-07-17). They are
+truthful historical records, each carrying a `RETIRED.md` note; **do not cite
+their payoff numbers as current-convention.** The current-convention advantage
+map (V=4/C=3, strategy_mode=fixed) is `n-scaling-advantage/2026-07-19T0901Z`.
+The `gamma-sweep/N2..N6` folders are current-convention (V=4/C=3, fixed),
+regenerated 2026-07-19 via `tests/test_gamma_sweep.py`. See
+`docs/findings/2026-07-17-item11-stale-claim-audit.md` (item 13) and
+`docs/VERIFIED-FACTS.md` F3.
