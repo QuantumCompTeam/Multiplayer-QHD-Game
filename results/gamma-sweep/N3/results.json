@@ -3,7 +3,7 @@
     "name": "gamma-sweep-N3",
     "description": "Quantum advantage vs entanglement \u03b3 at N=3 across ['fully-connected', 'ghz', 'ring', 'star', 'w']; \u03b3 swept 0\u03c0\u21920.5\u03c0 (config.game.gamma)"
   },
-  "generated_at": "2026-07-19T0821Z",
+  "generated_at": "2026-07-24T0405Z",
   "cells": [
     {
       "N": 3,

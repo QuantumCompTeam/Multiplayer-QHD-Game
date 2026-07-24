@@ -1,39 +1,68 @@
-# Paper — IEEE QCE submission draft
+# Paper — IEEE QCE review draft
 
 Target: IEEE International Conference on Quantum Computing and Engineering
 (QCE). Thesis structure: the simulation noise findings are the contribution;
-the hardware scaling runs test the registered predictions (the registered
-model comparison favors per-gate decay, with the depolarizing fit as its
-physical interpretation).
+the hardware scaling runs test registered predictions. The CZ-exponential
+baseline is the lowest-scoring registered candidate in both recorded
+executions, but this ranking is not yet a physical scaling law.
 
 ## Build
 
-Overleaf: upload this `paper/` folder — IEEEtran is built in.
-Locally: `latexmk -pdf main.tex` (needs a TeX distribution with IEEEtran).
+Overleaf: upload this complete `paper/` folder; IEEEtran is built in.
+
+Windows local build:
+
+```powershell
+winget install --id MiKTeX.MiKTeX --exact --accept-package-agreements --accept-source-agreements
+pdflatex --enable-installer -interaction=nonstopmode -halt-on-error main.tex
+bibtex main
+pdflatex --enable-installer -interaction=nonstopmode -halt-on-error main.tex
+pdflatex --enable-installer -interaction=nonstopmode -halt-on-error main.tex
+```
+
+Run the commands from the `paper/` directory. The expected review artifact is
+`main.pdf`. MiKTeX also supplies `latexmk`, but that convenience wrapper
+requires a separate Perl installation; the explicit sequence above produces
+the same bibliography and cross-reference passes without Perl.
 
 ## Status / division of labor
 
-- All numbers already in `main.tex` are REAL, sourced from `results/`
-  artifacts (each has a `% comment` naming its run dir + job id).
-- The prose draft is complete: every `\todo` section is now filled (2026-07-19),
-  all Aasa-tagged sections drafted by Prithvi from the data artifacts
-  (payoff tensor, zero-noise landscape + gamma-sweep + star asymmetry,
-  Month-4 noise port, wiring-permutation + T9 pilot, both hardware captions,
-  market-architecture discussion). Aasa to review/sign off when back.
-- One `\todo{email}` remains — author email addresses not recorded anywhere in
-  the repo; to be filled by the authors.
-- `references.bib` has two metadata TODOs (varsamis2025, flitney2002 year).
-- Table II (scaling) gains cross-day error bars automatically as repeat runs
-  accumulate (`TODOS.md` protocol); regenerate `figs/hardware_scaling.pdf`
-  from `scripts/plot_hardware_scaling.py` after each run.
+- The evidence-backed prose draft and all six figures are present, but this is
+  a review draft, not a submission-ready manuscript.
+- Every numerical claim remains sourced from a named `results/` artifact in an
+  adjacent LaTeX comment.
+- Simulation payoff gaps use a circuit-evaluated restricted `{D,H}` comparator;
+  hardware analytic-baseline advantage instead subtracts the noiseless
+  all-Hawk payoff `1/N`. Their zero crossings are not interchangeable.
+- Equilibrium claims are restricted to unilateral deviations in the finite
+  menu `{D,H,Q_N}`; full-SU(2) equilibrium is not established. The `N=4,5`
+  hardware points are a fixed cooperative protocol, not equilibria.
+- The review draft omits Aasa's unknown email rather than inventing it.
+- Aasa must review the game-theory wording and sign off on the exploratory T9
+  learning rule.
+- All eight cited publications were checked against authoritative publisher/DOI
+  records; every entry includes a verified DOI, and no unverified citation remains.
+- Table I reports the registration-source hardware execution;
+  `figs/hardware_scaling.pdf` is a two-execution aggregate whose result
+  artifacts carry the same recorded result-write-time calibration snapshot.
+  This does not prove that the provider calibration was unchanged at execution
+  time.
+- Figure 6 error bars are the two-point sample standard deviation across those
+  executions; they exclude within-run uncertainty and are not cross-day error
+  bars. Cross-day hardware repeats and the resulting uncertainty update remain
+  in progress.
+- See `REVIEW-NOTES.md` for the complete pre-submission checklist.
 
 ## Figures
 
-- `figs/hardware_n3_validation.pdf` — from `results/hardware-n3/2026-07-16T013912Z/plots/`
-- `figs/hardware_scaling.pdf` — from `results/hardware-scaling/2026-07-17T014458Z/plots/`
-  (2-run aggregate; refreshed 2026-07-19).
-- Advantage map: embedded at `main.tex` (Figs. `fig:advmap` + `fig:heat`) from
-  `figs/advantage_vs_N.png` + `figs/topology_heatmap.png` — the V=4/C=3 fixed-mode
-  regen `results/n-scaling-advantage/2026-07-19T0901Z`; gamma-sweep N2–N6
-  current-convention. Star per-player figure (`per_player_advantage_star.png`)
-  and gamma-sweep prose remain Aasa `\todo`s in the same subsection.
+- `figs/hardware_n3_validation.pdf` — from
+  `results/hardware-n3/2026-07-16T013912Z/plots/`
+- `figs/hardware_scaling.pdf` — from
+  `results/hardware-scaling/2026-07-17T014458Z/plots/` (two-execution aggregate;
+  refreshed 2026-07-19).
+- `figs/advantage_vs_N.png` and `figs/topology_heatmap.png` — from the V=4/C=3
+  fixed-mode regeneration
+  `results/n-scaling-advantage/2026-07-19T0901Z/`.
+- `figs/advantage_vs_gamma_N4.png` — from `results/gamma-sweep/N4/`.
+- `figs/per_player_advantage_star.png` — from
+  `results/n-scaling-advantage/2026-07-19T0901Z/`.

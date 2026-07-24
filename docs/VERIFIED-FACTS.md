@@ -170,48 +170,54 @@ TODOS.md:43 (`**What:** Re-run `python experiments/hardware_scaling.py --hardwar
 continuing to TODOS.md:44 (`` `entangled-equilibria`) on 3-5 different days.``).
 This is the only place the hardware entry point is tied to an environment.
 
-**Convention 2, `.venv/bin/python`. Measured: 3 lines, 2 files.**
+**Post-snapshot status (2026-07-19):** The counts and `live`
+classifications below describe the b3469f0 snapshot. Commits dff79a4 and
+cd5c094 replaced all 26 live non-conda command lines with the pinned
+`conda run -n entangled-equilibria python` invocation. For changed rows,
+the citation now anchors the current replacement.
+
+**Convention 2, `.venv/bin/python`. Measured at snapshot: 3 lines, 2 files.**
 
 | source | classification |
 | --- | --- |
-| results/README.md:45 (`PYTHONPATH=src .venv/bin/python scripts/n3_advantage.py`) | live |
-| results/README.md:46 (`PYTHONPATH=src .venv/bin/python scripts/topology_sweep.py`) | live |
+| results/README.md:61 (`conda run -n entangled-equilibria python scripts/run_experiment.py`) | live at snapshot; replaced by item 17 |
+| results/README.md:62 (`conda run -n entangled-equilibria python scripts/topology_sweep.py`) | live at snapshot; replaced by item 17 |
 | docs/findings/2026-07-17-item11-stale-claim-audit.md:456 (`Regeneration commands use `.venv/bin/python` vs the pinned`) | dated record, exempt |
 
 No `.venv/` directory exists in the repo root.
 
-**Convention 3, bare `PYTHONPATH=src python`. Measured: 25 lines, 13 files.**
+**Convention 3, bare `PYTHONPATH=src python`. Measured at snapshot: 25 lines, 13 files.**
 
 | source | classification |
 | --- | --- |
-| README.md:200 (`PYTHONPATH=src python scripts/run_experiment.py --config experiments/noise-sweep.yaml`) | live |
-| README.md:218 (`PYTHONPATH=src python scripts/run_experiment.py`) | live |
-| README.md:220 (`PYTHONPATH=src python scripts/run_experiment.py --config experiments/config.yaml`) | live |
-| README.md:250 (`PYTHONPATH=src python scripts/draw_topology.py --topology star --N 5`) | live |
-| README.md:251 (`PYTHONPATH=src python scripts/draw_topology.py --topology ghz --N 4`) | live |
-| README.md:252 (`PYTHONPATH=src python scripts/draw_topology.py --topology full --N 6`) | live |
-| scripts/draw_topology.py:4 (`PYTHONPATH=src python scripts/draw_topology.py --topology star --N 5`) | live |
-| scripts/draw_topology.py:5 (`PYTHONPATH=src python scripts/draw_topology.py --topology ghz --N 4`) | live |
-| scripts/draw_topology.py:6 (`PYTHONPATH=src python scripts/draw_topology.py --topology ring --N 6`) | live |
-| scripts/asymmetry_diagnostics.py:23 (`PYTHONPATH=src python scripts/asymmetry_diagnostics.py             # ring N=5 p=0.02`) | live |
-| scripts/asymmetry_diagnostics.py:24 (`PYTHONPATH=src python scripts/asymmetry_diagnostics.py w 5 0.02`) | live |
-| scripts/plot_hardware_scaling.py:18 (`PYTHONPATH=src python scripts/plot_hardware_scaling.py            # all runs`) | live |
-| scripts/plot_hardware_scaling.py:19 (`PYTHONPATH=src python scripts/plot_hardware_scaling.py <run_dir> [<run_dir>..]`) | live |
-| scripts/run_experiment.py:4 (`PYTHONPATH=src python scripts/run_experiment.py`) | live |
-| scripts/run_experiment.py:5 (`PYTHONPATH=src python scripts/run_experiment.py --config path/to.yaml`) | live |
-| scripts/t9_adaptation_pilot.py:29 (`PYTHONPATH=src python scripts/t9_adaptation_pilot.py               # w 4, p in {0, 0.02, 0.05}`) | live |
-| scripts/t9_adaptation_pilot.py:30 (`PYTHONPATH=src python scripts/t9_adaptation_pilot.py ring 4 0.02`) | live |
-| scripts/topology_optimal_strategy.py:17 (`PYTHONPATH=src python scripts/topology_optimal_strategy.py            # ring, N=2..4`) | live |
-| scripts/topology_optimal_strategy.py:18 (`PYTHONPATH=src python scripts/topology_optimal_strategy.py ring 2 5`) | live |
-| scripts/plot_hardware_result.py:14 (`PYTHONPATH=src python scripts/plot_hardware_result.py \`) | live |
-| scripts/topology_sweep.py:16 (`PYTHONPATH=src python scripts/topology_sweep.py`) | live |
-| experiments/config.yaml:6 (`#     PYTHONPATH=src python scripts/run_experiment.py`) | live |
-| experiments/noise-sweep.yaml:4 (`#   PYTHONPATH=src python scripts/run_experiment.py --config experiments/noise-sweep.yaml`) | live |
-| TODOS.md:80 (`scaling figure (`PYTHONPATH=src python scripts/plot_hardware_scaling.py`),`) | live |
+| README.md:200 (`conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/noise-sweep.yaml`) | live at snapshot; replaced by item 17 |
+| README.md:218 (`conda run -n entangled-equilibria python scripts/run_experiment.py`) | live at snapshot; replaced by item 17 |
+| README.md:220 (`conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/config.yaml`) | live at snapshot; replaced by item 17 |
+| README.md:250 (`conda run -n entangled-equilibria python scripts/draw_topology.py --topology star --N 5`) | live at snapshot; replaced by item 17 |
+| README.md:251 (`conda run -n entangled-equilibria python scripts/draw_topology.py --topology ghz --N 4 --what both`) | live at snapshot; replaced by item 17 |
+| README.md:252 (`conda run -n entangled-equilibria python scripts/draw_topology.py --topology full --N 6 --out /tmp/diag`) | live at snapshot; replaced by item 17 |
+| scripts/draw_topology.py:4 (`conda run -n entangled-equilibria python scripts/draw_topology.py --topology star --N 5`) | live at snapshot; replaced by item 17 |
+| scripts/draw_topology.py:5 (`conda run -n entangled-equilibria python scripts/draw_topology.py --topology ghz --N 4 --what both`) | live at snapshot; replaced by item 17 |
+| scripts/draw_topology.py:6 (`conda run -n entangled-equilibria python scripts/draw_topology.py --topology ring --N 6 --out /tmp/diag`) | live at snapshot; replaced by item 17 |
+| scripts/asymmetry_diagnostics.py:23 (`conda run -n entangled-equilibria python scripts/asymmetry_diagnostics.py             # ring N=5 p=0.02`) | live at snapshot; replaced by item 17 |
+| scripts/asymmetry_diagnostics.py:24 (`conda run -n entangled-equilibria python scripts/asymmetry_diagnostics.py w 5 0.02`) | live at snapshot; replaced by item 17 |
+| scripts/plot_hardware_scaling.py:18 (`conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py            # all runs`) | live at snapshot; replaced by item 17 |
+| scripts/plot_hardware_scaling.py:19 (`conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py <run_dir> [<run_dir>..]`) | live at snapshot; replaced by item 17 |
+| scripts/run_experiment.py:4 (`conda run -n entangled-equilibria python scripts/run_experiment.py`) | live at snapshot; replaced by item 17 |
+| scripts/run_experiment.py:5 (`conda run -n entangled-equilibria python scripts/run_experiment.py --config path/to.yaml`) | live at snapshot; replaced by item 17 |
+| scripts/t9_adaptation_pilot.py:29 (`conda run -n entangled-equilibria python scripts/t9_adaptation_pilot.py               # w 4, p in {0, 0.02, 0.05}`) | live at snapshot; replaced by item 17 |
+| scripts/t9_adaptation_pilot.py:30 (`conda run -n entangled-equilibria python scripts/t9_adaptation_pilot.py ring 4 0.02`) | live at snapshot; replaced by item 17 |
+| scripts/topology_optimal_strategy.py:17 (`conda run -n entangled-equilibria python scripts/topology_optimal_strategy.py            # ring, N=2..4`) | live at snapshot; replaced by item 17 |
+| scripts/topology_optimal_strategy.py:18 (`conda run -n entangled-equilibria python scripts/topology_optimal_strategy.py ring 2 5`) | live at snapshot; replaced by item 17 |
+| scripts/plot_hardware_result.py:14 (`conda run -n entangled-equilibria python scripts/plot_hardware_result.py \`) | live at snapshot; replaced by item 17 |
+| scripts/topology_sweep.py:16 (`conda run -n entangled-equilibria python scripts/topology_sweep.py`) | live at snapshot; replaced by item 17 |
+| experiments/config.yaml:6 (`#     conda run -n entangled-equilibria python scripts/run_experiment.py`) | live at snapshot; replaced by item 17 |
+| experiments/noise-sweep.yaml:4 (`#   conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/noise-sweep.yaml`) | live at snapshot; replaced by item 17 |
+| TODOS.md:84 (`conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py`) | live at snapshot; replaced by item 17 |
 | docs/superpowers/plans/2026-07-02-w-entangler-gate-level.md:375 (`PYTHONPATH=src python scripts/run_experiment.py --config experiments/noise-sweep.yaml`) | dated record, exempt |
 
-On this machine convention 3 resolves to python 3.9.13 with qiskit 0.45.3
-(see A1), which satisfies neither pyproject.toml:4
+At the snapshot, convention 3 resolved on this machine to python 3.9.13 with
+qiskit 0.45.3 (see A1), which satisfied neither pyproject.toml:4
 (`requires-python = ">=3.10"`) nor pyproject.toml:6 (`"qiskit==1.3.2",`).
 
 ### A5.1 Sweep classification rule
@@ -304,21 +310,22 @@ for a dependency manifest.
 
 ### A7. Whether the documented bare-python commands can run
 
-They cannot, on this machine, and the cause is not qiskit.
+At the snapshot commit, they could not run on this machine, and the cause was
+not qiskit.
 
     PYTHONPATH=src python -c "import game.nash; print('ok')"
 
-fails at src/game/nash.py:24
+failed at src/game/nash.py:24
 (`from typing import Any, Callable, TypeAlias`) with
 `ImportError: cannot import name 'TypeAlias' from 'typing'`.
 
-The representative README quickstart entry point,
-README.md:218 (`PYTHONPATH=src python scripts/run_experiment.py`), run in
-`--help` form so it touches no hardware and writes nothing to results/:
+At the snapshot commit, the representative README quickstart entry point used
+bare `PYTHONPATH=src python`. Running that historical command in `--help` form
+so it touched no hardware and wrote nothing to results/:
 
     PYTHONPATH=src python scripts/run_experiment.py --help
 
-fails with the same root cause, through this import chain:
+failed with the same root cause, through this import chain:
 scripts/run_experiment.py:30 (`from experiment import load_config, run_sweep, write_outputs  # noqa: E402`)
 to src/experiment/__init__.py:16 (`from experiment.report import write_outputs`)
 to src/experiment/report.py:17 (`from experiment.sweep import (`)
@@ -326,17 +333,15 @@ to src/experiment/sweep.py:18 (`from circuits.noise import build_ewl_circuit_noi
 to src/circuits/noise.py:36 (`from circuits.ewl import U, StrategyParams`)
 to src/circuits/ewl.py:8 (`from typing import TypeAlias`).
 
-`typing.TypeAlias` requires Python 3.10. The failure occurs at import time,
-before any qiskit code executes, and would occur identically regardless of which
-qiskit version the bare interpreter carried. src/ genuinely requires the version
-declared at pyproject.toml:4 (`requires-python = ">=3.10"`).
+`typing.TypeAlias` requires Python 3.10. The failure occurred at import time,
+before any qiskit code executed, and would have occurred identically regardless
+of which qiskit version the bare interpreter carried. src/ genuinely requires
+the version declared at pyproject.toml:4 (`requires-python = ">=3.10"`).
 
-Consequence: on any machine where `python` resolves to an interpreter below
-3.10, README.md's primary documented quickstart does not run. Whether that is
-true for a given reader depends on their PATH, which the repo does not
-constrain. Recorded as evidence for G10, not as a claim that the commands are
-universally broken. The fix is to name an interpreter, not to change code:
-effort is unchanged, priority is raised.
+**Post-snapshot status:** item 17 replaced that quickstart with README.md:218
+(`conda run -n entangled-equilibria python scripts/run_experiment.py`). The
+import failure above remains a record of the removed bare-Python convention; it
+is not a claim about the current quickstart.
 
 ---
 
@@ -1079,13 +1084,13 @@ No disposition is recommended here. Item 13 decides.
 Ids are stable. Where evidence lives in another section it is cross-referenced
 rather than duplicated.
 
-**G1. `results/` is blanket-ignored yet 50 files under it are tracked.**
-.gitignore:52 (`results/`) ignores the tree; `git ls-files -- results | wc -l`
-returns 50, against 126 ignored-but-present (E2). results/README.md:5
-(`These artifacts are committed to git as part of the research record.`) asserts
-the opposite of the ignore rule. *Consequence:* new run artifacts never appear
-in `git status` and enter the repo only via `git add -f`, which TODOS.md:80
-prescribes as routine.
+**G1. Resolved after this snapshot: `results/` was blanket-ignored while
+50 files under it were tracked.** At b3469f0, `.gitignore` line 52 read
+`results/`; `git ls-files -- results | wc -l` returned 50, against 126
+ignored-but-present (E2). Item 17 removed the ignore rule in cd5c094. Current
+.gitignore:52 (`# (results/ is intentionally NOT ignored.)`) and
+results/README.md:3 (`Generated experiment outputs, committed to git as part of the research record.`)
+now agree. The former `git add -f` consequence is no longer the current rule.
 
 **G2. results/README.md documents two experiments that do not exist.**
 results/README.md:23 (`### \`month2_n3_advantage/\``) and

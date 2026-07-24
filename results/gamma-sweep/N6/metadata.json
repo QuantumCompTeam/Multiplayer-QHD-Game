@@ -1,8 +1,8 @@
 {
   "experiment": "gamma-sweep-N6",
-  "created_utc": "2026-07-19T08:23:03.029405+00:00",
+  "created_utc": "2026-07-24T04:06:26.438485+00:00",
   "git": {
-    "commit": "9dd49fde877ad8debec466eb64a2b4a3563f6f0c",
+    "commit": "a2ce611934bea8cd3dccf9a85d8c6882bc5ac88a",
     "dirty": true
   },
   "python": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",

@@ -2,7 +2,7 @@
 
 Quantum advantage vs entanglement γ at N=2 across ['fully-connected', 'ghz', 'ring', 'star', 'w']; γ swept 0π→0.5π (config.game.gamma)
 
-_Generated: 2026-07-19T0821Z_
+_Generated: 2026-07-24T0405Z_
 
 ## Parameters used
 
@@ -11,7 +11,7 @@ experiment:
   name: gamma-sweep-N2
   description: "Quantum advantage vs entanglement \u03B3 at N=2 across ['fully-connected',\
     \ 'ghz', 'ring', 'star', 'w']; \u03B3 swept 0\u03C0\u21920.5\u03C0 (config.game.gamma)"
-generated_at: 2026-07-19T0821Z
+generated_at: 2026-07-24T0405Z
 output:
   formats:
   - md
