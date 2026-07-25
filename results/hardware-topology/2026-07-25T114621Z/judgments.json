@@ -1,0 +1,620 @@
+{
+  "judged_utc": "2026-07-25T11:46:43.374047+00:00",
+  "run_dir": "results/hardware-topology/2026-07-25T114621Z",
+  "job": {
+    "job_id": "d9ia1pd0k0jc738jaqgg",
+    "backend": "ibm_fez"
+  },
+  "run_git_commit": "5e91200da30b877f6f5d0dc55c1ceef846126fc5",
+  "registration_registered_utc": "2026-07-25T05:12:07.413095+00:00",
+  "registration_git_commit": "add4378f47707b1f4e39a8a6b25df027ee1224cd",
+  "T1_equilibrium": {
+    "claim": "At ghz N=3, gamma=pi/2, every unilateral Hawk deviation gap payoff_k(Q,Q,Q) - payoff_k(H at k) is >= 0. PASS iff all three gaps are >= 0 within 1.96 sigma_predictive. This is the restricted-menu {D,H,Q} equilibrium claim; it is NOT a full-SU(2) equilibrium claim.",
+    "gaps": [
+      {
+        "position": 0,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "predicted_gap": 0.33096953978245414,
+        "measured_gap": 0.28945994831733035,
+        "sigma_predictive": 0.027306416398009185,
+        "z_vs_prediction": -1.5201405728270556,
+        "deviation_pays": false,
+        "verdict": "PASS"
+      },
+      {
+        "position": 1,
+        "profile": [
+          "Q",
+          "H",
+          "Q"
+        ],
+        "predicted_gap": 0.3259352696946809,
+        "measured_gap": 0.27263685880363187,
+        "sigma_predictive": 0.027175913836384798,
+        "z_vs_prediction": -1.9612371165119686,
+        "deviation_pays": false,
+        "verdict": "PASS"
+      },
+      {
+        "position": 2,
+        "profile": [
+          "Q",
+          "Q",
+          "H"
+        ],
+        "predicted_gap": 0.32356436748627093,
+        "measured_gap": 0.35118380977673413,
+        "sigma_predictive": 0.02722376618863692,
+        "z_vs_prediction": 1.0145342161361728,
+        "deviation_pays": false,
+        "verdict": "PASS"
+      }
+    ],
+    "verdict": "PASS"
+  },
+  "T2_gamma_sign_change": {
+    "claim": "The same gap at position 0 is NEGATIVE at gamma=0.30pi and POSITIVE at gamma=0.45pi and 0.50pi, i.e. the cooperative profile becomes an equilibrium as entanglement increases. PASS iff both signs come back as registered at 0.30pi and 0.45pi. gamma=0.40pi is registered as MARGINAL (ideal gap +0.0469, within ~2 sigma of zero) and does not count toward pass/fail.",
+    "points": {
+      "0.30pi": {
+        "predicted_gap": -0.6937511017728561,
+        "measured_gap": -0.687707989582421,
+        "sigma_predictive": 0.031492591408418924,
+        "significantly_negative": true,
+        "significantly_positive": false
+      },
+      "0.40pi": {
+        "predicted_gap": 0.04852598023936405,
+        "measured_gap": 0.006747716180219854,
+        "sigma_predictive": 0.029386856256163028,
+        "significantly_negative": false,
+        "significantly_positive": false
+      },
+      "0.45pi": {
+        "predicted_gap": 0.2564292552889158,
+        "measured_gap": 0.24673439865576396,
+        "sigma_predictive": 0.02793015650785067,
+        "significantly_negative": false,
+        "significantly_positive": true
+      },
+      "0.50pi": {
+        "predicted_gap": 0.33096953978245414,
+        "measured_gap": 0.28945994831733035,
+        "sigma_predictive": 0.027306416398009185,
+        "significantly_negative": false,
+        "significantly_positive": true
+      }
+    },
+    "marginal_point_not_counted": "0.40pi",
+    "verdict": "PASS"
+  },
+  "T3_wiring_invariance": {
+    "claim": "star N=4's per-player payoff vector is INVARIANT under wiring permutation: the position-locked unfairness is a property of the entanglement topology, not of which physical qubit a player was assigned. PASS iff, for each permuted wiring, max_j |v_perm[j] - v_identity[j]| <= the registered threshold. FAILURE would mean the paper's player-position claim must be narrowed to this device.",
+    "identity_wiring": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "identity_measured_per_player": [
+      0.35268661189230155,
+      1.2021131713670907,
+      1.212390057531338,
+      1.2018969480175044
+    ],
+    "ideal_per_player": [
+      0.2500000000000001,
+      1.2500000000000004,
+      1.2500000000000004,
+      1.2500000000000004
+    ],
+    "permutations": [
+      {
+        "wiring": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "measured_per_player": [
+          0.3360230873942908,
+          1.2170939000459389,
+          1.2175732488767559,
+          1.212128353165225
+        ],
+        "max_abs_deviation": 0.01666352449801073,
+        "threshold": 0.057247766606600366,
+        "predicted_max_abs_deviation": 0.0034080694623899177,
+        "verdict": "PASS"
+      },
+      {
+        "wiring": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "measured_per_player": [
+          0.3369784419322947,
+          1.2367516555466493,
+          1.1986299067325294,
+          1.2119450406314034
+        ],
+        "max_abs_deviation": 0.034638484179558615,
+        "threshold": 0.05723660630326906,
+        "predicted_max_abs_deviation": 0.004509840041599045,
+        "verdict": "PASS"
+      }
+    ],
+    "verdict": "PASS"
+  },
+  "T4_per_cell_advantage": {
+    "claim_a": "Each cell's measured mitigated fold-1 advantage vs the raw device-noise-model prediction; PASS iff |z| <= 1.96 with z = (measured - predicted) / sigma_predictive, sigma being shot noise only. REGISTERED EXPECTATION: this FAILS LOW and systematically. All 9 GHZ points in results/hardware-scaling/ over 3 calibration days missed in the same direction. It is registered anyway so the size of the device-model error is measured rather than assumed.",
+    "claim_b": "The competing model: the same prediction plus a cz-linear bias correction fitted on those 9 GHZ points (beta per routed fold-1 cz, through the origin), with sigma = sqrt(shot^2 + fit residual^2). The substantive registered claim is that the device-model bias is a property of GATE COUNT and TRANSFERS ACROSS TOPOLOGIES: beta was fitted on GHZ alone and is applied here to ring, star, fully-connected and W. W N=3 at 42 cz is a 3x extrapolation beyond the 6-14 cz fitting range and is the sharpest discriminator -- the two models differ there by ~0.036, far outside shot noise. PASS iff |z| <= 1.96. Whichever of T4a/T4b scores better wins on the record; this mirrors the five-model comparison already in results/hardware-scaling/repeat-judgments.json.",
+    "series": [
+      {
+        "series": "fully-connected|N3|g1.570796|QQQ|w0-1-2",
+        "topology": "fully-connected",
+        "N": 3,
+        "cz": 10,
+        "measured": 0.9887413214065779,
+        "T4a": {
+          "predicted": 0.9940360025071724,
+          "sigma_predictive": 0.0012030669858915633,
+          "z": -4.400986115225116,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9855555905638649,
+          "sigma_predictive": 0.0018667962749651763,
+          "z": 1.7065230338390491,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "fully-connected|N4|g1.570796|QQQQ|w0-1-2-3",
+        "topology": "fully-connected",
+        "N": 4,
+        "cz": 31,
+        "measured": 0.7389284388193312,
+        "T4a": {
+          "predicted": 0.744968770957262,
+          "sigma_predictive": 0.0009565905894138554,
+          "z": -6.314438177394086,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.7186794939330087,
+          "sigma_predictive": 0.001718320027072022,
+          "z": 11.78415229253092,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "ghz|N3|g0.942478|HQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 4,
+        "measured": 0.9941048771157499,
+        "T4a": {
+          "predicted": 0.9986856266935984,
+          "sigma_predictive": 0.0005661008291228522,
+          "z": -8.09175564173992,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9952934619162754,
+          "sigma_predictive": 0.001535587284531631,
+          "z": -0.774026206454332,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g0.942478|QQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 8,
+        "measured": 0.9875709069867005,
+        "T4a": {
+          "predicted": 0.99496340340206,
+          "sigma_predictive": 0.00110609432306912,
+          "z": -6.683423159470996,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.988179073847414,
+          "sigma_predictive": 0.0018058246900536559,
+          "z": -0.33678067647610427,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.256637|HQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 4,
+        "measured": 0.992066665292048,
+        "T4a": {
+          "predicted": 0.9981167468992158,
+          "sigma_predictive": 0.0006774309629808496,
+          "z": -8.930919809962734,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9947245821218929,
+          "sigma_predictive": 0.001580022426830331,
+          "z": -1.6822019641688664,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.256637|QQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 8,
+        "measured": 0.9858234773719088,
+        "T4a": {
+          "predicted": 0.994211802196856,
+          "sigma_predictive": 0.0011853078624736119,
+          "z": -7.076916546762526,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.98742747264221,
+          "sigma_predictive": 0.0018554010047758976,
+          "z": -0.8645005937651369,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.413717|HQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 4,
+        "measured": 0.9953799526826896,
+        "T4a": {
+          "predicted": 0.9979835330415292,
+          "sigma_predictive": 0.0007009342293093029,
+          "z": -3.714443167378369,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9945913682642062,
+          "sigma_predictive": 0.0015902411620565837,
+          "z": 0.49588982935365394,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.413717|QQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 8,
+        "measured": 0.9865690131661484,
+        "T4a": {
+          "predicted": 0.9943797491919111,
+          "sigma_predictive": 0.0011680838246972262,
+          "z": -6.686794098691711,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.987595419637265,
+          "sigma_predictive": 0.0018444451689331803,
+          "z": -0.5564852175629026,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.570796|HQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 4,
+        "measured": 0.9926550203537401,
+        "T4a": {
+          "predicted": 0.9979343498475197,
+          "sigma_predictive": 0.0007094134147651004,
+          "z": -7.441823602289377,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9945421850701968,
+          "sigma_predictive": 0.001593996722935881,
+          "z": -1.1839200729226218,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.570796|QHQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 6,
+        "measured": 0.9949705808406653,
+        "T4a": {
+          "predicted": 0.9972222756709779,
+          "sigma_predictive": 0.0008223573585371536,
+          "z": -2.7380977466025707,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9921340285049933,
+          "sigma_predictive": 0.0016473705669404963,
+          "z": 1.721866587030254,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.570796|QQH|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 6,
+        "measured": 0.971894113865091,
+        "T4a": {
+          "predicted": 0.9953355114864104,
+          "sigma_predictive": 0.0010646498310789556,
+          "z": -22.017941427335867,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9902472643204259,
+          "sigma_predictive": 0.0017807406949070649,
+          "z": -10.306469946930006,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "ghz|N3|g1.570796|QQQ|w0-1-2",
+        "topology": "ghz",
+        "N": 3,
+        "cz": 6,
+        "measured": 0.9885817255345466,
+        "T4a": {
+          "predicted": 0.996299850616279,
+          "sigma_predictive": 0.0009486907968830647,
+          "z": -8.135553867593543,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9912116034502945,
+          "sigma_predictive": 0.0017139347676537377,
+          "z": -1.5344095734448495,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N4|g1.570796|QQQQ|w0-1-2-3",
+        "topology": "ghz",
+        "N": 4,
+        "cz": 9,
+        "measured": 0.7425029970055393,
+        "T4a": {
+          "predicted": 0.7474435966188814,
+          "sigma_predictive": 0.0006830050746731839,
+          "z": -7.233620651656356,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.7398112258699046,
+          "sigma_predictive": 0.0015824203271289738,
+          "z": 1.7010468644058312,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "ghz|N5|g1.570796|QQQQQ|w0-1-2-3-4",
+        "topology": "ghz",
+        "N": 5,
+        "cz": 14,
+        "measured": 0.592143621492359,
+        "T4a": {
+          "predicted": 0.5948493285274044,
+          "sigma_predictive": 0.000864879172566542,
+          "z": -3.1284220049098077,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.5829767518067738,
+          "sigma_predictive": 0.0016690039373293982,
+          "z": 5.4924194488440135,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "ring|N3|g1.570796|QQQ|w0-1-2",
+        "topology": "ring",
+        "N": 3,
+        "cz": 10,
+        "measured": 0.9899461911032206,
+        "T4a": {
+          "predicted": 0.9940360025071724,
+          "sigma_predictive": 0.0012030669858915633,
+          "z": -3.3994876859836336,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9855555905638649,
+          "sigma_predictive": 0.0018667962749651763,
+          "z": 2.3519441292208474,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "ring|N4|g1.570796|QQQQ|w0-1-2-3",
+        "topology": "ring",
+        "N": 4,
+        "cz": 20,
+        "measured": 0.08940511973256388,
+        "T4a": {
+          "predicted": 0.05574468535852811,
+          "sigma_predictive": 0.003073840771441722,
+          "z": 10.950610938200297,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.03878386147191305,
+          "sigma_predictive": 0.003389108326368322,
+          "z": 14.936453304487676,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "ring|N5|g1.570796|QQQQQ|w0-1-2-3-4",
+        "topology": "ring",
+        "N": 5,
+        "cz": 28,
+        "measured": 0.5960022969187404,
+        "T4a": {
+          "predicted": 0.5973567191362643,
+          "sigma_predictive": 0.0006208812695737111,
+          "z": -2.181451243413798,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.5736115656950033,
+          "sigma_predictive": 0.0015566154665135224,
+          "z": 14.384240491897122,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "star|N3|g1.570796|QQQ|w0-1-2",
+        "topology": "star",
+        "N": 3,
+        "cz": 5,
+        "measured": 0.9934226722176889,
+        "T4a": {
+          "predicted": 0.9970514235834729,
+          "sigma_predictive": 0.0008471981500683987,
+          "z": -4.283238065960167,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9928112176118191,
+          "sigma_predictive": 0.0016599104991417352,
+          "z": 0.3683660090022384,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "star|N4|g1.570796|QQQQ|w0-1-2-3",
+        "topology": "star",
+        "N": 4,
+        "cz": 9,
+        "measured": 0.7422716972020587,
+        "T4a": {
+          "predicted": 0.7482213405564795,
+          "sigma_predictive": 0.0005700086847492557,
+          "z": -10.437811762531394,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.7405889698075027,
+          "sigma_predictive": 0.0015370322248968054,
+          "z": 1.0947899252203188,
+          "verdict": "PASS"
+        }
+      },
+      {
+        "series": "star|N4|g1.570796|QQQQ|w1-2-3-0",
+        "topology": "star",
+        "N": 4,
+        "cz": 10,
+        "measured": 0.7457046473705526,
+        "T4a": {
+          "predicted": 0.7484380086709469,
+          "sigma_predictive": 0.0005342410467793555,
+          "z": -5.116344610494049,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.7399575967276394,
+          "sigma_predictive": 0.0015241298027876592,
+          "z": 3.7707094450891265,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "star|N4|g1.570796|QQQQ|w3-2-1-0",
+        "topology": "star",
+        "N": 4,
+        "cz": 9,
+        "measured": 0.7460762612107192,
+        "T4a": {
+          "predicted": 0.7484940459878243,
+          "sigma_predictive": 0.0005245900584318191,
+          "z": -4.6089031582731,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.7408616752388475,
+          "sigma_predictive": 0.0015207737797210822,
+          "z": 3.428903129055872,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "star|N5|g1.570796|QQQQQ|w0-1-2-3-4",
+        "topology": "star",
+        "N": 5,
+        "cz": 17,
+        "measured": 0.5976537263652895,
+        "T4a": {
+          "predicted": 0.5980822389820581,
+          "sigma_predictive": 0.0005291730548075874,
+          "z": -0.8097778465392482,
+          "verdict": "PASS"
+        },
+        "T4b": {
+          "predicted": 0.5836655386784353,
+          "sigma_predictive": 0.0015223607593524084,
+          "z": 9.188484136181069,
+          "verdict": "FAIL"
+        }
+      },
+      {
+        "series": "w|N3|g1.570796|QQQ|w0-1-2",
+        "topology": "w",
+        "N": 3,
+        "cz": 42,
+        "measured": 0.9791505156433138,
+        "T4a": {
+          "predicted": 0.9902003013566498,
+          "sigma_predictive": 0.0015391746905373113,
+          "z": -7.179032881237581,
+          "verdict": "FAIL"
+        },
+        "T4b": {
+          "predicted": 0.9545825711947582,
+          "sigma_predictive": 0.002099194342521024,
+          "z": 11.703511176126149,
+          "verdict": "FAIL"
+        }
+      }
+    ],
+    "score": {
+      "n_series": 23,
+      "T4a_passed": 1,
+      "T4b_passed": 13,
+      "T4a_rms_z": 7.793100142911999,
+      "T4b_rms_z": 6.517115133546435,
+      "better_model": "T4b"
+    },
+    "verdict_T4a": "FAIL",
+    "verdict_T4b": "FAIL"
+  },
+  "T5_ring4_null": {
+    "claim": "ring N=4 is the only cell whose NOISELESS advantage is zero: its ideal circuit is deterministic on |1111> (all-Hawk). Registered: (a) its measured mitigated fold-1 advantage is the smallest of all 12 topology cells; (b) it is POSITIVE, i.e. device noise moves this cell AWAY from its ideal and toward advantage; (c) ZNE brings it back toward zero, |zne| < |raw|.",
+    "ideal_advantage": 1.1102230246251565e-16,
+    "measured_mitigated_advantage": 0.08940511973256388,
+    "measured_raw_advantage": 0.11370849609374994,
+    "measured_zne_advantage": 0.03670211533377249,
+    "n_topology_cells_compared": 12,
+    "a_smallest_of_all_cells": true,
+    "b_positive": true,
+    "c_zne_moves_toward_zero": true,
+    "verdict": "PASS"
+  },
+  "calibration_at_submit": "2026-07-25 16:05:46+05:30"
+}
