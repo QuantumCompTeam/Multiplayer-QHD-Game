@@ -1,6 +1,37 @@
 # Project Status — one page (re-orient in 60 s)
 
-**Last updated:** 2026-07-19 (dev @ 03d642d, pushed fork). Read first when returning cold.
+**Last updated:** 2026-07-25 (dev @ f94ee35). Read first when returning cold.
+
+## Head of the line (2026-07-25)
+
+**Every hardware run in this repo is GHZ.** The title claims topology
+determines advantage; the topology axis, the noise-robustness dichotomy, and
+the position-locked-unfairness claim are all simulation-only. That is the
+submission-readiness gap. Plan:
+`docs/superpowers/plans/2026-07-25-hardware-topology-batch.md` (11 tasks).
+
+- **Landed** (commits `2b83fb7`, `f94ee35`): `src/hardware/topology_hw.py`
+  (topology- and profile-parameterised EWL build + pinned-set ISA check) and
+  `experiments/hardware_topology.py` (five-axis batch plan, per-series
+  analysis, `--report`). 70 new tests; full suite **583 passed, 3 skipped**.
+- **Blocked on an IBM credential**, nothing else: Task 0 (cross-day repeat
+  run 3 — the only wall-clock-gated item, ~35 s QPU, zero code change),
+  Task 3 (transpile feasibility report, network read only, no quota), then
+  Tasks 6–11.
+- **Do not touch `experiments/hardware_scaling.py`** until plan Task 10.
+  Item 3 re-runs the *identical* registered batch; editing `NS`, the entangler
+  or the pub order breaks `--from-job` recovery of runs 1–2 and makes run 3
+  non-comparable.
+- **Do not edit `results/hardware-scaling/preregistration*.json`.** New claims
+  get new registration files.
+- ibm_fez is heavy-hex (degree ≤3, girth 12): no native triangle, no cycle
+  below N=12. Pre-routing gate counts understate ring and fully-connected cost;
+  only GHZ is free. Cell selection comes from the measured `--report`, not from
+  pre-routing numbers.
+
+**Venue note:** IEEE QCE26's technical-paper deadline (2026-04-27) has passed;
+the conference is 2026-09-13/18 in Toronto. Venue choice is Prithvi's call and
+is deliberately not encoded anywhere in the repo.
 
 ## One question
 
@@ -30,12 +61,16 @@ networks — topology, noise, hardware? **Answer: yes, sharper edges.**
 
 ## State of the paper (item 14)
 
-Prithvi's prose **drafted**: intro, N=3 error-budget, robustness→fairness link,
-conclusion. ~12 `\todo`s remain, most assigned to Aasa (payoff tensor,
-zero-noise landscape, Month-4 port). **Head of the line:** the advantage-map
-figure — data is ready (`results/n-scaling-advantage/2026-07-19T0901Z/plots/
-advantage_vs_N.png` + `topology_heatmap.png`) but `main.tex:199` still needs
-the `\includegraphics` + caption.
+**Full draft exists as of `d7ee2f5`.** `main.tex` has **zero** `\todo` markers
+left — Aasa's three sections (payoff tensor, zero-noise landscape, Month-4 port)
+were written in `c993ff8`/`d7ee2f5`, and the advantage-map figure is embedded
+(`fig:advmap`, `fig:heat`). Builds to 7 pages; all 8 references carry verified
+DOIs. The paper is no longer the bottleneck — the hardware evidence is.
+
+Remaining paper-side work is in `paper/REVIEW-NOTES.md`: Aasa's publication
+email, item-10 T9 sign-off (keeps the fairness paragraph hedged as
+"exploratory"), and the claim updates that depend on the hardware runs above
+(plan Task 11).
 
 ## Hardware runs (blocked — wait, don't act)
 

@@ -20,7 +20,7 @@ item.
 | 6 | — (parallel track) | closed 2026-07-19 — never scoped; no G-defect, finding, data artifact, or paper `\todo` traces to it; not blocking the paper | — | — |
 | 7 | — (completed before this index; title not reconstructed) | done | — | — |
 | 8 | — (parallel track) | closed 2026-07-19 — never scoped; no G-defect, finding, data artifact, or paper `\todo` traces to it; not blocking the paper | — | — |
-| 9 | W-topology hardware + wiring-permutation controls | open | separates player-4 position effect into wiring vs hardware | docs/findings/2026-07-17-run2-repeat-judgment.md, "Player index 4" |
+| 9 | Topology hardware + wiring-permutation controls | in progress 2026-07-25 — offline core landed (2b83fb7, f94ee35); device tasks blocked on IBM credential | separates player-4 position effect into wiring vs hardware | docs/superpowers/plans/2026-07-25-hardware-topology-batch.md; docs/findings/2026-07-17-run2-repeat-judgment.md, "Player index 4" |
 | 10 | T9 learning rule | blocked on Aasa | — | TODOS.md, "T9 adaptation & fairness pilot"; docs/findings/2026-07-05-t9-adaptation-fairness.md |
 | 11 | Stale-claim audit | done (124c09d, 2996528) | — | docs/findings/2026-07-17-item11-stale-claim-audit.md |
 | 12 | Forgiving-observable disclosure | closed 2026-07-19 — never scoped; "forgiving" appears nowhere in the repo outside this row; no G-defect, finding, or paper `\todo` traces to it; not blocking the paper | — | — |
