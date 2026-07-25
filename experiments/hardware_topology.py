@@ -56,7 +56,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit import ClassicalRegister
+from qiskit.quantum_info import Statevector
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+from qiskit_aer import AerSimulator
+from qiskit_aer.noise import NoiseModel
 
 from game.payoffs import expected_payoff
 from hardware.chain import best_linear_chain
@@ -66,7 +69,12 @@ from hardware.mitigation import (
     mitigate_probs,
     zne_extrapolate,
 )
-from hardware.topology_hw import GATE_CIRCUITS, build_ewl_circuit, check_isa_on_set
+from hardware.topology_hw import (
+    GATE_CIRCUITS,
+    assert_circuit_identity,
+    build_ewl_circuit,
+    check_isa_on_set,
+)
 
 GAMMA = math.pi / 2
 FOLDS = (1, 3, 5)
@@ -75,6 +83,19 @@ DEFAULT_BACKEND = "ibm_fez"
 PIN_LEN = 5      # width of the pinned qubit set and of the readout-cal circuits
 CZ_BUDGET = 60   # per-pub routed cz ceiling; Task 3's report justifies the value
 REPORT_NS = (3, 4, 5)
+
+# The batch cell list, decided from the MEASURED routed cz counts in
+# docs/findings/2026-07-25-topology-hardware-feasibility.md -- not from
+# pre-routing gate counts, which understate heavy-hex routing cost.
+# Excluded there with measured numbers: fully-connected N=5 (67 cz), w N=4
+# (107 cz), w N=5 (219 cz), all over CZ_BUDGET. w N=3 (42 cz) is the most
+# expensive cell kept and is kept deliberately: every other cell is GHZ-class,
+# so without it the topology axis compares one entanglement class.
+CELLS = [("ghz", 3), ("ghz", 4), ("ghz", 5),
+         ("ring", 3), ("ring", 4), ("ring", 5),
+         ("star", 3), ("star", 4), ("star", 5),
+         ("fully-connected", 3), ("fully-connected", 4),
+         ("w", 3)]
 
 
 # ── the uniform series record ─────────────────────────────────────────────────
@@ -128,6 +149,38 @@ def payoff_stats(probs: np.ndarray, N: int, shots: int) -> dict:
             "mean": mean,
             "sigma": float(np.sqrt(max(var, 0.0) / shots)),
             "p_ground": float(probs[0])}
+
+
+# ── the noiseless reference for a series ──────────────────────────────────────
+
+
+def ideal_probs(topology: str, N: int, gamma: float,
+                profile: list[str]) -> np.ndarray:
+    """Exact noiseless outcome distribution of one series' logical circuit.
+
+    NOT a single basis state in general. `q_strategy(N)` is derived for the GHZ
+    entangler, so only GHZ (plus, coincidentally, ring N=4 and fully-connected
+    N=4) concentrates on one outcome; ring N=3/5, star N=3/4/5,
+    fully-connected N=3 and W N=3 all spread over 4-16 outcomes noiselessly.
+    That spread is the paper's topology claim, not a defect, which is why the
+    rehearsal gate below compares against THIS distribution rather than
+    assuming the cooperative |0..0>.
+    """
+    qc = build_ewl_circuit(N, topology, gamma, profile)
+    return np.abs(Statevector.from_instruction(qc).data) ** 2
+
+
+def ideal_payoff_mean(topology: str, N: int, gamma: float,
+                      profile: list[str]) -> float:
+    """Noiseless mean per-player payoff -- the target ZNE should move toward.
+
+    This equals V/N = 4/N for most cells, but NOT for all: ring N=4 is
+    noiselessly deterministic on |1111> (all-Hawk) and pays 1/N, i.e. zero
+    advantage on a perfect device. Hardcoding 4/N as the gate's target would
+    demand that ZNE move that cell toward a payoff its own circuit never has.
+    """
+    return float(np.mean(expected_payoff(
+        ideal_probs(topology, N, gamma, profile), N)))
 
 
 # ── batch plan ────────────────────────────────────────────────────────────────
@@ -222,10 +275,14 @@ def build_batch(backend, cells, folds=FOLDS, gammas=(GAMMA,),
             for profile in cell_profiles:
                 for wiring in cell_wirings:
                     layout = [pinned[w] for w in wiring]
+                    logical = build_ewl_circuit(N, topology, gamma, profile)
+                    # Gate 1 of 3: the built circuit IS the validated dense
+                    # J†(U_1⊗…⊗U_N)J reference. Raises otherwise.
+                    assert_circuit_identity(logical, N, topology, gamma, profile)
                     pm = generate_preset_pass_manager(
                         backend=backend, optimization_level=3,
                         initial_layout=layout, seed_transpiler=7)
-                    isa_u = pm.run(build_ewl_circuit(N, topology, gamma, profile))
+                    isa_u = pm.run(logical)
                     fil = list(isa_u.layout.final_index_layout())
                     n_cz = check_isa_on_set(isa_u, allowed, CZ_BUDGET)
                     print(f"  {topology:16s} N={N} g={gamma:.4f} "
@@ -281,9 +338,17 @@ def analyze_batch(counts_per_pub: list[dict], plan: dict, shots: int) -> dict:
             fold_values.append(f)
             mit_payoffs.append(s_mit["mean"])
             mit_sigmas.append(max(s_mit["sigma"], 1e-9))
+        # The exact noiseless payoff of THIS cell's own circuit. Distinct from
+        # ideal_cooperative_payoff = V/N below, which is what full cooperation
+        # would pay: the two differ wherever the all-Q profile does not
+        # concentrate on |0..0> (ring N=4 pays 1/N noiselessly, not V/N).
+        ideal = ideal_payoff_mean(first["topology"], N, first["gamma"],
+                                  first["profile"])
         entry = {"topology": first["topology"], "N": N, "gamma": first["gamma"],
                  "profile": first["profile"], "wiring": first["wiring"],
                  "fil": first["fil"], "classical_ne_payoff": classical,
+                 "ideal_payoff": ideal,
+                 "ideal_advantage": ideal - classical,
                  "ideal_cooperative_payoff": 4.0 / N,
                  "folds": folds_out}
         if len(fold_values) >= 2:
@@ -295,8 +360,8 @@ def analyze_batch(counts_per_pub: list[dict], plan: dict, shots: int) -> dict:
 
 
 def print_summary(analysis: dict) -> None:
-    print("\n  topology         N  profile  wiring   raw adv  mitig adv   ZNE adv  "
-          "P(0..0)  worst player")
+    print("\n  topology         N  profile  wiring   ideal adv   raw adv  "
+          "mitig adv   ZNE adv  P(0..0)  worst player")
     for key in sorted(analysis["series"]):
         s = analysis["series"][key]
         f1 = s["folds"].get("1")
@@ -306,7 +371,8 @@ def print_summary(analysis: dict) -> None:
         worst = min(f1["mitigated"]["per_player"])
         print(f"  {s['topology']:16s} {s['N']}  {''.join(s['profile']):7s} "
               f"{'-'.join(map(str, s['wiring'])):8s} "
-              f"{f1['raw']['advantage']:8.4f} {f1['mitigated']['advantage']:10.4f} "
+              f"{s['ideal_advantage']:10.4f} {f1['raw']['advantage']:9.4f} "
+              f"{f1['mitigated']['advantage']:10.4f} "
               f"{zne} {f1['raw']['p_ground']:8.4f} {worst:13.4f}")
 
 
@@ -352,6 +418,352 @@ def report(backend) -> None:
           "95.5% of shots in |000> (results/hardware-n3/2026-07-16T013912Z).")
 
 
+# ── reduction to the pinned qubits (exact local simulation of the ISA) ────────
+
+
+def reduce_isa(isa: QuantumCircuit, active: list[int]) -> QuantumCircuit:
+    """Rebuild an ISA circuit on len(active) qubits (local j = physical active[j]).
+
+    Ported unchanged from experiments/hardware_scaling.py:342.
+    """
+    local = {p: j for j, p in enumerate(active)}
+    small = QuantumCircuit(len(active))
+    for creg in isa.cregs:
+        small.add_register(ClassicalRegister(len(creg), creg.name))
+    for ci in isa.data:
+        phys = [isa.find_bit(q).index for q in ci.qubits]
+        if not all(p in local for p in phys):
+            print(f"reduce_isa: instruction on non-active qubit {phys}")
+            sys.exit(1)
+        cl = [isa.find_bit(c).index for c in ci.clbits]
+        small.append(ci.operation, [local[p] for p in phys], cl)
+    return small
+
+
+def strip_measures(qc: QuantumCircuit) -> QuantumCircuit:
+    """Copy of qc without measure instructions (keeps registers)."""
+    out = qc.copy_empty_like()
+    for ci in qc.data:
+        if ci.operation.name != "measure":
+            out.append(ci.operation, ci.qubits, ci.clbits)
+    return out
+
+
+def reduce_noise_model(nm: NoiseModel, active: list[int]) -> NoiseModel:
+    """Filter a device NoiseModel to the active qubits, remapped to 0..len-1.
+
+    Ported unchanged from experiments/hardware_scaling.py:367. Uses the NATIVE
+    to_dict form (numpy complex arrays): serializable=True encodes Kraus
+    matrices as [re, im] pairs that from_dict cannot decode in aer 0.14.
+    """
+    local = {p: j for j, p in enumerate(active)}
+    src = nm.to_dict()
+    kept = []
+    for err in src["errors"]:
+        gqs = err.get("gate_qubits")
+        if gqs is None:
+            kept.append(err)  # all-qubit default error: applies as-is
+            continue
+        if all(q in local for tup in gqs for q in tup):
+            e2 = dict(err)
+            e2["gate_qubits"] = [[local[q] for q in tup] for tup in gqs]
+            kept.append(e2)
+    return NoiseModel.from_dict({"errors": kept})
+
+
+# ── dress rehearsal (mandatory pre-submission gate) ───────────────────────────
+
+
+def _exact_pub_probs(small: QuantumCircuit, qargs: list[int]) -> dict:
+    """Exact noiseless outcome distribution of a reduced pub over `qargs`.
+
+    qargs[j] is the local qubit measured into clbit j, and both Qiskit's
+    probabilities_dict and get_counts render index 0 as the RIGHTMOST
+    character, so the keys line up with the counts the device will return.
+    """
+    sv = Statevector.from_instruction(strip_measures(small))
+    return sv.probabilities_dict(qargs=qargs)
+
+
+def _tvd(p: dict, q: dict) -> float:
+    keys = set(p) | set(q)
+    return 0.5 * sum(abs(p.get(k, 0.0) - q.get(k, 0.0)) for k in keys)
+
+
+def rehearse(backend, plan: dict, shots: int) -> dict:
+    """Simulate the ENTIRE batch + analysis on the reduced device noise model.
+
+    Mandatory pre-submission gate. Two checks must pass:
+
+      (a) Noiseless dry run, per pub: the reduced, transpiled, FOLDED, measured
+          circuit reproduces the logical circuit's exact distribution. This
+          replaces the plan's "every pub is single-outcome noiselessly" check,
+          which is false for 9 of the 12 cells -- q_strategy(N) is GHZ-derived,
+          so only GHZ-class cells concentrate on one basis state (see
+          ideal_probs). The distribution check is strictly stronger anyway: it
+          validates the layout, the fil->clbit remap AND cz^k = cz for odd k,
+          without assuming anything about the topology.
+
+      (b) ZNE moves a strict majority of the all-Q series toward that cell's own
+          noiseless payoff. hardware_scaling.py hardcodes >= 2 of 3; here the
+          denominator varies with the cell list. A ring or W cell failing to
+          improve is expected and is data, not a bug -- a MAJORITY failing means
+          the batch is not worth quota.
+    """
+    print("\n=== dress rehearsal on AerSimulator(device noise model) ===")
+    pinned = plan["pinned"]
+    nm_small = reduce_noise_model(NoiseModel.from_backend(backend), pinned)
+    sim = AerSimulator(method="density_matrix", noise_model=nm_small)
+
+    counts_per_pub = []
+    for pub, m in zip(plan["pubs"], plan["meta"]):
+        # Reduce onto the whole pinned set, not onto m["fil"]: routing may use a
+        # pinned qubit that no virtual qubit ends on, and check_isa_on_set only
+        # guarantees the cz gates stayed inside the pinned set.
+        small = reduce_isa(pub, pinned)
+        qargs = [pinned.index(q) for q in m["fil"]]
+        got = _exact_pub_probs(small, qargs)
+        if m["kind"] == "series":
+            want = {}
+            for i, p in enumerate(ideal_probs(m["topology"], m["N"], m["gamma"],
+                                              m["profile"])):
+                if p > 1e-12:
+                    want[format(i, f"0{m['N']}b")] = float(p)
+        else:  # cal0 -> |0...0>, cal1 -> |1...1>
+            bit = "1" if m["kind"] == "cal1" else "0"
+            want = {bit * PIN_LEN: 1.0}
+        err = _tvd(got, want)
+        if err > 1e-6:
+            print(f"noiseless dry run FAILED for {m}: TVD {err:.3e}")
+            print(f"  got  {got}")
+            print(f"  want {want}")
+            sys.exit(1)
+        counts_per_pub.append(sim.run(small, shots=shots).result().get_counts())
+    print(f"noiseless dry run: {len(plan['pubs'])}/{len(plan['pubs'])} pubs "
+          f"reproduce their logical distribution exactly")
+
+    analysis = analyze_batch(counts_per_pub, plan, shots)
+    print_summary(analysis)
+
+    coop = [s for s in analysis["series"].values()
+            if set(s["profile"]) == {"Q"} and "zne" in s]
+    improved = 0
+    print("\n  ZNE gate (target = each cell's OWN noiseless payoff):")
+    for s in sorted(coop, key=lambda s: (s["topology"], s["N"])):
+        ideal = s["ideal_payoff"]
+        raw = s["folds"]["1"]["raw"]["mean"]
+        zne = s["zne"]["linear"]
+        better = abs(zne - ideal) < abs(raw - ideal)
+        improved += better
+        print(f"    {s['topology']:16s} N={s['N']}: ideal={ideal:.4f} "
+              f"|raw-ideal|={abs(raw - ideal):.4f} "
+              f"|ZNE-ideal|={abs(zne - ideal):.4f} "
+              f"{'improved' if better else 'NOT improved'}")
+    ok = improved > len(coop) / 2
+    print(f"  rehearsal gate: ZNE improved {improved}/{len(coop)} cooperative "
+          f"series -> {'PASS' if ok else 'FAIL'}")
+    if not ok:
+        sys.exit(1)
+    return analysis
+
+
+# ── persistence ───────────────────────────────────────────────────────────────
+
+
+def git_provenance() -> dict:
+    """Ported unchanged from experiments/hardware_scaling.py:574."""
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                         text=True).strip()
+        porcelain = subprocess.check_output(["git", "status", "--porcelain"],
+                                            text=True).strip()
+        dirty = bool(porcelain)
+    except Exception:  # noqa: BLE001
+        commit, dirty, porcelain = None, None, ""
+    out = {"commit": commit, "dirty": dirty}
+    if dirty:
+        # G16: "dirty": true alone leaves the code unidentifiable; at least
+        # enumerate what was dirty at save time.
+        out["dirty_files"] = porcelain.splitlines()
+    return out
+
+
+def environment_provenance() -> dict:
+    """Ported unchanged from experiments/hardware_scaling.py:591 (item 16/G16)."""
+    env = {
+        "python": platform.python_version(),
+        "qiskit": __import__("qiskit").__version__,
+        "qiskit_aer": __import__("qiskit_aer").__version__,
+        "numpy": __import__("numpy").__version__,
+        "scipy": __import__("scipy").__version__,
+        "platform": platform.platform(),
+    }
+    try:
+        env["qiskit_ibm_runtime"] = __import__("qiskit_ibm_runtime").__version__
+    except Exception:  # noqa: BLE001  (absent only on sim-only installs)
+        env["qiskit_ibm_runtime"] = None
+    return env
+
+
+def pinned_calibration(backend, pinned: list[int]) -> dict:
+    """chain_calibration from hardware_scaling.py:610, over the pinned set.
+
+    The cz_error loop still walks consecutive pairs of `pinned`: the pinned set
+    IS a linear chain (find_pinned_set picks one), so those are exactly its
+    native edges, and routed topologies use no others -- check_isa_on_set
+    enforces that.
+    """
+    props = backend.properties()
+    cal = {
+        "backend": backend.name,
+        "calibration_last_update": str(props.last_update_date),
+        "pinned": pinned,
+        "readout_error": {str(q): float(props.readout_error(q)) for q in pinned},
+        "t1_us": {str(q): float(props.t1(q)) * 1e6 for q in pinned},
+        "t2_us": {str(q): float(props.t2(q)) * 1e6 for q in pinned},
+        "cz_error": {},
+    }
+    for a, b in zip(pinned, pinned[1:]):
+        try:
+            cal["cz_error"][f"{a}_{b}"] = float(props.gate_error("cz", [a, b]))
+        except Exception:  # noqa: BLE001
+            cal["cz_error"][f"{a}_{b}"] = float(props.gate_error("cz", [b, a]))
+    return cal
+
+
+def _results_dir() -> str:
+    return os.path.join(os.path.dirname(__file__), "..", "results",
+                        "hardware-topology")
+
+
+def _save_pending_job_id(job_id: str, backend_name: str) -> None:
+    os.makedirs(_results_dir(), exist_ok=True)
+    stamp = datetime.now(timezone.utc).isoformat()
+    with open(os.path.join(_results_dir(), "pending_jobs.txt"), "a",
+              encoding="utf-8") as fh:
+        fh.write(f"{stamp}\t{backend_name}\t{job_id}\n")
+
+
+def _submit_cal_path(job_id: str) -> str:
+    return os.path.join(_results_dir(), f"pending-{job_id}-calibration.json")
+
+
+def save_run(analysis: dict, plan: dict, job_info: dict, cal: dict, shots: int,
+             cal_submit: dict | None = None) -> str:
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
+    out_dir = os.path.join(_results_dir(), ts)
+    os.makedirs(out_dir, exist_ok=True)
+    payload = {
+        "experiment": "hardware-topology",
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "git": git_provenance(),
+        "environment": environment_provenance(),
+        "job": job_info,
+        "shots": shots,
+        "note": ("advantage = measured profile payoff minus the ANALYTIC "
+                 "noiseless classical NE payoff 1/N. This is the hardware "
+                 "convention; simulation figures use the circuit-relative gap "
+                 "and the two are NOT comparable. ideal_payoff is this cell's "
+                 "own noiseless payoff and is NOT V/N for every topology."),
+        "analysis": analysis,
+        "pub_meta": plan["meta"],
+    }
+    with open(os.path.join(out_dir, "result.json"), "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, indent=2)
+    with open(os.path.join(out_dir, "calibration.json"), "w",
+              encoding="utf-8") as fh:
+        json.dump(cal, fh, indent=2)
+    if cal_submit is not None:
+        # G15: calibration.json above is fetched at analysis time; this one was
+        # snapshotted at submission and identifies the calibration the job
+        # actually ran under.
+        with open(os.path.join(out_dir, "calibration_at_submit.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(cal_submit, fh, indent=2)
+    print(f"\nsaved: {os.path.relpath(os.path.join(out_dir, 'result.json'))}")
+    return out_dir
+
+
+def analyze_and_save(counts_per_pub: list[dict], plan: dict, backend,
+                     job_info: dict, shots: int) -> None:
+    analysis = analyze_batch(counts_per_pub, plan, shots)
+    print_summary(analysis)
+    cal_submit = None
+    sub_path = _submit_cal_path(job_info.get("job_id", ""))
+    if job_info.get("job_id") and os.path.exists(sub_path):
+        with open(sub_path, encoding="utf-8") as fh:
+            cal_submit = json.load(fh)
+    save_run(analysis, plan, job_info,
+             pinned_calibration(backend, plan["pinned"]), shots,
+             cal_submit=cal_submit)
+
+
+# ── submission and recovery ───────────────────────────────────────────────────
+
+
+def submit(backend, plan: dict, shots: int) -> str:
+    """Submit ONE batch job, persisting the id and calibration BEFORE polling."""
+    from qiskit_ibm_runtime import SamplerV2
+
+    cal_submit = pinned_calibration(backend, plan["pinned"])
+    print(f"\n=== HARDWARE SUBMISSION: {len(plan['pubs'])} pubs x {shots} shots "
+          f"on {backend.name} ===")
+    job = SamplerV2(mode=backend).run(plan["pubs"], shots=shots)
+    job_id = job.job_id()
+    _save_pending_job_id(job_id, backend.name)
+    with open(_submit_cal_path(job_id), "w", encoding="utf-8") as fh:
+        json.dump(cal_submit, fh, indent=2)
+    print(f"submitted job {job_id}; id and submit-time calibration persisted. "
+          f"Recover with: --from-job {job_id}")
+    return job
+
+
+def pinned_from_job_pubs(circuits) -> list[int]:
+    """Recover the pinned set from the job's OWN cal0 circuit.
+
+    Pub 0 is cal0: transpiled at optimization_level=0 with initial_layout=pinned
+    and measured fil[j] -> clbit j, so its measure targets in clbit order ARE
+    the pinned set. Reading it from the job rather than from the live backend
+    makes recovery immune to the chain selector picking a different set on a
+    later calibration day.
+    """
+    cal0 = circuits[0]
+    by_clbit = {cal0.find_bit(ci.clbits[0]).index: cal0.find_bit(ci.qubits[0]).index
+                for ci in cal0.data if ci.operation.name == "measure"}
+    if sorted(by_clbit) != list(range(PIN_LEN)):
+        print(f"cannot read the pinned set from pub 0: measured clbits "
+              f"{sorted(by_clbit)}, expected 0..{PIN_LEN - 1}")
+        sys.exit(1)
+    return [by_clbit[j] for j in range(PIN_LEN)]
+
+
+def recover(service, backend, job_id: str, shots_hint: int) -> None:
+    """Re-analyse a submitted batch, rebuilding the plan on ITS pinned set."""
+    job = service.job(job_id)
+    print(f"job {job_id} status: {job.status()}")
+    if str(job.status()) not in ("DONE", "JobStatus.DONE"):
+        print("not finished; re-run later (the job id stays valid).")
+        return
+    pubs_in = job.inputs["pubs"]
+    circuits = [p[0] if isinstance(p, (list, tuple)) else p for p in pubs_in]
+    pinned = pinned_from_job_pubs(circuits)
+    print(f"recovered pinned set from the job itself: {pinned}")
+    plan = build_batch(backend, CELLS, pinned=pinned)
+    if len(plan["pubs"]) != len(circuits):
+        # Abort rather than guess: a mismatched plan would silently mislabel
+        # every series in the saved artifact.
+        print(f"ABORT: rebuilt plan has {len(plan['pubs'])} pubs but job "
+              f"{job_id} has {len(circuits)}. The cell list changed since "
+              f"submission; recover with the code at the submitting commit.")
+        sys.exit(1)
+    result = job.result()
+    counts_per_pub = [r.data.meas.get_counts() for r in result]
+    shots = sum(counts_per_pub[0].values()) or shots_hint
+    analyze_and_save(counts_per_pub, plan, backend,
+                     {"job_id": job_id, "backend": backend.name,
+                      "recovered": True}, shots)
+
+
 # ── backend plumbing ──────────────────────────────────────────────────────────
 
 
@@ -379,16 +791,43 @@ def main() -> None:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--backend", default=DEFAULT_BACKEND)
     ap.add_argument("--shots", type=int, default=DEFAULT_SHOTS)
-    ap.add_argument("--report", action="store_true")
+    ap.add_argument("--report", action="store_true",
+                    help="routed cz/depth per cell; network read only, no quota")
+    ap.add_argument("--rehearse", action="store_true",
+                    help="full dress rehearsal on the device noise model, no job")
+    ap.add_argument("--hardware", action="store_true",
+                    help="rehearse, then submit the batch (SPENDS QUOTA)")
+    ap.add_argument("--from-job", default=None, metavar="JOB_ID",
+                    help="recover a submitted batch job and analyse it")
     args = ap.parse_args()
 
-    if not args.report:
-        print("(no mode selected; use --report. --rehearse/--hardware/--from-job "
-              "land in the next task, once the report has chosen the cells.)")
+    if not (args.report or args.rehearse or args.hardware or args.from_job):
+        print("(no mode selected; use --report / --rehearse / --hardware "
+              "/ --from-job)")
         return
 
     service = load_service()
-    report(service.backend(args.backend))
+    backend = service.backend(args.backend)
+
+    if args.report:
+        report(backend)
+        return
+
+    if args.from_job:
+        recover(service, backend, args.from_job, args.shots)
+        return
+
+    plan = build_batch(backend, CELLS)
+    rehearse(backend, plan, args.shots)  # mandatory gate for --hardware too
+    if not args.hardware:
+        return
+
+    job = submit(backend, plan, args.shots)
+    result = job.result()
+    counts_per_pub = [r.data.meas.get_counts() for r in result]
+    analyze_and_save(counts_per_pub, plan, backend,
+                     {"job_id": job.job_id(), "backend": backend.name},
+                     args.shots)
 
 
 if __name__ == "__main__":
