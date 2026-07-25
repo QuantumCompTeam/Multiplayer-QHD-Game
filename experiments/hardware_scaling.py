@@ -275,14 +275,37 @@ def check_isa(isa: QuantumCircuit, chain: list[int], N: int) -> int:
     return n_cz
 
 
-def build_batch(backend, ns=NS, chain_len=CHAIN_LEN) -> dict:
+def validate_chain(edges, chain: list[int], chain_len: int) -> None:
+    """Raise unless `chain` is chain_len distinct qubits forming a path IN ORDER.
+
+    Deliberately a local copy of hardware_topology.validate_pinned_chain rather
+    than a shared import: these two scripts are kept independent on purpose, so
+    that this one stays byte-stable for item 3's cross-day repeats.
+    """
+    if len(chain) != chain_len:
+        raise ValueError(f"chain has {len(chain)} qubits but chain_len "
+                         f"is {chain_len}")
+    if len(set(chain)) != len(chain):
+        raise ValueError(f"chain must be distinct qubits: {chain}")
+    undirected = {frozenset(e) for e in edges}
+    for a, b in zip(chain, chain[1:]):
+        if frozenset((a, b)) not in undirected:
+            raise ValueError(f"({a}, {b}) is not an edge of the coupling map; "
+                             f"{chain} is not a connected chain in this order")
+
+
+def build_batch(backend, ns=NS, chain_len=CHAIN_LEN, chain=None) -> dict:
     """Build the full 11-pub batch plan against a real backend.
 
     Returns {"chain", "pubs", "meta"}; meta[i] describes pubs[i]:
     cals: {"kind": "cal0"/"cal1", "fil": [5 phys qubits]}
     series: {"kind": "series", "N", "fold", "fil", "cz"}.
     """
-    chain = find_chain(backend, chain_len)
+    if chain is None:
+        chain = find_chain(backend, chain_len)
+    else:
+        validate_chain(backend.coupling_map.get_edges(), chain, chain_len)
+        print(f"pinned chain on {backend.name}: {chain} (--chain, explicit)")
     plan: dict = {"chain": chain, "pubs": [], "meta": []}
 
     # readout calibration pubs (opt level 0 so the X layer survives verbatim)
@@ -537,11 +560,12 @@ def print_summary(analysis: dict, ns=NS) -> None:
 # ── dress rehearsal (spec D6) ───────────────────────────────────────────────────
 
 
-def rehearse(backend, shots: int, refs: dict, ns=NS, chain_len=CHAIN_LEN) -> dict:
+def rehearse(backend, shots: int, refs: dict, ns=NS, chain_len=CHAIN_LEN,
+             chain=None) -> dict:
     """Simulate the ENTIRE batch + analysis on the device noise model. Returns
     the plan (reused for submission) after the ZNE-improves gate passes."""
     print("\n=== dress rehearsal on AerSimulator(device noise model) ===")
-    plan = build_batch(backend, ns, chain_len)
+    plan = build_batch(backend, ns, chain_len, chain)
     nm_full = NoiseModel.from_backend(backend)
 
     counts_per_pub = []
@@ -737,6 +761,10 @@ def main() -> None:
     ap.add_argument("--ns", default=None, metavar="3,4,5",
                     help="player counts to run (default 3,4,5 = the registered "
                          "batch). Recovering runs 1-3 needs the default.")
+    ap.add_argument("--chain", default=None, metavar="Q0,Q1,...",
+                    help="run on these physical qubits instead of letting live "
+                         "calibration pick. Use this to hold a registered "
+                         "chain fixed so its predictions stay testable.")
     ap.add_argument("--chain-len", type=int, default=None, metavar="L",
                     help=f"pinned chain length (default {CHAIN_LEN}); must be "
                          f">= max(--ns)")
@@ -751,6 +779,16 @@ def main() -> None:
         print(f"ERROR: --chain-len {chain_len} is shorter than max(--ns) "
               f"{max(ns)}; every N runs on a prefix of the one pinned chain.")
         sys.exit(2)
+
+    chain = None
+    if args.chain:
+        chain = [int(x) for x in args.chain.replace(" ", "").split(",") if x]
+        if args.chain_len is None:
+            chain_len = len(chain)
+        if len(chain) != chain_len:
+            print(f"ERROR: --chain has {len(chain)} qubits but --chain-len is "
+                  f"{chain_len}")
+            sys.exit(2)
 
     refs = run_noiseless_gates(args.shots, ns)
 
@@ -781,12 +819,12 @@ def main() -> None:
 
     if args.hardware:
         # mandatory pre-submit gate
-        plan = rehearse(backend, args.shots, refs, ns, chain_len)
+        plan = rehearse(backend, args.shots, refs, ns, chain_len, chain)
     elif args.rehearse:
-        rehearse(backend, args.shots, refs, ns, chain_len)
+        rehearse(backend, args.shots, refs, ns, chain_len, chain)
         return
     else:  # --report only
-        plan = build_batch(backend, ns, chain_len)
+        plan = build_batch(backend, ns, chain_len, chain)
 
     if args.report:
         print("\n=== transpile report (no submission) ===")
