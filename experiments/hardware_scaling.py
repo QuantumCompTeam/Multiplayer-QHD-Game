@@ -596,8 +596,12 @@ def rehearse(backend, shots: int, refs: dict, ns=NS, chain_len=CHAIN_LEN,
         print(f"  N={N}: |raw-ideal|={abs(raw - ideal):.4f}  "
               f"|ZNE-ideal|={abs(zne - ideal):.4f}  "
               f"{'improved' if better else 'NOT improved'}")
-    ok = improved >= 2
-    print(f"rehearsal gate: ZNE improved {improved}/3 series -> "
+    # Strict majority. For the default 3 series this IS `improved >= 2` and
+    # prints "3/3" exactly as before; it generalises correctly to the --ns
+    # extension, where the old hardcoded `>= 2` would have passed a 5-series
+    # batch on 2 improvements and printed the wrong denominator.
+    ok = improved > len(ns) / 2
+    print(f"rehearsal gate: ZNE improved {improved}/{len(ns)} series -> "
           f"{'PASS' if ok else 'FAIL'}")
     if not ok:
         sys.exit(1)
