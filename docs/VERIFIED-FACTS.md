@@ -406,7 +406,10 @@ elsewhere in results/ is absent here.
 This run uses a different qubit-chain key and a different calibration epoch from
 the two scaling runs, and is a separate experiment.
 
-### B3. The two hardware-scaling runs
+### B3. The first two hardware-scaling runs
+
+(Run 3 `2026-07-25T035623Z` is covered in section C; the two 2026-07-25 batches
+are in B3.1.)
 
 | field | run 1 | run 2 |
 | --- | --- | --- |
@@ -433,6 +436,35 @@ mechanical rather than meaningful.
 rather than polling a live submission. What this implies about run 1's execution
 path is not determined here; the fact recorded is the flag's presence and
 absence.
+
+### B3.1 The 2026-07-25 runs (topology batch and N=3..7 extension)
+
+| field | topology batch | N=3..7 extension |
+| --- | --- | --- |
+| directory | results/hardware-topology/2026-07-25T114621Z | results/hardware-scaling/2026-07-25T180549Z |
+| experiment | hardware-topology, result.json:2 (`"experiment": "hardware-topology",`) | **hardware-scaling-n345**, result.json:2 (`"experiment": "hardware-scaling-n345",`) — see the mislabel note below |
+| created_utc | 2026-07-25T11:46:21.848162+00:00, result.json:3 | 2026-07-25T18:05:49.016021+00:00, result.json:3 |
+| job_id | d9ia1pd0k0jc738jaqgg, result.json:22 (`"job_id": "d9ia1pd0k0jc738jaqgg",`) | d9if010gk0ls73f4avkg, result.json:23 (`"job_id": "d9if010gk0ls73f4avkg",`) |
+| shots | 4096, result.json:25 (`"shots": 4096,`) | 4096, result.json:26 (`"shots": 4096,`) |
+| calibration_last_update at submit | 2026-07-25 16:05:46+05:30, calibration_at_submit.json:3 | 2026-07-25 22:32:49+05:30, calibration_at_submit.json:3 |
+| pubs | 49 | 17 |
+
+**`experiment` is mislabelled on the extension run.** It records
+`"hardware-scaling-n345"` while the run covers N=3..7. The string is a literal
+in `experiments/hardware_scaling.py`'s `save_run` payload and was not
+parameterised when `--ns` was added. The `pub_meta` block carries the true N
+values, so nothing downstream is wrong, but a consumer keying off `experiment`
+alone would misread the run's scope. Not corrected here: editing the artifact
+after the fact would be worse than the label.
+
+**ibm_fez recalibrated three times on 2026-07-25**: 08:15:48 (topology
+registration), 16:05:46 (topology submission), 22:32:49 (extension submission),
+all +05:30. The topology batch was registered under the first and executed
+under the second, and its qubit selector moved the pinned set as a result —
+this is the confound recorded in
+`docs/findings/2026-07-25-topology-hardware-run1.md`. The extension pinned its
+chain explicitly and so was unaffected despite a further recalibration:
+judgments-n67.json:28 (`"chain_matches": true,`).
 
 ### B4. What the artifacts do not record
 

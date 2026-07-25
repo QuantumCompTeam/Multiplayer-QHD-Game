@@ -36,7 +36,8 @@ live convention V=4/C=3 unless marked retired.
 | `topology-controls/` | 2–5 | GHZ, ring, star, FC | p = 0→0.05 | one control run `2026-07-16T172737Z` |
 | `topology/` | per-topology | all 5 | 0 | per-topology reference runs |
 | `hardware-n3/` | 3 | GHZ | device | one run `2026-07-16T013912Z` |
-| `hardware-scaling/` | 3–5 | GHZ | device | 2 of 3–5 cross-day runs so far |
+| `hardware-scaling/` | 3–**7** | GHZ | device | 3 runs at N=3–5 (**2 of 3–5 distinct calibration days**) + N=3–7 extension `2026-07-25T180549Z` |
+| `hardware-topology/` | 3–5 | **all 5** | device | one 49-pub batch `2026-07-25T114621Z` (topology + deviations + wirings + γ sweep) |
 | `t9-pilot/` | 4 | W | 0 / 0.02 / 0.05 | adaptation pilot (provisional) |
 
 **Known coverage gaps** (unrun cells, not failures — see `src/experiment/report.py`,
@@ -47,10 +48,20 @@ which lists skipped cells explicitly per run):
   paper's noise claims are scoped to the three swept topologies.
 - **Noise at N=6** — the noise sweep stops at N=5 (cost); the N=6 row exists
   only at zero noise.
-- **Hardware beyond GHZ** — only the GHZ cooperative profile has been run on
-  device; W/other topologies on hardware are item 9 (open).
+- ~~**Hardware beyond GHZ**~~ — **closed 2026-07-25.** `hardware-topology/`
+  runs ghz/ring/star/fully-connected/W on device. Still unrun on hardware:
+  fully-connected N=5 (67 routed cz) and W N=4,5 (107, 219), all excluded on
+  measured routed cz — see
+  `docs/findings/2026-07-25-topology-hardware-feasibility.md`.
 - **Cross-day hardware variance** — hardware-scaling has 2 of the 3–5 planned
-  calibration-day repeats (item 3, blocked on a fresh ibm_fez calibration).
+  calibration *days* (three runs, but runs 1 and 2 share one calibration
+  stamp). Item 3, gated on wall-clock, not on code. Fig. 6's error bars stay
+  the two-point sample SD until this closes.
+- **Absolute-magnitude noise prediction** — no registered model predicts the
+  measured advantage magnitude: both the depolarizing and cz-exponential laws
+  failed their registered tests at N=6,7, and the topology batch's per-cell
+  predictions failed and were confounded by a mid-day recalibration. The
+  structural claims are within-job differentials and do not rest on this.
 
 ## Regenerate
 
