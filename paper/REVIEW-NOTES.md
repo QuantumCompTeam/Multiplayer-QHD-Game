@@ -4,8 +4,15 @@ The compiled `main.pdf` is an evidence-preserving review draft, not a submission
 
 ## Author input
 
-- Add Aasa Singh Bhui's preferred publication email to the IEEE author block.
-- Obtain Aasa's game-theory sign-off on the exploratory T9 independent round-robin best-response rule and its interpretation.
+- ~~Add Aasa Singh Bhui's preferred publication email to the IEEE author
+  block.~~ **Done 2026-07-26:** `aasasingh2005@gmail.com`.
+- **Still open — Aasa's game-theory sign-off on the T9 rule (item 10).** This
+  cannot be closed from the repository side; it is a judgement about whether
+  "independent round-robin best response" is the right rule. Simultaneous best
+  response, fictitious play, or a fairness-constrained rule could change the
+  `p=0.02` limit-cycle verdict specifically. Until sign-off the fairness
+  paragraph stays hedged as exploratory, which is how it currently reads in
+  Sec. IV-C and the conclusion — no text change is pending, only the decision.
 - Complete final author review of all sections drafted from repository artifacts.
 
 ## Bibliography verification

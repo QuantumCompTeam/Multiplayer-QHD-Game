@@ -611,7 +611,7 @@ def rehearse(backend, shots: int, refs: dict, ns=NS, chain_len=CHAIN_LEN,
 # ── persistence ────────────────────────────────────────────────────────────────
 
 
-def git_provenance() -> dict:
+def git_provenance(when: str = "at_save") -> dict:
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
                                          text=True).strip()
@@ -620,7 +620,7 @@ def git_provenance() -> dict:
         dirty = bool(porcelain)
     except Exception:  # noqa: BLE001
         commit, dirty, porcelain = None, None, ""
-    out = {"commit": commit, "dirty": dirty}
+    out = {"commit": commit, "dirty": dirty, "captured": when}
     if dirty:
         # G16: "dirty": true alone leaves the code unidentifiable; at least
         # enumerate what was dirty at save time.
@@ -666,16 +666,29 @@ def chain_calibration(backend, chain: list[int]) -> dict:
     return cal
 
 
+def plan_ns(plan: dict) -> list[int]:
+    """The N values this plan actually carries, in ascending order."""
+    return sorted({m["N"] for m in plan["meta"] if m.get("kind") == "series"})
+
+
 def save_run(analysis: dict, predictions: dict, plan: dict, job_info: dict,
-             cal: dict, shots: int, cal_submit: dict | None = None) -> str:
+             cal: dict, shots: int, cal_submit: dict | None = None,
+             git_info: dict | None = None) -> str:
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     out_dir = os.path.join(os.path.dirname(__file__), "..", "results",
                            "hardware-scaling", ts)
     os.makedirs(out_dir, exist_ok=True)
     payload = {
-        "experiment": "hardware-scaling-n345",
+        # Reflects the ns actually run. Was hardcoded "hardware-scaling-n345",
+        # which mislabelled the N=3..7 extension (see VERIFIED-FACTS B3.1).
+        "experiment": ("hardware-scaling-n"
+                       + "".join(str(N) for N in plan_ns(plan))),
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "git": git_provenance(),
+        # G16: prefer provenance captured BEFORE submission. Capturing it at
+        # save time always reports dirty, because _save_pending_job_id writes
+        # pending_jobs.txt and the pending calibration for crash safety before
+        # polling -- the run dirties its own provenance.
+        "git": git_info if git_info is not None else git_provenance(),
         "environment": environment_provenance(),
         "job": job_info,
         "shots": shots,
@@ -719,7 +732,8 @@ def _submit_cal_path(job_id: str) -> str:
 
 
 def analyze_and_save(counts_per_pub: list[dict], plan: dict, refs: dict,
-                     backend, job_info: dict, shots: int, ns=NS) -> None:
+                     backend, job_info: dict, shots: int, ns=NS,
+                     git_info: dict | None = None) -> None:
     analysis = analyze_batch(counts_per_pub, plan, refs, shots, ns, len(plan["chain"]))
     print_summary(analysis, ns)
     if 3 not in ns:
@@ -744,7 +758,7 @@ def analyze_and_save(counts_per_pub: list[dict], plan: dict, refs: dict,
         with open(sub_path, encoding="utf-8") as fh:
             cal_submit = json.load(fh)
     save_run(analysis, predictions, plan, job_info, cal, shots,
-             cal_submit=cal_submit)
+             cal_submit=cal_submit, git_info=git_info)
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
@@ -855,6 +869,8 @@ def main() -> None:
 
         print(f"\n=== HARDWARE SUBMISSION: {len(plan['pubs'])} pubs x "
               f"{args.shots} shots on {backend.name} ===")
+        # Capture provenance BEFORE the first write of this run.
+        git_at_submit = git_provenance("before_submission")
         job = Sampler(mode=backend).run(plan["pubs"], shots=args.shots)
         _save_pending_job_id(job.job_id(), backend.name)
         # G15: snapshot calibration NOW; the copy fetched at analysis time may
@@ -868,7 +884,7 @@ def main() -> None:
         counts_per_pub = [r.data.meas.get_counts() for r in result]
         analyze_and_save(counts_per_pub, plan, refs, backend,
                          {"job_id": job.job_id(), "backend": backend.name},
-                         args.shots, ns)
+                         args.shots, ns, git_info=git_at_submit)
 
 
 if __name__ == "__main__":

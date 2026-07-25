@@ -733,8 +733,8 @@ def rehearse(backend, plan: dict, shots: int, seed: int | None = None) -> dict:
 # ── persistence ───────────────────────────────────────────────────────────────
 
 
-def git_provenance() -> dict:
-    """Ported unchanged from experiments/hardware_scaling.py:574."""
+def git_provenance(when: str = "at_save") -> dict:
+    """Ported from experiments/hardware_scaling.py, plus a capture-time label."""
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
                                          text=True).strip()
@@ -743,7 +743,7 @@ def git_provenance() -> dict:
         dirty = bool(porcelain)
     except Exception:  # noqa: BLE001
         commit, dirty, porcelain = None, None, ""
-    out = {"commit": commit, "dirty": dirty}
+    out = {"commit": commit, "dirty": dirty, "captured": when}
     if dirty:
         # G16: "dirty": true alone leaves the code unidentifiable; at least
         # enumerate what was dirty at save time.
@@ -812,14 +812,19 @@ def _submit_cal_path(job_id: str) -> str:
 
 
 def save_run(analysis: dict, plan: dict, job_info: dict, cal: dict, shots: int,
-             cal_submit: dict | None = None) -> str:
+             cal_submit: dict | None = None,
+             git_info: dict | None = None) -> str:
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     out_dir = os.path.join(_results_dir(), ts)
     os.makedirs(out_dir, exist_ok=True)
     payload = {
         "experiment": "hardware-topology",
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "git": git_provenance(),
+        # G16: prefer provenance captured BEFORE submission. At save time it
+        # always reports dirty, because _save_pending_job_id writes
+        # pending_jobs.txt and the pending calibration for crash safety before
+        # polling -- the run dirties its own provenance.
+        "git": git_info if git_info is not None else git_provenance(),
         "environment": environment_provenance(),
         "job": job_info,
         "shots": shots,
@@ -848,7 +853,8 @@ def save_run(analysis: dict, plan: dict, job_info: dict, cal: dict, shots: int,
 
 
 def analyze_and_save(counts_per_pub: list[dict], plan: dict, backend,
-                     job_info: dict, shots: int) -> None:
+                     job_info: dict, shots: int,
+                     git_info: dict | None = None) -> None:
     analysis = analyze_batch(counts_per_pub, plan, shots)
     print_summary(analysis)
     cal_submit = None
@@ -858,17 +864,23 @@ def analyze_and_save(counts_per_pub: list[dict], plan: dict, backend,
             cal_submit = json.load(fh)
     save_run(analysis, plan, job_info,
              pinned_calibration(backend, plan["pinned"]), shots,
-             cal_submit=cal_submit)
+             cal_submit=cal_submit, git_info=git_info)
 
 
 # ── submission and recovery ───────────────────────────────────────────────────
 
 
-def submit(backend, plan: dict, shots: int) -> str:
-    """Submit ONE batch job, persisting the id and calibration BEFORE polling."""
+def submit(backend, plan: dict, shots: int):
+    """Submit ONE batch job, persisting the id and calibration BEFORE polling.
+
+    Returns (job, git_at_submit). The provenance block is captured here, before
+    this run's first write, so the saved artifact is not dirtied by its own
+    crash-safety files.
+    """
     from qiskit_ibm_runtime import SamplerV2
 
     cal_submit = pinned_calibration(backend, plan["pinned"])
+    git_at_submit = git_provenance("before_submission")
     print(f"\n=== HARDWARE SUBMISSION: {len(plan['pubs'])} pubs x {shots} shots "
           f"on {backend.name} ===")
     job = SamplerV2(mode=backend).run(plan["pubs"], shots=shots)
@@ -878,7 +890,7 @@ def submit(backend, plan: dict, shots: int) -> str:
         json.dump(cal_submit, fh, indent=2)
     print(f"submitted job {job_id}; id and submit-time calibration persisted. "
           f"Recover with: --from-job {job_id}")
-    return job
+    return job, git_at_submit
 
 
 def pinned_from_job_pubs(circuits) -> list[int]:
@@ -1005,12 +1017,12 @@ def main() -> None:
     if not args.hardware:
         return
 
-    job = submit(backend, plan, args.shots)
+    job, git_at_submit = submit(backend, plan, args.shots)
     result = job.result()
     counts_per_pub = [r.data.meas.get_counts() for r in result]
     analyze_and_save(counts_per_pub, plan, backend,
                      {"job_id": job.job_id(), "backend": backend.name},
-                     args.shots)
+                     args.shots, git_info=git_at_submit)
 
 
 if __name__ == "__main__":
