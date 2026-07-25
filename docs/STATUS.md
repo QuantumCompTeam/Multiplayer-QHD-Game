@@ -47,14 +47,34 @@ and **four of five pre-registered tests passed**. Plan:
   live: it holds `[20,21,22,23,24]` against drifted calibration and reproduces
   the registration's exact routed cz counts. This also makes the Task 9
   cross-day repeats controlled, which they previously could not be.
+- **Task 10 done (`e8efec9`): N=6,7 are on hardware, and the chain held.**
+  Job `d9if010gk0ls73f4avkg`, 17 pubs, 20 QPU-s, registered
+  (`preregistration-n67.json`, frozen at `8d1e5d1`) and judged. **Advantage
+  survives to N=7 at 98.1% of ideal while P(0…0) has fallen to 0.78.**
+  Registered on `[97,107,108,109,110,111,98]` and *executed on the same* — the
+  first run whose qubits provably match its registration, so its failures are
+  model failures, not provenance failures.
+  - **Both registered models FAILED.** M1 (depolarizing) over-predicts at every
+    N; M2 (cz-exponential) over-predicts at N=4,5,6 then *under*-predicts at
+    N=7. A one-parameter retention law fitted at N=3 cannot bend that way.
+  - **The model race SPLIT, contradicting the existing ranking.** M2 is closer
+    at N=4,5,6; M1 at N=7. **M2's lead in `repeat-judgments.json` does not
+    extrapolate** — any paper text ranking the five models must be scoped to
+    N≤5. The registration named this outcome in advance.
+  - **Open thread: retention is not monotone** (99.15 / 97.51 / 97.33 / 96.29 /
+    **98.13**%). N=7 keeps more of its ideal advantage than N=4,5,6 despite the
+    most gates and the lowest fidelity, and its ZNE *overshoots* the ideal
+    (0.4437 vs 0.4286), which no physical noise model can do. Cause
+    undetermined — needs the Task 9 repeats before it is a result rather than
+    an observation. `docs/findings/2026-07-25-scaling-n67-run1.md`.
 - **Next: plan Task 9 — two more calibration days.** Wall-clock-gated, ~55
   QPU-s each, zero code change. Each repeat now runs chain-matched, so it
-  doubles as the T4 re-test. Then Task 10 (N=6,7) and Task 11 (fold into the
-  paper).
-- **Quota:** 102 QPU-s consumed all time, 100 of it in July (55 by this run).
-  The Open Plan monthly allowance is still **unverified** — `usage()` is gated
-  to the retired `ibm_quantum` channel and `instances()` returns empty on
-  `ibm_cloud`, so it cannot be read from the API. Check
+  doubles as the topology T4 re-test *and* tests the N=7 anomaly. Then Task 11
+  (fold into the paper).
+- **Quota:** 122 QPU-s consumed all time, 120 of it in July (55 topology + 20
+  N=6,7 today). The Open Plan monthly allowance is still **unverified** —
+  `usage()` is gated to the retired `ibm_quantum` channel and `instances()`
+  returns empty on `ibm_cloud`, so it cannot be read from the API. Check
   quantum.cloud.ibm.com before Task 9.
 - **Not blocked.** The IBM credential is a saved account in `~/.qiskit` and is
   verified working. Do **not** set `QISKIT_IBM_TOKEN`: the env var takes
@@ -103,10 +123,15 @@ networks — topology, noise, hardware? **Answer: yes, sharper edges.**
   position-locked unfair (hub 0.34 vs leaves 1.21), and ring N=4 has zero
   noiseless advantage, so what advantage it shows is manufactured by noise.
 - **Scaling:** set per-two-qubit-gate decay, not fitted depolarizing strength.
-  In the registered five-model comparison, cz-exponential retention leads runs.
+  In the registered five-model comparison, cz-exponential retention leads
+  **at N≤5 — and loses at N=7** (`e8efec9`, chain-matched). Scope the ranking
+  claim to N≤5; it does not extrapolate.
   A cz-*linear* device-model bias correction fitted on GHZ (6–14 cz)
   **over-corrects beyond its fitting range** — the bias saturates. Directional
   only; the measurement it came from is chain-confounded (see head of line).
+- **Reach (new, hardware):** the cooperative advantage survives to **N=7 at
+  98.1% of ideal** with ground-state probability down to 0.78 — the
+  first-order-insensitivity mechanism holds across the full N=3…7 curve.
 
 ## Why a reviewer trusts the process (the moat)
 
