@@ -25,6 +25,18 @@ Batch layout (one job): pubs = [cal0 |00000>, cal1 |11111>] +
 [N in {3,4,5} x cz-fold in {1,3,5}]. All Ns run on prefixes of ONE 5-qubit
 linear chain (controlled variable across the scaling curve).
 
+  --ns 3,4,5,6,7 --chain-len 7   Extend the scaling curve (item 4). DEFAULTS
+                 REPRODUCE THE REGISTERED BATCH EXACTLY: --ns defaults to 3,4,5
+                 and --chain-len to 5, and the default offline-gate output is
+                 verified byte-identical to the pre-flag script. Omitting
+                 --chain-len alongside --ns raises it to max(ns) automatically.
+
+IMPORTANT for recovery: plan_from_job_circuits rebuilds the pub ORDER from `ns`,
+so recovering runs 1-3 requires the default --ns 3,4,5. A job submitted with a
+different --ns must be recovered with that same --ns, or the pub count check
+fails loudly rather than mislabelling the series. N=3 must always be present:
+it is the p_eff fit anchor the frozen preregistration is built on.
+
 Honesty notes carried into every saved result:
 - "advantage" = measured (Q,…,Q) cooperative-profile payoff minus the ANALYTIC
   noiseless classical NE payoff (1/3, 1/4, 1/5 at N=3,4,5).
@@ -141,12 +153,12 @@ def payoff_stats(probs: np.ndarray, N: int, shots: int) -> dict:
     }
 
 
-def run_noiseless_gates(shots: int) -> dict[int, dict]:
+def run_noiseless_gates(shots: int, ns=NS) -> dict[int, dict]:
     """Gates 1+2 for every N. Returns per-N references from compute_advantage."""
     print("=== offline gates (no network) ===")
     refs: dict[int, dict] = {}
     sim = AerSimulator()
-    for N in NS:
+    for N in ns:
         qc = build_ewl_gate_circuit(N)
         assert_circuit_identity(qc, N)
         ref = compute_advantage(N=N)
@@ -193,7 +205,7 @@ def load_service():
         sys.exit(2)
 
 
-def find_chain(backend) -> list[int]:
+def find_chain(backend, chain_len=CHAIN_LEN) -> list[int]:
     """Best 5-qubit linear chain by summed cz + readout calibration error."""
     props = backend.properties()
     edges = list(backend.coupling_map.get_edges())
@@ -209,7 +221,7 @@ def find_chain(backend) -> list[int]:
     nodes = {q for e in edge_err for q in e}
     node_err = {q: float(props.readout_error(q)) for q in nodes}
     chain = best_linear_chain(
-        [tuple(e) for e in edge_err], edge_err, node_err, CHAIN_LEN
+        [tuple(e) for e in edge_err], edge_err, node_err, chain_len
     )
     score_cz = sum(edge_err[frozenset(e)] for e in zip(chain, chain[1:]))
     score_ro = sum(node_err[q] for q in chain)
@@ -263,30 +275,30 @@ def check_isa(isa: QuantumCircuit, chain: list[int], N: int) -> int:
     return n_cz
 
 
-def build_batch(backend) -> dict:
+def build_batch(backend, ns=NS, chain_len=CHAIN_LEN) -> dict:
     """Build the full 11-pub batch plan against a real backend.
 
     Returns {"chain", "pubs", "meta"}; meta[i] describes pubs[i]:
     cals: {"kind": "cal0"/"cal1", "fil": [5 phys qubits]}
     series: {"kind": "series", "N", "fold", "fil", "cz"}.
     """
-    chain = find_chain(backend)
+    chain = find_chain(backend, chain_len)
     plan: dict = {"chain": chain, "pubs": [], "meta": []}
 
     # readout calibration pubs (opt level 0 so the X layer survives verbatim)
     for label, prep in (("cal0", False), ("cal1", True)):
-        qc = QuantumCircuit(CHAIN_LEN)
+        qc = QuantumCircuit(chain_len)
         if prep:
-            qc.x(range(CHAIN_LEN))
+            qc.x(range(chain_len))
         pm = generate_preset_pass_manager(
             backend=backend, optimization_level=0, initial_layout=chain
         )
         isa = pm.run(qc)
         fil = list(isa.layout.final_index_layout())
-        plan["pubs"].append(with_measurement(isa, fil, CHAIN_LEN))
+        plan["pubs"].append(with_measurement(isa, fil, chain_len))
         plan["meta"].append({"kind": label, "fil": fil})
 
-    for N in NS:
+    for N in ns:
         pm = generate_preset_pass_manager(
             backend=backend, optimization_level=3, initial_layout=chain[:N]
         )
@@ -306,7 +318,7 @@ def build_batch(backend) -> dict:
     return plan
 
 
-def plan_from_job_circuits(circuits: list[QuantumCircuit]) -> dict:
+def plan_from_job_circuits(circuits: list[QuantumCircuit], ns=NS) -> dict:
     """Reconstruct the batch plan from a job's own submitted circuits.
 
     fil is read off each pub's measure instructions (physical qubit measured
@@ -314,7 +326,7 @@ def plan_from_job_circuits(circuits: list[QuantumCircuit]) -> dict:
     QPY layout metadata. Pub order is the deterministic build_batch order.
     """
     metas = [{"kind": "cal0"}, {"kind": "cal1"}]
-    for N in NS:
+    for N in ns:
         for f in FOLDS:
             metas.append({"kind": "series", "N": N, "fold": f})
     if len(circuits) != len(metas):
@@ -390,7 +402,7 @@ def reduce_noise_model(nm: NoiseModel, active: list[int]) -> NoiseModel:
 
 
 def device_predictions(plan: dict, backend, refs: dict,
-                       shots: int = 200_000) -> dict:
+                       shots: int = 200_000, ns=NS) -> dict:
     """Per-N predicted payoff/advantage from the device noise model.
 
     'raw' = sampled with readout error; 'noro' = exact pre-measurement
@@ -399,7 +411,7 @@ def device_predictions(plan: dict, backend, refs: dict,
     nm_full = NoiseModel.from_backend(backend)
     out: dict = {"model_built_utc": datetime.now(timezone.utc).isoformat(),
                  "backend": backend.name}
-    for N in NS:
+    for N in ns:
         meta_idx = next(i for i, m in enumerate(plan["meta"])
                         if m.get("N") == N and m.get("fold") == 1)
         pub = plan["pubs"][meta_idx]
@@ -428,7 +440,7 @@ def device_predictions(plan: dict, backend, refs: dict,
     return out
 
 
-def effective_p_prediction(measured_n3_payoff: float, refs: dict) -> dict:
+def effective_p_prediction(measured_n3_payoff: float, refs: dict, ns=NS) -> dict:
     """Fit ONE depolarizing p to the N=3 mitigated payoff; predict N=4,5.
 
     Uses the repo's Month-4 noisy path (circuits.noise.build_ewl_circuit_noisy,
@@ -452,7 +464,7 @@ def effective_p_prediction(measured_n3_payoff: float, refs: dict) -> dict:
                 hi = mid
         p_eff = (lo + hi) / 2
     out: dict = {"p_eff": p_eff, "fit_on": "N=3 mitigated fold-1 payoff"}
-    for N in NS:
+    for N in ns:
         pay = q_payoff(N, p_eff)
         out[str(N)] = {"payoff": pay,
                        "advantage": pay - refs[N]["classical_ne_payoff"]}
@@ -463,15 +475,15 @@ def effective_p_prediction(measured_n3_payoff: float, refs: dict) -> dict:
 
 
 def analyze_batch(counts_per_pub: list[dict], plan: dict, refs: dict,
-                  shots: int) -> dict:
+                  shots: int, ns=NS, chain_len=CHAIN_LEN) -> dict:
     """counts (one dict per pub, plan order) -> per-N raw/mitigated/ZNE results."""
     meta = plan["meta"]
-    mats5 = confusion_from_counts(counts_per_pub[0], counts_per_pub[1], CHAIN_LEN)
+    mats5 = confusion_from_counts(counts_per_pub[0], counts_per_pub[1], chain_len)
     cal_fil = meta[0]["fil"]  # clbit j of the cal pubs measures physical cal_fil[j]
-    mats_by_phys = {cal_fil[j]: mats5[j] for j in range(CHAIN_LEN)}
+    mats_by_phys = {cal_fil[j]: mats5[j] for j in range(chain_len)}
 
     result: dict = {"chain": plan["chain"], "shots": shots, "series": {}}
-    for N in NS:
+    for N in ns:
         classical = refs[N]["classical_ne_payoff"]
         fil = next(m["fil"] for m in meta if m.get("N") == N)
         mats = [mats_by_phys[fil[j]] for j in range(N)]
@@ -504,15 +516,15 @@ def analyze_batch(counts_per_pub: list[dict], plan: dict, refs: dict,
             "zne": zne,
         }
     result["confusion_matrices"] = {
-        str(cal_fil[j]): mats5[j].tolist() for j in range(CHAIN_LEN)
+        str(cal_fil[j]): mats5[j].tolist() for j in range(chain_len)
     }
     return result
 
 
-def print_summary(analysis: dict) -> None:
+def print_summary(analysis: dict, ns=NS) -> None:
     print("\n  N | ideal adv | raw adv  | mitigated | ZNE(lin)  | P(0..0) raw")
     print("  --+-----------+----------+-----------+-----------+------------")
-    for N in NS:
+    for N in ns:
         s = analysis["series"][str(N)]
         f1 = s["folds"]["1"]
         print(f"  {N} | {s['ideal_advantage']:9.4f} "
@@ -525,11 +537,11 @@ def print_summary(analysis: dict) -> None:
 # ── dress rehearsal (spec D6) ───────────────────────────────────────────────────
 
 
-def rehearse(backend, shots: int, refs: dict) -> dict:
+def rehearse(backend, shots: int, refs: dict, ns=NS, chain_len=CHAIN_LEN) -> dict:
     """Simulate the ENTIRE batch + analysis on the device noise model. Returns
     the plan (reused for submission) after the ZNE-improves gate passes."""
     print("\n=== dress rehearsal on AerSimulator(device noise model) ===")
-    plan = build_batch(backend)
+    plan = build_batch(backend, ns, chain_len)
     nm_full = NoiseModel.from_backend(backend)
 
     counts_per_pub = []
@@ -546,11 +558,11 @@ def rehearse(backend, shots: int, refs: dict) -> dict:
         sim = AerSimulator(method="density_matrix", noise_model=small_nm)
         counts_per_pub.append(sim.run(small, shots=shots).result().get_counts())
 
-    analysis = analyze_batch(counts_per_pub, plan, refs, shots)
-    print_summary(analysis)
+    analysis = analyze_batch(counts_per_pub, plan, refs, shots, ns, chain_len)
+    print_summary(analysis, ns)
 
     improved = 0
-    for N in NS:
+    for N in ns:
         s = analysis["series"][str(N)]
         ideal = s["ideal_payoff"]
         raw = s["folds"]["1"]["raw"]["mean"]
@@ -679,18 +691,24 @@ def _submit_cal_path(job_id: str) -> str:
 
 
 def analyze_and_save(counts_per_pub: list[dict], plan: dict, refs: dict,
-                     backend, job_info: dict, shots: int) -> None:
-    analysis = analyze_batch(counts_per_pub, plan, refs, shots)
-    print_summary(analysis)
+                     backend, job_info: dict, shots: int, ns=NS) -> None:
+    analysis = analyze_batch(counts_per_pub, plan, refs, shots, ns, len(plan["chain"]))
+    print_summary(analysis, ns)
+    if 3 not in ns:
+        # The fit-one-predict-many protocol is anchored on N=3 by the frozen
+        # registration; without it there is nothing to fit.
+        print("ERROR: --ns must include 3 (the p_eff fit anchor)")
+        sys.exit(1)
     predictions = {
-        "device_model": device_predictions(plan, backend, refs),
+        "device_model": device_predictions(plan, backend, refs, ns=ns),
         "effective_p": effective_p_prediction(
-            analysis["series"]["3"]["folds"]["1"]["mitigated"]["mean"], refs),
+            analysis["series"]["3"]["folds"]["1"]["mitigated"]["mean"], refs, ns),
     }
+    others = ", ".join(
+        f"N={N}: {predictions['effective_p'][str(N)]['advantage']:.4f}"
+        for N in ns if N != 3)
     print(f"  effective p fitted at N=3: {predictions['effective_p']['p_eff']:.5f}"
-          f" -> predicted mitigated advantage N=4: "
-          f"{predictions['effective_p']['4']['advantage']:.4f}, N=5: "
-          f"{predictions['effective_p']['5']['advantage']:.4f}")
+          f" -> predicted mitigated advantage {others}")
     cal = chain_calibration(backend, plan["chain"])
     cal_submit = None
     sub_path = _submit_cal_path(job_info.get("job_id", ""))
@@ -716,9 +734,25 @@ def main() -> None:
                     help="rehearse, then submit the batch (spends quota)")
     ap.add_argument("--from-job", default=None, metavar="JOB_ID",
                     help="recover a submitted batch job and analyze it")
+    ap.add_argument("--ns", default=None, metavar="3,4,5",
+                    help="player counts to run (default 3,4,5 = the registered "
+                         "batch). Recovering runs 1-3 needs the default.")
+    ap.add_argument("--chain-len", type=int, default=None, metavar="L",
+                    help=f"pinned chain length (default {CHAIN_LEN}); must be "
+                         f">= max(--ns)")
     args = ap.parse_args()
 
-    refs = run_noiseless_gates(args.shots)
+    ns = NS if args.ns is None else tuple(
+        int(x) for x in args.ns.replace(" ", "").split(",") if x)
+    chain_len = CHAIN_LEN if args.chain_len is None else args.chain_len
+    if args.ns is not None and args.chain_len is None:
+        chain_len = max(CHAIN_LEN, max(ns))
+    if chain_len < max(ns):
+        print(f"ERROR: --chain-len {chain_len} is shorter than max(--ns) "
+              f"{max(ns)}; every N runs on a prefix of the one pinned chain.")
+        sys.exit(2)
+
+    refs = run_noiseless_gates(args.shots, ns)
 
     if not (args.rehearse or args.report or args.hardware or args.from_job):
         print("(offline gates only; use --rehearse / --report / --hardware "
@@ -736,22 +770,23 @@ def main() -> None:
             return
         pubs_in = job.inputs["pubs"]
         circuits = [p[0] if isinstance(p, (list, tuple)) else p for p in pubs_in]
-        plan = plan_from_job_circuits(circuits)
+        plan = plan_from_job_circuits(circuits, ns)
         result = job.result()
         counts_per_pub = [r.data.meas.get_counts() for r in result]
         shots = sum(counts_per_pub[0].values())
         analyze_and_save(counts_per_pub, plan, refs, backend,
                          {"job_id": args.from_job, "backend": backend.name,
-                          "recovered": True}, shots)
+                          "recovered": True}, shots, ns)
         return
 
     if args.hardware:
-        plan = rehearse(backend, args.shots, refs)  # mandatory pre-submit gate
+        # mandatory pre-submit gate
+        plan = rehearse(backend, args.shots, refs, ns, chain_len)
     elif args.rehearse:
-        rehearse(backend, args.shots, refs)
+        rehearse(backend, args.shots, refs, ns, chain_len)
         return
     else:  # --report only
-        plan = build_batch(backend)
+        plan = build_batch(backend, ns, chain_len)
 
     if args.report:
         print("\n=== transpile report (no submission) ===")
@@ -765,8 +800,9 @@ def main() -> None:
             print(f"  previous 1-pub job usage: {usage}")
             qs = usage.get("quantum_seconds")
             if qs:
-                print(f"  batch estimate ~ {qs:.1f} s x 11 pubs x 1.5 safety = "
-                      f"{qs * 11 * 1.5:.0f} s QPU")
+                n_pubs = len(plan["pubs"])
+                print(f"  batch estimate ~ {qs:.1f} s x {n_pubs} pubs x 1.5 "
+                      f"safety = {qs * n_pubs * 1.5:.0f} s QPU")
         except Exception as exc:  # noqa: BLE001
             print(f"  (previous-job metrics unavailable: {exc})")
         if not args.hardware:
@@ -790,7 +826,7 @@ def main() -> None:
         counts_per_pub = [r.data.meas.get_counts() for r in result]
         analyze_and_save(counts_per_pub, plan, refs, backend,
                          {"job_id": job.job_id(), "backend": backend.name},
-                         args.shots)
+                         args.shots, ns)
 
 
 if __name__ == "__main__":
