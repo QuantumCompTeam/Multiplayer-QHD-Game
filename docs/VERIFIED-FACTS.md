@@ -545,8 +545,8 @@ that pattern and is the authoritative check.
 
 Single source for every value in this section:
 `results/hardware-scaling/repeat-judgments.json`, generated
-2026-07-17T01:45:51.985423+00:00 (repeat-judgments.json:2
-(`"generated_utc": "2026-07-17T01:45:51.985423+00:00",`)).
+2026-07-25T03:57:31.164219+00:00 (repeat-judgments.json:2
+(`"generated_utc": "2026-07-25T03:57:31.164219+00:00",`)).
 
 Registration status is stated per subsection and sourced to
 `results/hardware-scaling/preregistration.json` or
@@ -555,11 +555,16 @@ and neither was modified.
 
 Run 1 is `2026-07-16T074134Z` (repeat-judgments.json:11
 (`"run": "2026-07-16T074134Z",`)). Run 2 is `2026-07-17T014458Z`
-(repeat-judgments.json:280 (`"run": "2026-07-17T014458Z",`)).
+(repeat-judgments.json:280 (`"run": "2026-07-17T014458Z",`)). Run 3 is
+`2026-07-25T035623Z` (repeat-judgments.json:549
+(`"run": "2026-07-25T035623Z",`)).
 
-**File-level anomaly.** `n_repeats_judged` is 1 (repeat-judgments.json:8
-(`"n_repeats_judged": 1,`)) while the `judgments` array contains two entries.
-See G8.
+**Distinct calibration days is 2, not 3.** Run 2 carries
+`"distinct_calibration_vs_previous_runs": false` — it shares run 1's
+calibration stamp, so runs 1 and 2 are ONE calibration day. Run 3 is the first
+genuinely distinct one. The registered target is 3–5 distinct days, so this is
+2 of 3–5. Any cross-day uncertainty estimate must use this count, not the
+number of runs.
 
 ### C1. p_eff
 
@@ -1140,10 +1145,15 @@ shifted by commit b608375 which inserted 20 lines above it. *Consequence:* the
 citation was correct when written and points at unrelated content now. One
 instance of G13.
 
-**G8. `n_repeats_judged` disagrees with the array it describes.**
-results/hardware-scaling/repeat-judgments.json:8 (`"n_repeats_judged": 1,`)
-while the `judgments` array contains two entries (C). *Consequence:* any
-consumer trusting the count reads one run and silently ignores the second.
+**G8. RESOLVED — not a defect; the original reading was wrong.**
+`n_repeats_judged` counts *repeats*, i.e. array entries other than the
+registration source run, not the array length. At two entries it read 1; after
+run 3 it reads 2 with three entries (repeat-judgments.json:8
+(`"n_repeats_judged": 2,`)), and exactly one entry carries
+`"is_registration_source": true`. The field has now been consistent at two
+different array sizes, which is what distinguishes a convention from an
+off-by-one. *Consequence:* none. Consumers wanting the array length should read
+`len(judgments)`.
 
 **G9. The NE claim is not pinned by any test at N=4 or N=5.**
 Three tests assert `q_is_nash is True`, all at N=3 (D4). No test asserts it
