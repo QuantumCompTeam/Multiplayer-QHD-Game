@@ -556,7 +556,7 @@ def _tvd(p: dict, q: dict) -> float:
     return 0.5 * sum(abs(p.get(k, 0.0) - q.get(k, 0.0)) for k in keys)
 
 
-def rehearse(backend, plan: dict, shots: int) -> dict:
+def rehearse(backend, plan: dict, shots: int, seed: int | None = None) -> dict:
     """Simulate the ENTIRE batch + analysis on the reduced device noise model.
 
     Mandatory pre-submission gate. Two checks must pass:
@@ -582,7 +582,7 @@ def rehearse(backend, plan: dict, shots: int) -> dict:
     sim = AerSimulator(method="density_matrix", noise_model=nm_small)
 
     counts_per_pub = []
-    for pub, m in zip(plan["pubs"], plan["meta"]):
+    for i, (pub, m) in enumerate(zip(plan["pubs"], plan["meta"])):
         # Reduce onto the whole pinned set, not onto m["fil"]: routing may use a
         # pinned qubit that no virtual qubit ends on, and check_isa_on_set only
         # guarantees the cz gates stayed inside the pinned set.
@@ -604,7 +604,10 @@ def rehearse(backend, plan: dict, shots: int) -> dict:
             print(f"  got  {got}")
             print(f"  want {want}")
             sys.exit(1)
-        counts_per_pub.append(sim.run(small, shots=shots).result().get_counts())
+        # seed per pub, not per batch: one seed for every pub would correlate
+        # their sampling noise and understate the spread.
+        kw = {} if seed is None else {"seed_simulator": seed + i}
+        counts_per_pub.append(sim.run(small, shots=shots, **kw).result().get_counts())
     print(f"noiseless dry run: {len(plan['pubs'])}/{len(plan['pubs'])} pubs "
           f"reproduce their logical distribution exactly")
 
