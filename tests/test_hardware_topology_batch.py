@@ -208,3 +208,57 @@ def test_analyze_batch_omits_zne_for_a_single_fold_series():
     out = ht.analyze_batch(counts, plan, shots=4096)
     dev = next(s for s in out["series"].values() if s["profile"] == ["H", "Q", "Q"])
     assert "zne" not in dev
+
+
+# ── pinned-set guard ─────────────────────────────────────────────────────────
+#
+# Run 1 (job d9ia1pd0k0jc738jaqgg) was registered against pinned
+# [20,21,22,23,24] but EXECUTED on [137,147,146,145,144]: ibm_fez recalibrated
+# between the two, and find_pinned_set selects from live calibration. That made
+# the registered per-cell prediction untestable. These tests pin the guard that
+# stops it recurring.
+
+_EDGES = [(20, 21), (21, 22), (22, 23), (23, 24), (24, 25), (40, 41)]
+
+
+def test_validate_pinned_chain_accepts_a_connected_path():
+    ht.validate_pinned_chain(_EDGES, [20, 21, 22, 23, 24])  # must not raise
+
+
+def test_validate_pinned_chain_accepts_the_reverse_direction():
+    ht.validate_pinned_chain(_EDGES, [24, 23, 22, 21, 20])
+
+
+def test_validate_pinned_chain_rejects_wrong_length():
+    with pytest.raises(ValueError, match="PIN_LEN|length"):
+        ht.validate_pinned_chain(_EDGES, [20, 21, 22])
+
+
+def test_validate_pinned_chain_rejects_duplicates():
+    with pytest.raises(ValueError, match="distinct"):
+        ht.validate_pinned_chain(_EDGES, [20, 21, 22, 23, 23])
+
+
+def test_validate_pinned_chain_rejects_a_broken_link():
+    with pytest.raises(ValueError, match="not an edge"):
+        ht.validate_pinned_chain(_EDGES, [20, 21, 22, 23, 41])
+
+
+def test_validate_pinned_chain_rejects_out_of_order_path():
+    """Adjacency must hold in the GIVEN order: the order is the chain."""
+    with pytest.raises(ValueError, match="not an edge"):
+        ht.validate_pinned_chain(_EDGES, [20, 22, 21, 23, 24])
+
+
+def test_registered_pinned_set_matches_the_frozen_registration():
+    """The committed registration is the source of truth for run comparability."""
+    assert ht.registered_pinned_set() == [20, 21, 22, 23, 24]
+
+
+def test_parse_pinned_arg_reads_a_comma_list():
+    assert ht.parse_pinned_arg("137,147,146,145,144") == [137, 147, 146, 145, 144]
+
+
+def test_parse_pinned_arg_rejects_wrong_length():
+    with pytest.raises(ValueError, match="PIN_LEN|length"):
+        ht.parse_pinned_arg("1,2,3")

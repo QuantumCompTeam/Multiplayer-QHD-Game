@@ -267,6 +267,92 @@ def find_pinned_set(backend) -> list[int]:
     return chain
 
 
+def validate_pinned_chain(edges, pinned: list[int]) -> None:
+    """Raise unless `pinned` is PIN_LEN distinct qubits forming a path IN ORDER.
+
+    The order matters: `pinned[w]` is the physical qubit player-slot w maps to,
+    and pinned_calibration reports cz error over zip(pinned, pinned[1:]). A set
+    that is connected but listed out of order would silently misdescribe both.
+    """
+    if len(pinned) != PIN_LEN:
+        raise ValueError(f"pinned set has {len(pinned)} qubits but PIN_LEN "
+                         f"is {PIN_LEN}")
+    if len(set(pinned)) != len(pinned):
+        raise ValueError(f"pinned set must be distinct qubits: {pinned}")
+    undirected = {frozenset(e) for e in edges}
+    for a, b in zip(pinned, pinned[1:]):
+        if frozenset((a, b)) not in undirected:
+            raise ValueError(f"({a}, {b}) is not an edge of the coupling map; "
+                             f"{pinned} is not a connected chain in this order")
+
+
+def parse_pinned_arg(text: str) -> list[int]:
+    """Parse --pinned '20,21,22,23,24'."""
+    pinned = [int(x) for x in text.replace(" ", "").split(",") if x]
+    if len(pinned) != PIN_LEN:
+        raise ValueError(f"--pinned needs exactly PIN_LEN={PIN_LEN} qubits, "
+                         f"got {len(pinned)}")
+    return pinned
+
+
+def registered_pinned_set() -> list[int] | None:
+    """The pinned set the frozen registration's predictions were computed on.
+
+    None when no registration exists yet (the pre-Task-7 state).
+    """
+    path = os.path.join(_results_dir(), "preregistration.json")
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        return list(json.load(fh)["protocol"]["pinned"])
+
+
+def resolve_pinned_set(backend, explicit: list[int] | None = None,
+                       free: bool = False) -> list[int]:
+    """Decide which physical qubits to run on, and say why out loud.
+
+    Precedence: --pinned > the frozen registration > live calibration.
+
+    Defaulting to the REGISTERED set is the fix for what happened to run 1
+    (job d9ia1pd0k0jc738jaqgg): ibm_fez recalibrated between registration and
+    submission, find_pinned_set re-selected from live calibration, and the
+    batch executed on [137,147,146,145,144] while the registered per-cell
+    predictions described [20,21,22,23,24]. Those predictions were then
+    untestable -- their z-scores conflated device-model error, calibration
+    drift and a different qubit set. Holding the qubits fixed also makes the
+    Task 9 cross-day repeats controlled, which they otherwise are not.
+
+    `free=True` (--free-pinned) restores live selection deliberately, for a run
+    that is not meant to be judged against the registration.
+    """
+    edges = backend.coupling_map.get_edges()
+    if explicit is not None:
+        validate_pinned_chain(edges, explicit)
+        print(f"pinned set: {explicit} (--pinned, explicit)")
+        return explicit
+
+    live = find_pinned_set(backend)
+    if free:
+        print("pinned set: live calibration (--free-pinned); this run is NOT "
+              "comparable to the frozen registration's per-cell predictions.")
+        return live
+
+    registered = registered_pinned_set()
+    if registered is None:
+        print("pinned set: live calibration (no registration exists yet)")
+        return live
+
+    validate_pinned_chain(edges, registered)
+    if registered == live:
+        print(f"pinned set: {registered} (registered; live selection agrees)")
+    else:
+        print(f"pinned set: {registered} (REGISTERED -- holding it fixed).\n"
+              f"  live calibration would have picked {live}. Using the "
+              f"registered set so the frozen per-cell predictions stay "
+              f"testable; pass --free-pinned to override deliberately.")
+    return registered
+
+
 def build_batch(backend, cells, folds=FOLDS, gammas=(GAMMA,),
                 profiles=None, wirings=None, pinned=None,
                 include_cal=True) -> dict:
@@ -333,14 +419,20 @@ def build_batch(backend, cells, folds=FOLDS, gammas=(GAMMA,),
     return plan
 
 
-def build_full_batch(backend, pinned=None) -> dict:
+def build_full_batch(backend, pinned=None, free_pinned=False) -> dict:
     """The submitted batch: the topology ladder plus the three fold-1 axes.
 
     The topology ladder (CELLS) keeps the full 1/3/5 fold ladder, W N=3
     included, because ZNE needs it. The extra axes get fold 1 only: they ask
     equilibrium, fairness and gamma questions, not extrapolation questions, and
     a fold ladder on each would triple their cost for nothing.
+
+    `pinned=None` resolves through resolve_pinned_set, which defaults to the
+    frozen registration's qubits so the batch stays comparable to its own
+    predictions. Recovery passes the job's own pinned set explicitly.
     """
+    if pinned is None:
+        pinned = resolve_pinned_set(backend, free=free_pinned)
     plan = build_batch(backend, CELLS, folds=FOLDS, pinned=pinned)
     pinned = plan["pinned"]
 
@@ -445,17 +537,19 @@ def print_summary(analysis: dict) -> None:
 # ── transpile feasibility report (no job, no quota) ───────────────────────────
 
 
-def report(backend) -> None:
+def report(backend, pinned: list[int]) -> None:
     """Routed cz count + depth per (topology, N) on the REAL coupling map.
 
-    Pre-routing gate counts badly understate the cost on ibm_fez: it is
-    heavy-hex, so max degree is 3 and the girth is 12. There is no native
-    triangle (fully-connected needs SWAPs at every N) and no native cycle below
-    N=12 (ring needs SWAPs at every N we run); star is native only up to a
-    degree-3 hub. Only GHZ is free on this device. This report is the only
-    honest source for which cells are worth quota.
+    Pre-routing gate counts do not price routing on ibm_fez, which is heavy-hex
+    (max degree 3, girth 12), so only a measured report can decide the cells.
+
+    What that measurement actually showed, against the expectation: at N<=5 the
+    girth argument OVERSTATES the cost. Ring routes to 10/20/28 cz and
+    fully-connected to 10/31 at N=3/4 -- the transpiler closes a short cycle
+    with a few SWAPs rather than routing a 12-cycle. The real casualty is W
+    (42 cz at N=3, 107 and 219 at N=4,5). See
+    docs/findings/2026-07-25-topology-hardware-feasibility.md.
     """
-    pinned = find_pinned_set(backend)
     print(f"\n{'topology':16s} {'N':>2s} {'cz':>5s} {'depth':>6s}  note")
     for topology in GATE_CIRCUITS:
         for N in REPORT_NS:
@@ -868,7 +962,24 @@ def main() -> None:
                     help="rehearse, then submit the batch (SPENDS QUOTA)")
     ap.add_argument("--from-job", default=None, metavar="JOB_ID",
                     help="recover a submitted batch job and analyse it")
+    ap.add_argument("--pinned", default=None, metavar="Q0,Q1,Q2,Q3,Q4",
+                    help="run on these physical qubits (overrides everything)")
+    ap.add_argument("--free-pinned", action="store_true",
+                    help="let live calibration pick the chain instead of "
+                         "reusing the registration's; the run is then NOT "
+                         "comparable to the frozen per-cell predictions")
     args = ap.parse_args()
+
+    explicit = None
+    if args.pinned:
+        try:
+            explicit = parse_pinned_arg(args.pinned)
+        except ValueError as exc:
+            print(f"ERROR: {exc}")
+            sys.exit(2)
+    if explicit is not None and args.free_pinned:
+        print("ERROR: --pinned and --free-pinned are mutually exclusive")
+        sys.exit(2)
 
     if not (args.report or args.rehearse or args.hardware or args.from_job):
         print("(no mode selected; use --report / --rehearse / --hardware "
@@ -879,14 +990,17 @@ def main() -> None:
     backend = service.backend(args.backend)
 
     if args.report:
-        report(backend)
+        report(backend, resolve_pinned_set(backend, explicit=explicit,
+                                           free=args.free_pinned))
         return
 
     if args.from_job:
         recover(service, backend, args.from_job, args.shots)
         return
 
-    plan = build_full_batch(backend)
+    pinned = resolve_pinned_set(backend, explicit=explicit,
+                                free=args.free_pinned)
+    plan = build_full_batch(backend, pinned=pinned)
     rehearse(backend, plan, args.shots)  # mandatory gate for --hardware too
     if not args.hardware:
         return
