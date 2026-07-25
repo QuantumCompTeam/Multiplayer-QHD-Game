@@ -1,0 +1,185 @@
+{
+  "judged_utc": "2026-07-25T18:09:04.462189+00:00",
+  "registration_registered_utc": "2026-07-25T17:10:46.718385+00:00",
+  "registration_git_commit": "7eabcd5b2d59eb22fecdbbcb928a8f5c108939aa",
+  "anchor_run": "results/hardware-scaling/2026-07-25T035623Z",
+  "job": {
+    "job_id": "d9if010gk0ls73f4avkg",
+    "backend": "ibm_fez"
+  },
+  "chain_registered": [
+    97,
+    107,
+    108,
+    109,
+    110,
+    111,
+    98
+  ],
+  "chain_executed": [
+    97,
+    107,
+    108,
+    109,
+    110,
+    111,
+    98
+  ],
+  "chain_matches": true,
+  "routed_cz_registered": {
+    "3": 6,
+    "4": 9,
+    "5": 14,
+    "6": 18,
+    "7": 22
+  },
+  "routed_cz_executed": {
+    "3": 6,
+    "4": 9,
+    "5": 14,
+    "6": 18,
+    "7": 22
+  },
+  "T1_m1_depolarizing": {
+    "claim": "Measured mitigated fold-1 advantage at N=6 and N=7 vs M1; PASS iff |z| <= 1.96.",
+    "p_eff": 0.0019404821342050127,
+    "series": {
+      "3": {
+        "predicted": 0.9914935753187506,
+        "measured": 0.9915322003473204,
+        "sigma_predictive": 0.0014349557495008563,
+        "z": 0.026917226251198044,
+        "abs_error": 3.862502856977201e-05,
+        "verdict": "PASS"
+      },
+      "4": {
+        "predicted": 0.7422970908205936,
+        "measured": 0.7313208535254767,
+        "sigma_predictive": 0.0011815069862166764,
+        "z": -9.290031648703213,
+        "abs_error": 0.010976237295116875,
+        "verdict": "FAIL"
+      },
+      "5": {
+        "predicted": 0.5928071963551922,
+        "measured": 0.5840015393705151,
+        "sigma_predictive": 0.0010202952432753648,
+        "z": -8.63049890971659,
+        "abs_error": 0.008805656984677057,
+        "verdict": "FAIL"
+      },
+      "6": {
+        "predicted": 0.4931699984718293,
+        "measured": 0.48144721828537573,
+        "sigma_predictive": 0.0009068359963199052,
+        "z": -12.927122692555876,
+        "abs_error": 0.011722780186453563,
+        "verdict": "FAIL"
+      },
+      "7": {
+        "predicted": 0.4220194979315163,
+        "measured": 0.42054752029107056,
+        "sigma_predictive": 0.0008216198628370972,
+        "z": -1.7915555684874662,
+        "abs_error": 0.0014719776404457097,
+        "verdict": "PASS"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "T2_m2_cz_exponential": {
+    "claim": "Same measurement vs M2; PASS iff |z| <= 1.96.",
+    "r": 0.998577211324487,
+    "series": {
+      "3": {
+        "predicted": 0.9914935753187747,
+        "measured": 0.9915322003473204,
+        "sigma_predictive": 0.0014349557495008563,
+        "z": 0.02691722623440879,
+        "abs_error": 3.8625028545680173e-05,
+        "verdict": "PASS"
+      },
+      "4": {
+        "predicted": 0.7404506522206022,
+        "measured": 0.7313208535254767,
+        "sigma_predictive": 0.0011815069862166764,
+        "z": -7.727249014718244,
+        "abs_error": 0.009129798695125535,
+        "verdict": "FAIL"
+      },
+      "5": {
+        "predicted": 0.5881584768341055,
+        "measured": 0.5840015393705151,
+        "sigma_predictive": 0.0010202952432753648,
+        "z": -4.07424957725541,
+        "abs_error": 0.00415693746359036,
+        "verdict": "FAIL"
+      },
+      "6": {
+        "predicted": 0.48734859411014686,
+        "measured": 0.48144721828537573,
+        "sigma_predictive": 0.0009068359963199052,
+        "z": -6.507655021106258,
+        "abs_error": 0.005901375824771127,
+        "verdict": "FAIL"
+      },
+      "7": {
+        "predicted": 0.4153550842062103,
+        "measured": 0.42054752029107056,
+        "sigma_predictive": 0.0008216198628370972,
+        "z": 6.3197548157252355,
+        "abs_error": 0.005192436084860252,
+        "verdict": "FAIL"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "T3_model_race": {
+    "claim": "Which model has the smaller |measured - predicted| at N=6 and N=7, and does the winner AGREE with the ranking the N=4,5 repeats already produced? M2 currently outscores M1 there. If M2 wins again at the two largest N, the cz-dose description of this device is supported over the fitted-depolarizing one; if it loses, the existing ranking does not extrapolate and the paper must say so.",
+    "per_N": {
+      "3": {
+        "m1_abs_error": 3.862502856977201e-05,
+        "m2_abs_error": 3.8625028545680173e-05,
+        "winner": "M2"
+      },
+      "4": {
+        "m1_abs_error": 0.010976237295116875,
+        "m2_abs_error": 0.009129798695125535,
+        "winner": "M2"
+      },
+      "5": {
+        "m1_abs_error": 0.008805656984677057,
+        "m2_abs_error": 0.00415693746359036,
+        "winner": "M2"
+      },
+      "6": {
+        "m1_abs_error": 0.011722780186453563,
+        "m2_abs_error": 0.005901375824771127,
+        "winner": "M2"
+      },
+      "7": {
+        "m1_abs_error": 0.0014719776404457097,
+        "m2_abs_error": 0.005192436084860252,
+        "winner": "M1"
+      }
+    },
+    "winner_at_new_ns": [
+      "M2",
+      "M1"
+    ],
+    "m2_wins_both_new": false,
+    "agrees_with_existing_ranking": false,
+    "verdict": "SPLIT"
+  },
+  "T4_monotone_decay": {
+    "claim": "Measured advantage is strictly decreasing in N across 3,4,5,6,7. A non-monotone curve would indicate the chain is not uniform in quality and the scaling read is confounded by qubit selection rather than by N.",
+    "measured": {
+      "3": 0.9915322003473204,
+      "4": 0.7313208535254767,
+      "5": 0.5840015393705151,
+      "6": 0.48144721828537573,
+      "7": 0.42054752029107056
+    },
+    "verdict": "PASS"
+  }
+}
