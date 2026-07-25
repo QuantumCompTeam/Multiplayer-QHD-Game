@@ -97,6 +97,36 @@ CELLS = [("ghz", 3), ("ghz", 4), ("ghz", 5),
          ("fully-connected", 3), ("fully-connected", 4),
          ("w", 3)]
 
+# The three extra axes, all at fold 1. Each is a comparison against a twin that
+# already exists in the main batch, so all three must ride in the SAME job: the
+# pinned set moves between calibration days, which would make a second-batch
+# comparison uncontrolled.
+#
+# item 2 -- unilateral Hawk deviations at the one cell where the cooperative
+# profile is a genuine restricted-menu pure NE (N=3). Falsifiable claim: every
+# deviation gap payoff(QQQ) - payoff(H at position k) is >= 0.
+DEVIATION_CELL = ("ghz", 3)
+DEVIATION_PROFILES = [["H", "Q", "Q"], ["Q", "H", "Q"], ["Q", "Q", "H"]]
+
+# item 6 -- wiring permutations on the cell whose noiseless per-player payoffs
+# are already maximally unequal (star N=4 pays mean 1.0, worst player 0.25).
+# If the unfairness is topology-locked it stays put in PLAYER space under both
+# permutations; if it is device-locked it follows the physical qubits.
+WIRING_CELL = ("star", 4)
+WIRING_PERMS = [[1, 2, 3, 0], [3, 2, 1, 0]]
+
+# item 7 -- entanglement-angle sweep on the reference cell, swept in the
+# DEVIATION GAP rather than in the cooperative payoff. results/gamma-sweep/N3
+# shows the cooperative payoff is 1.333333 at every gamma; what gamma moves is
+# q_is_nash. Sweeping all-Q pubs would therefore measure a constant. The gap
+# payoff_0(Q,Q,Q) - payoff_0(H,Q,Q) is the quantity that varies, so each gamma
+# carries both profiles. Noiseless gaps: -0.7031, +0.0469, +0.2599 at
+# 0.30/0.40/0.45 pi -- a SIGN CHANGE bracketed between 0.30pi and 0.40pi.
+# gamma = 0.5pi is already covered (all-Q from the main batch, HQQ from item 2).
+GAMMA_CELL = ("ghz", 3)
+GAMMA_SWEEP = (0.30 * math.pi, 0.40 * math.pi, 0.45 * math.pi)
+GAMMA_PROFILES = [["Q", "Q", "Q"], ["H", "Q", "Q"]]
+
 
 # ── the uniform series record ─────────────────────────────────────────────────
 
@@ -238,7 +268,8 @@ def find_pinned_set(backend) -> list[int]:
 
 
 def build_batch(backend, cells, folds=FOLDS, gammas=(GAMMA,),
-                profiles=None, wirings=None, pinned=None) -> dict:
+                profiles=None, wirings=None, pinned=None,
+                include_cal=True) -> dict:
     """Build the full batch plan.
 
     cells:    [(topology, N), ...]                    -- item 1
@@ -247,15 +278,18 @@ def build_batch(backend, cells, folds=FOLDS, gammas=(GAMMA,),
     profiles: {(topology, N): [profile, ...]}         -- item 2
     wirings:  {(topology, N): [wiring, ...]}          -- item 6
     pinned:   reuse a known pinned set (recovery path); else chosen from calibration
+    include_cal: prepend the two readout-calibration pubs. False when
+              concatenating a sub-batch onto one that already carries them.
 
     Deviation and gamma series are cheap only at fold 1; pass per-cell folds by
     calling build_batch twice and concatenating if a cell needs a different set.
+    build_full_batch does exactly that.
     """
     pinned = list(pinned) if pinned is not None else find_pinned_set(backend)
     allowed = set(pinned)
     plan: dict = {"pinned": pinned, "pubs": [], "meta": []}
 
-    for label, prep in (("cal0", False), ("cal1", True)):
+    for label, prep in (("cal0", False), ("cal1", True)) if include_cal else ():
         qc = QuantumCircuit(PIN_LEN)
         if prep:
             qc.x(range(PIN_LEN))
@@ -296,6 +330,37 @@ def build_batch(backend, cells, folds=FOLDS, gammas=(GAMMA,),
                             profile=profile, wiring=wiring, fil=fil,
                             cz=n_cz * f))
     print(f"batch: {len(plan['pubs'])} pubs")
+    return plan
+
+
+def build_full_batch(backend, pinned=None) -> dict:
+    """The submitted batch: the topology ladder plus the three fold-1 axes.
+
+    The topology ladder (CELLS) keeps the full 1/3/5 fold ladder, W N=3
+    included, because ZNE needs it. The extra axes get fold 1 only: they ask
+    equilibrium, fairness and gamma questions, not extrapolation questions, and
+    a fold ladder on each would triple their cost for nothing.
+    """
+    plan = build_batch(backend, CELLS, folds=FOLDS, pinned=pinned)
+    pinned = plan["pinned"]
+
+    for label, kwargs in (
+        ("item 2 -- unilateral Hawk deviations",
+         dict(cells=[DEVIATION_CELL],
+              profiles={DEVIATION_CELL: DEVIATION_PROFILES})),
+        ("item 6 -- wiring permutations",
+         dict(cells=[WIRING_CELL], wirings={WIRING_CELL: WIRING_PERMS})),
+        ("item 7 -- gamma sweep of the deviation gap",
+         dict(cells=[GAMMA_CELL], gammas=GAMMA_SWEEP,
+              profiles={GAMMA_CELL: GAMMA_PROFILES})),
+    ):
+        print(f"  {label} (fold 1):")
+        sub = build_batch(backend, folds=(1,), pinned=pinned,
+                          include_cal=False, **kwargs)
+        plan["pubs"].extend(sub["pubs"])
+        plan["meta"].extend(sub["meta"])
+
+    print(f"full batch: {len(plan['pubs'])} pubs")
     return plan
 
 
@@ -360,7 +425,7 @@ def analyze_batch(counts_per_pub: list[dict], plan: dict, shots: int) -> dict:
 
 
 def print_summary(analysis: dict) -> None:
-    print("\n  topology         N  profile  wiring   ideal adv   raw adv  "
+    print("\n  topology         N  profile  wiring    g/pi  ideal adv   raw adv  "
           "mitig adv   ZNE adv  P(0..0)  worst player")
     for key in sorted(analysis["series"]):
         s = analysis["series"][key]
@@ -371,6 +436,7 @@ def print_summary(analysis: dict) -> None:
         worst = min(f1["mitigated"]["per_player"])
         print(f"  {s['topology']:16s} {s['N']}  {''.join(s['profile']):7s} "
               f"{'-'.join(map(str, s['wiring'])):8s} "
+              f"{s['gamma'] / math.pi:5.2f} "
               f"{s['ideal_advantage']:10.4f} {f1['raw']['advantage']:9.4f} "
               f"{f1['mitigated']['advantage']:10.4f} "
               f"{zne} {f1['raw']['p_ground']:8.4f} {worst:13.4f}")
@@ -748,7 +814,7 @@ def recover(service, backend, job_id: str, shots_hint: int) -> None:
     circuits = [p[0] if isinstance(p, (list, tuple)) else p for p in pubs_in]
     pinned = pinned_from_job_pubs(circuits)
     print(f"recovered pinned set from the job itself: {pinned}")
-    plan = build_batch(backend, CELLS, pinned=pinned)
+    plan = build_full_batch(backend, pinned=pinned)
     if len(plan["pubs"]) != len(circuits):
         # Abort rather than guess: a mismatched plan would silently mislabel
         # every series in the saved artifact.
@@ -817,7 +883,7 @@ def main() -> None:
         recover(service, backend, args.from_job, args.shots)
         return
 
-    plan = build_batch(backend, CELLS)
+    plan = build_full_batch(backend)
     rehearse(backend, plan, args.shots)  # mandatory gate for --hardware too
     if not args.hardware:
         return
