@@ -440,8 +440,18 @@ round-robin best-response rule. No tested setting produced a beneficial
 converged fairness repair: at $p=0$ the dynamics reached the 50-round cap
 near mean $0.51$ without converging; at $p=0.02$ they entered a payoff limit
 cycle with lower mean and larger spread; and at $p=0.05$ they converged with
-little change. The pilot does not test the W $N{=}5$ negative-player cells or
-the ring $N{=}5$ wiring case, and it remains pending game-theory sign-off.
+little change. Two robustness checks were then run on this pilot, both
+simulation-only. Replacing round-robin with \emph{simultaneous} best response,
+which removes move order entirely, reproduces all three verdicts, so the
+$p=0.02$ non-convergence is a property of the noisy best-response map rather
+than of the update order. Extending to $N{=}5$, W $N{=}5$ reproduces the
+$N{=}4$ verdicts, while ring $N{=}5$ fails to converge at every noise level
+tested and does so in the opposite direction: it drives a perfectly fair
+$p{=}0$ baseline apart while leaving mean welfare unchanged, i.e.\ it
+redistributes rather than shrinks. Because those ring endpoints are snapshots of
+non-convergent trajectories we report the direction only and not the magnitudes.
+Belief-based rules such as fictitious play remain untested, and the pilot
+remains exploratory pending game-theory sign-off.
 
 % =============================================================================
 \section{Hardware Validation on IBM Heron r2}\label{sec:hardware}
@@ -528,8 +538,9 @@ readout-mitigated payoff linearly to $\lambda=0$~\cite{temme2017,kandala2019}.
 \begin{table}[t]
 \centering
 \caption{Measured advantage on ibm\_fez for the registration-source execution
-(4096 shots; the repeat execution is discussed separately and cross-day
-repeats remain pending). Ideal advantage is $3/N$; retention is ZNE/ideal.}
+(4096 shots). Repeat executions are discussed separately; the cross-calibration
+aggregate over both epochs is Fig.~\ref{fig:scaling}. Ideal advantage is $3/N$;
+retention is ZNE/ideal.}
 \label{tab:scaling}
 \begin{tabular}{@{}ccccc c@{}}
 \toprule
@@ -545,11 +556,16 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{hardware_scaling.pdf}
-  \caption{Two-execution aggregate of the $N$-player GHZ EWL quantum advantage
-  on ibm\_fez (IBM Heron r2), physical chain $[59,75,74,73,79]$, 4096 shots per
-  execution. Both result artifacts carry the same recorded result-write-time
-  calibration snapshot; this does not establish that the provider calibration
-  was unchanged at execution time. Table~\ref{tab:scaling} reports the
+  \caption{Cross-calibration aggregate of the $N$-player GHZ EWL quantum
+  advantage on ibm\_fez (IBM Heron r2): three executions spanning
+  \emph{two distinct provider calibrations}, all on the same physical chain
+  $[59,75,74,73,79]$, 4096 shots each. Executions sharing a calibration stamp
+  are averaged into one point before the spread is taken, because two runs
+  under one calibration are one sample rather than two; the two epochs are
+  2026-07-16 08:30:13 (two executions) and 2026-07-26 13:29:01 (one).
+  A fourth execution exists on chain $[20,21,22,23,24]$ and is deliberately
+  \emph{excluded} here: pooling it would confound calibration drift with a
+  change of physical qubits. Table~\ref{tab:scaling} reports the
   registration-source execution alone.
   \textbf{(A)} Measured cooperative-profile advantage (mean $(Q,\ldots,Q)$
   payoff minus the analytic noiseless classical-Nash payoff) at $N=3,4,5$:
@@ -557,10 +573,13 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
   ideal ($1.0, 0.75, 0.6$), the device noise-model prediction (diamonds), and
   a single-parameter depolarizing model with $p_{\mathrm{eff}}=0.0018$ fitted
   to the $N{=}3$ point alone --- its $N{=}4,5$ values are predictions, not
-  fits. Error bars show the sample standard deviation across the two
-  same-recorded-calibration execution estimates; they do not include the
-  within-run multinomial or weighted-fit standard errors and are not a
-  cross-day uncertainty estimate. \textbf{(B)} ZNE mechanics:
+  fits. The ideal, device-model and depolarizing curves are the
+  registration anchor's rather than run averages, so the registered
+  $p_{\mathrm{eff}}$ is quoted unchanged. Error bars are the sample standard
+  deviation across the two calibration epochs --- a genuine cross-calibration
+  estimate, unlike the within-epoch spread reported in earlier drafts --- and
+  still exclude the within-run multinomial and weighted-fit standard errors,
+  so they are a lower bound on total uncertainty. \textbf{(B)} ZNE mechanics:
   readout-mitigated payoff vs cz
   fold factor ($\lambda=1,3,5$) with the weighted linear fit extrapolated to
   $\lambda=0$ (stars). \textbf{(C)} Ground-state probability
@@ -572,7 +591,12 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
   protocol, not an equilibrium.}
   \label{fig:scaling}
 \end{figure*}
-% aggregate source: results/hardware-scaling/2026-07-17T014458Z/plots/hardware_scaling.pdf
+% aggregate source: results/hardware-scaling/2026-07-26T090122Z/plots/hardware_scaling.pdf
+% (+ caption.md there records the epoch grouping and the two exclusions verbatim)
+% cross-epoch ZNE advantage, per epoch:
+%   2026-07-16 08:30:13  N=3 0.9938  N=4 0.7422  N=5 0.5892
+%   2026-07-26 13:29:01  N=3 0.9944  N=4 0.7357  N=5 0.5811
+% aggregate: N=3 0.9941+-0.0004, N=4 0.7389+-0.0046, N=5 0.5852+-0.0057
 
 Two model predictions frame Table~\ref{tab:scaling}: the reduced device noise
 model (\texttt{NoiseModel.from\_backend}) and a \emph{fit-one-predict-two}
@@ -589,16 +613,20 @@ its $N=5$ endpoint misses by $0.0092$ ($4.74\sigma$). The repeated deficit
 sign is observational, not a registered sign test.
 
 The CZ-exponential baseline carries the smallest mean $|z|$ --- the best score
---- of the five registered candidates in all three executions, including the
-cross-day repeat. It nevertheless
+--- of the five registered candidates in all four executions, including both
+cross-calibration repeats. It nevertheless
 misses $N=5$ outside the shared 95\% comparison yardstick in every run; that
 yardstick is for ranking, not a model-specific calibrated interval.
 \textbf{That ranking is specific to $N\le 5$}: in the registered $N=6,7$
 extension (Sec.~\ref{sec:n67}) the CZ-exponential law loses to the depolarizing
 model at $N{=}7$ and both fail their registered tests, so the ranking is not a
 physical scaling law and does not extrapolate.
-Model-specific predictive uncertainties, and further cross-day executions,
-remain needed.
+The registered target of three to five distinct calibrations is now met at
+three, and the $N=5$ deficit reproduces with the same sign in all three
+repeats. The deficit magnitude is not stable across epochs, however: it ranges
+from $0.0092$ to $0.0186$, so the epoch-to-epoch variation is itself of order
+the effect. Model-specific predictive uncertainties remain needed, and the
+cross-calibration sample that is chain-matched is two epochs rather than three.
 % registered: results/hardware-scaling/preregistration.json and
 % preregistration-baselines.json; outcomes:
 % results/hardware-scaling/repeat-judgments.json
@@ -636,9 +664,12 @@ decreasing in $N$ (the registered monotonicity check), but \emph{retention} is
 not: $N{=}7$ keeps more of its ideal advantage than $N=4,5,6$ despite carrying
 the most gates and the lowest fidelity, and its ZNE estimate overshoots the
 noiseless ideal ($0.4437$ against $0.4286$), which no physical noise model can
-produce. We report this as an unexplained observation rather than a result;
-distinguishing payoff geometry at odd $N$ from an end-of-chain qubit effect or
-an extrapolation artefact requires the cross-day repeats that remain pending.
+produce. We report this as an unexplained observation rather than a result.
+Distinguishing payoff geometry at odd $N$ from an end-of-chain qubit effect or
+an extrapolation artefact requires a repeat \emph{of this $N=3\ldots7$ batch
+specifically}: the cross-calibration repeats aggregated in
+Fig.~\ref{fig:scaling} re-execute the registered $N=3,4,5$ batch and so cannot
+address it, and no such $N=6,7$ repeat has been run.
 
 \subsection{Topology, equilibrium and fairness on device}\label{sec:hwtopology}
 % results/hardware-topology/2026-07-25T114621Z/ (job d9ia1pd0k0jc738jaqgg)
@@ -780,13 +811,26 @@ position is locked to the entangler's circuit layout rather than to any
 coordination failure (Sec.~\ref{sec:noise}).
 % docs/findings/2026-07-05-t9-adaptation-fairness.md; ring N=5 permutation
 % test scripts/asymmetry_diagnostics.py (README \S9 Month-4 findings)
+% simultaneous-rule check: docs/findings/2026-07-26-t9-rule-sensitivity.md
+%   results/t9-pilot/precise-2026-07-26T08{44Z-p0,38Z-p0.02,25Z-p0.05}-simul
+% N=5 extension: docs/findings/2026-07-26-t9-caveat2-n5-ring.md
+%   results/t9-pilot/precise-2026-07-26T0904Z-w5-p0    (0.8000 -> 0.4107)
+%   results/t9-pilot/precise-2026-07-26T0952Z-w5-p0.02, 0908Z-w5-p0.05
+%   results/t9-pilot/precise-2026-07-26T0916Z-ring5-p0 (mean conserved 0.800000,
+%     spread 0.0000 -> 1.3329 at the 50-round cap; snapshot, not a fixed point)
+%   results/t9-pilot/precise-2026-07-26T09{27Z-ring5-p0.02,28Z-ring5-p0.05}
 In the single exploratory W-state $N{=}4$ finite-round pilot, the provisional
 independent round-robin best-response rule produced no beneficial converged
 fairness repair in any tested setting. At $p{=}0$ the dynamics reached the
 50-round cap near mean $0.51$ without converging; at $p{=}0.02$ they entered a
 payoff limit cycle with lower mean and larger spread; and at $p{=}0.05$ they
-converged with little change. This pilot does not support a general claim about
-adaptation in the W $N{=}5$ or ring $N{=}5$ headline systems. The advantage we
+converged with little change. The verdict survives both checks we applied to it:
+it is unchanged under simultaneous rather than round-robin updates, and W
+$N{=}5$ reproduces it. Ring $N{=}5$ does not converge at any noise level tested
+and fails in the opposite direction, spreading a perfectly fair baseline apart
+at unchanged mean welfare --- reported as a direction, not a magnitude, since
+those endpoints are non-convergent snapshots. No belief-based rule has been
+tested. The advantage we
 report can therefore coexist with unequal per-player outcomes; the per-player
 floor is a relevant diagnostic for mechanism design.
 
@@ -821,12 +865,15 @@ a possible contract-interaction architecture.
 
 \textbf{Limitations.} Discrete strategy set $\{D,H,Q_N\}$ (mixed/continuous
 deviations are future work); the fixed GHZ-derived $Q_N$ is not
-topology-optimized under noise. The scaling series uses chain
-$[59,75,74,73,79]$ and one recorded calibration snapshot; the separate
-$N{=}3$ validation used $[136,143,142]$ and the preceding recorded calibration
-date. The two scaling executions establish same-recorded-calibration
-repeatability only; cross-day uncertainty remains pending. The exploratory W
-$N{=}4$ T9 pilot used one provisional finite-round adaptation rule.
+topology-optimized under noise. The chain-matched scaling series uses
+$[59,75,74,73,79]$; the separate $N{=}3$ validation used $[136,143,142]$ and the
+preceding recorded calibration date. Cross-calibration uncertainty now rests on
+two chain-matched epochs (three distinct calibrations exist, but one ran on a
+different physical chain and is excluded from the aggregate), and the
+epoch-to-epoch variation in the $N{=}5$ deficit is of order the deficit itself.
+The T9 adaptation evidence uses one provisional finite-round rule; it has been
+checked against a simultaneous-update rule and extended to W $N{=}5$ and ring
+$N{=}5$, but belief-based rules such as fictitious play remain untested.
 
 % =============================================================================
 \section{Conclusion}\label{sec:conclusion}
@@ -863,11 +910,13 @@ Second, the same flip terms
 that spare the mean concentrate loss on individual players, and that loss is
 locked to the \emph{graph position}: a registered wiring permutation on star
 $N{=}4$ reassigns players to different physical qubits and leaves the hub's
-disadvantage intact. In one exploratory
-W $N{=}4$ finite-round pilot, the provisional rule reached the 50-round cap
+disadvantage intact. In an exploratory
+finite-round adaptation pilot, the provisional rule reached the 50-round cap
 without convergence at $p{=}0$, and no tested setting produced a beneficial
-converged fairness repair; this result does not generalize to the W $N{=}5$ or
-ring $N{=}5$ systems. Third, the CZ-exponential baseline carries the best
+converged fairness repair --- a verdict unchanged under simultaneous updates and
+reproduced at W $N{=}5$, while ring $N{=}5$ fails to converge at any tested
+noise level and spreads a fair baseline apart instead of repairing it.
+Third, the CZ-exponential baseline carries the best
 registered score in all three
 scaling executions at $N\le5$, but its $N{=}5$ misses and the shared ranking
 yardstick do not establish a physical scaling law --- and in the registered
@@ -878,10 +927,12 @@ models fail their registered tests. The ranking does not extrapolate.
 
 The limitations are the same honesty notes threaded through the text: the
 $N{=}4,5$ curve measures a fixed cooperative protocol, not an equilibrium;
-two of the three scaling executions share one recorded calibration, so cross-day
-uncertainty rests on two distinct days rather than the registered target of
-three to five; the adaptation evidence is limited to one
-exploratory W $N{=}4$ finite-round pilot using a provisional rule; and
+the registered target of three to five distinct calibrations is met at three,
+but only two of those are chain-matched, so the plotted cross-calibration
+uncertainty rests on two epochs and the $N{=}5$ deficit magnitude varies by a
+factor of two across them; the adaptation evidence remains exploratory and
+finite-round, though its two self-raised caveats --- move order, and coverage
+beyond W $N{=}4$ --- have both been tested without changing the verdict; and
 \emph{no} registered model predicted absolute advantage magnitudes
 successfully at any $N$, so the quantitative noise models here are descriptive
 rather than predictive. The structural claims above are differential

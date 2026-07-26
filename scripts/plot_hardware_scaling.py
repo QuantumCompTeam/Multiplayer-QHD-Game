@@ -1,9 +1,17 @@
 """Paper figure for the N=3,4,5 hardware scaling runs (+ caption).
 
-Aggregates one or more results/hardware-scaling/<ts>/result.json runs (mean
-across runs, std as error when >1 run; shot-noise/fit errors when a single
-run) and writes plots/hardware_scaling.{png,pdf} + caption.md into the NEWEST
-run dir.
+Aggregates results/hardware-scaling/<ts>/result.json runs and writes
+plots/hardware_scaling.{png,pdf} + caption.md into the NEWEST included run dir.
+
+Sample selection (see load_runs): only runs whose series are exactly the
+registered {3,4,5} batch, and only those on ONE physical chain -- the same two
+filters scripts/judge_repeat_run.py applies, so the figure and the judge never
+disagree about what counts as a repeat. Every excluded run is printed.
+
+Error bars are cross-CALIBRATION-EPOCH, not cross-run: runs sharing a
+calibration stamp are averaged into one point first, because two executions
+under one calibration are one sample. With a single epoch the bars fall back to
+within-run sigma and the caption says so explicitly.
 
   (A) advantage vs N: measured raw + ZNE with error bars, against the noiseless
       ideal, the device-noise-model prediction, and the effective-p curve
@@ -37,35 +45,120 @@ MUTED = "#8b949e"
 GRID = "#e6e8eb"
 
 
-def load_runs(argv: list[str]) -> tuple[list[dict], str]:
-    if len(argv) > 1:
-        dirs = argv[1:]
+REGISTERED_SERIES = {"3", "4", "5"}
+
+
+def calibration_stamp(run_dir: str) -> str:
+    """The calibration this run actually EXECUTED under.
+
+    calibration_at_submit.json is the snapshot taken at submission (item 16) and
+    is the correct stamp for cross-day counting. calibration.json is fetched at
+    analysis time and is only a fallback for runs predating item 16 (G15).
+    """
+    for name in ("calibration_at_submit.json", "calibration.json"):
+        path = os.path.join(run_dir, name)
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as fh:
+                return str(json.load(fh)["calibration_last_update"])
+    return f"unknown ({os.path.basename(run_dir)})"
+
+
+def load_runs(argv: list[str]) -> tuple[list[tuple[str, list[dict]]], list[dict], str]:
+    """Registered-batch, chain-matched runs, grouped into calibration epochs.
+
+    Applies two filters the earlier version did not, each of which silently
+    corrupted the aggregate:
+
+      1. **Registered batch only.** The N=3..7 extension also measures N=3,4,5,
+         so it was being folded into this curve even though
+         scripts/judge_repeat_run.py excludes it explicitly as "not the
+         registered batch". The judge and this figure now agree on the sample.
+      2. **One physical chain only.** hardware_scaling.find_chain selects from
+         live calibration, so the runs have drifted across chains
+         ([59,75,74,73,79] and [20,21,22,23,24]). Averaging across them mixes
+         calibration drift with a change of qubits -- the confound that
+         invalidated topology T4. The chain of the newest qualifying run wins.
+
+    Runs are then grouped by calibration stamp, because runs sharing a stamp are
+    ONE epoch, not two independent samples: runs 1 and 2 differ by 18 hours yet
+    carry the same stamp, so treating them as two points would understate the
+    error bar. Every exclusion is printed -- a silently narrowed sample reads as
+    "everything was included" when it was not.
+
+    Explicit run dirs on the command line bypass both filters deliberately.
+    """
+    explicit = len(argv) > 1
+    if explicit:
+        dirs = list(argv[1:])
     else:
         dirs = sorted(glob.glob(os.path.join("results", "hardware-scaling", "*")))
         dirs = [d for d in dirs if os.path.exists(os.path.join(d, "result.json"))]
     if not dirs:
         print("no hardware-scaling runs found")
         sys.exit(2)
-    runs = [json.load(open(os.path.join(d, "result.json"), encoding="utf-8"))
-            for d in dirs]
-    return runs, dirs[-1]
+
+    loaded = []
+    for d in dirs:
+        with open(os.path.join(d, "result.json"), encoding="utf-8") as fh:
+            loaded.append((d, json.load(fh)))
+
+    if not explicit:
+        kept = []
+        for d, r in loaded:
+            series = set(r["analysis"]["series"])
+            if series != REGISTERED_SERIES:
+                print(f"  excluded {os.path.basename(d)}: series "
+                      f"{sorted(series)} != registered {sorted(REGISTERED_SERIES)}")
+                continue
+            kept.append((d, r))
+        if not kept:
+            print("no runs match the registered N=3,4,5 batch")
+            sys.exit(2)
+        target_chain = kept[-1][1]["analysis"]["chain"]
+        loaded = []
+        for d, r in kept:
+            if r["analysis"]["chain"] != target_chain:
+                print(f"  excluded {os.path.basename(d)}: chain "
+                      f"{r['analysis']['chain']} != {target_chain} "
+                      f"(not chain-matched; would confound qubit change with "
+                      f"calibration drift)")
+                continue
+            loaded.append((d, r))
+
+    by_stamp: dict[str, list[dict]] = {}
+    for d, r in loaded:
+        by_stamp.setdefault(calibration_stamp(d), []).append(r)
+    grouped = sorted(by_stamp.items())
+    print(f"  aggregating {len(loaded)} run(s) in {len(grouped)} calibration "
+          f"epoch(s):")
+    for stamp, rs in grouped:
+        print(f"    {stamp}: {len(rs)} run(s)")
+    return grouped, [r for _, r in loaded], loaded[-1][0]
 
 
-def agg(runs: list[dict], path_fn) -> tuple[np.ndarray, np.ndarray]:
-    """Mean and error across runs of a per-run scalar (path_fn(run) -> float).
+def agg(epochs: list[tuple[str, list[dict]]], path_fn) -> tuple[float, float]:
+    """Mean and error over calibration EPOCHS of a per-run scalar.
 
-    Single run: error = the run's own reported sigma (path_fn returns
-    (value, sigma)); multiple runs: mean +/- std across runs.
+    Runs within an epoch are averaged first, so an epoch contributes one point
+    however many times it was executed. The error is then the sample std across
+    epochs -- a genuine cross-calibration estimate.
+
+    With a single epoch there is no cross-epoch spread to measure, so the error
+    falls back to the mean of the runs' own reported within-run sigmas. That is a
+    different quantity and the caption says so rather than passing it off as a
+    cross-day bar.
     """
-    vals, sigs = [], []
-    for r in runs:
-        v, s = path_fn(r)
-        vals.append(v)
-        sigs.append(s)
-    vals = np.asarray(vals)
-    if len(runs) == 1:
-        return vals[0], sigs[0]
-    return float(vals.mean()), float(vals.std(ddof=1))
+    per_epoch, sigs = [], []
+    for _, runs in epochs:
+        vals = []
+        for r in runs:
+            v, s = path_fn(r)
+            vals.append(v)
+            sigs.append(s)
+        per_epoch.append(float(np.mean(vals)))
+    if len(per_epoch) == 1:
+        return per_epoch[0], float(np.mean(sigs))
+    return float(np.mean(per_epoch)), float(np.std(per_epoch, ddof=1))
 
 
 def style_axis(ax):
@@ -79,8 +172,13 @@ def style_axis(ax):
 
 
 def main() -> None:
-    runs, latest_dir = load_runs(sys.argv)
+    epochs, runs, latest_dir = load_runs(sys.argv)
     n_runs = len(runs)
+    n_epochs = len(epochs)
+    # The model curves (device model, p_eff) are the REGISTRATION ANCHOR's, not
+    # an average: p_eff is refit per run and the registered value belongs to the
+    # oldest run. Averaging them would silently move the registered number the
+    # paper quotes.
     first = runs[0]
     chain = first["analysis"]["chain"]
     backend = first["job"]["backend"]
@@ -90,13 +188,13 @@ def main() -> None:
     raw_adv, raw_err, zne_adv, zne_err, pg_meas, pg_err = {}, {}, {}, {}, {}, {}
     for N in NS:
         k = str(N)
-        raw_adv[N], raw_err[N] = agg(runs, lambda r: (
+        raw_adv[N], raw_err[N] = agg(epochs, lambda r: (
             r["analysis"]["series"][k]["folds"]["1"]["raw"]["advantage"],
             r["analysis"]["series"][k]["folds"]["1"]["raw"]["sigma"]))
-        zne_adv[N], zne_err[N] = agg(runs, lambda r: (
+        zne_adv[N], zne_err[N] = agg(epochs, lambda r: (
             r["analysis"]["series"][k]["zne"]["advantage"],
             r["analysis"]["series"][k]["zne"]["linear_stderr"]))
-        pg_meas[N], pg_err[N] = agg(runs, lambda r: (
+        pg_meas[N], pg_err[N] = agg(epochs, lambda r: (
             r["analysis"]["series"][k]["folds"]["1"]["raw"]["p_ground"],
             np.sqrt(r["analysis"]["series"][k]["folds"]["1"]["raw"]["p_ground"]
                     * (1 - r["analysis"]["series"][k]["folds"]["1"]["raw"]["p_ground"])
@@ -192,7 +290,9 @@ def main() -> None:
     axC.set_ylim(0.8, 1.03)
     axC.legend(frameon=False, fontsize=7.8, loc="lower left")
 
-    run_note = f"{n_runs} run" + ("s" if n_runs > 1 else "")
+    run_note = (f"{n_runs} run" + ("s" if n_runs > 1 else "")
+                + f" in {n_epochs} calibration epoch"
+                + ("s" if n_epochs > 1 else ""))
     fig.suptitle(
         f"N-player GHZ EWL quantum advantage on {backend} — pinned chain "
         f"{chain}, {shots} shots, {run_note}",
@@ -211,10 +311,13 @@ def main() -> None:
     cal = (json.load(open(cal_path, encoding="utf-8"))
            if os.path.exists(cal_path) else None)
     zne3 = first["analysis"]["series"]["3"]["zne"]
+    epoch_list = "; ".join(f"{stamp} ({len(rs)} run{'s' if len(rs) > 1 else ''})"
+                           for stamp, rs in epochs)
     cap = (
         f"**Figure — Scaling of the N-player GHZ EWL quantum advantage on "
-        f"{backend} (IBM Heron r2), physical chain {chain}, {shots} shots"
-        f"{', ' + run_note if n_runs > 1 else ''}.** "
+        f"{backend} (IBM Heron r2), physical chain {chain} on every included "
+        f"run, {shots} shots, {run_note}.** "
+        f"Calibration epochs: {epoch_list}. "
         f"**(A)** Measured cooperative-profile advantage (mean (Q,…,Q) payoff "
         f"minus the analytic noiseless classical-Nash payoff 1/3, 1/4, 1/5) at "
         f"N = 3, 4, 5: raw (open) and readout-mitigated + ZNE (filled), against "
@@ -222,10 +325,19 @@ def main() -> None:
         f"prediction (diamonds; qiskit-aer NoiseModel.from_backend reduced to "
         f"the executed qubits), and a single-parameter depolarizing model with "
         f"p_eff = {ep['p_eff']:.4f} fitted to the N=3 point alone — its N=4,5 "
-        f"values are predictions, not fits. Error bars: multinomial shot noise "
-        f"(raw) and weighted-fit standard error (ZNE)"
-        + (", std across runs when several runs are aggregated" if n_runs > 1
-           else "") + ". "
+        f"values are predictions, not fits. The ideal, device-model and "
+        f"depolarizing curves are the registration anchor's "
+        f"({first['job']['job_id']}), not run averages, so the registered "
+        f"p_eff is quoted unchanged. Error bars: "
+        + (f"sample standard deviation across the {n_epochs} distinct "
+           f"calibration epochs, with runs sharing a calibration stamp averaged "
+           f"into one point first (two executions under one calibration are one "
+           f"sample, not two); this is a cross-calibration estimate and excludes "
+           f"within-run multinomial and weighted-fit error"
+           if n_epochs > 1 else
+           "multinomial shot noise (raw) and weighted-fit standard error (ZNE). "
+           "Only ONE calibration epoch is represented, so these are within-run "
+           "uncertainties and NOT a cross-calibration estimate") + ". "
         f"**(B)** ZNE mechanics: readout-mitigated payoff vs cz fold factor "
         f"(cz → cz^λ, λ = 1, 3, 5; cz is self-inverse so the unitary is "
         f"unchanged) with the weighted linear fit extrapolated to λ = 0 (stars). "
@@ -239,11 +351,16 @@ def main() -> None:
     )
     if cal:
         ro = cal["readout_error"]; cz = cal["cz_error"]
+        # Name every job. The previous version printed only the anchor's id next
+        # to the NEWEST run's calibration figures, which read as though one job
+        # produced both.
+        jobs = ", ".join(r["job"]["job_id"] for r in runs)
         cap += (
-            f" Calibration {cal['calibration_last_update'][:10]}: readout "
+            f" Newest included run's calibration "
+            f"{cal['calibration_last_update'][:10]}: readout "
             f"{min(ro.values())*100:.2f}–{max(ro.values())*100:.2f}%, cz "
             f"{min(cz.values())*100:.2f}–{max(cz.values())*100:.2f}% on the "
-            f"chain; job {first['job']['job_id']}."
+            f"chain. Jobs aggregated: {jobs}."
         )
     cap_path = os.path.join(out_dir, "caption.md")
     open(cap_path, "w", encoding="utf-8").write(cap + "\n")

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.20)  26 JUL 2026 00:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.20)  26 JUL 2026 20:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -587,70 +587,78 @@ Underfull \vbox (badness 3039) has occurred while \output is active []
 r_player_advantage_star.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 459.
+(hyperref)                removing `math shift' on input line 469.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 459.
+(hyperref)                removing `math shift' on input line 469.
 
 <figs/hardware_n3_validation.pdf, id=178, 619.3333pt x 323.23547pt>
 File: figs/hardware_n3_validation.pdf Graphic file (type pdf)
 <use figs/hardware_n3_validation.pdf>
-Package pdftex.def Info: figs/hardware_n3_validation.pdf  used on input line 50
+Package pdftex.def Info: figs/hardware_n3_validation.pdf  used on input line 51
 0.
 (pdftex.def)             Requested size: 252.0pt x 131.52122pt.
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 517.
+(hyperref)                removing `math shift' on input line 527.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 517.
+(hyperref)                removing `math shift' on input line 527.
 
-<figs/hardware_scaling.pdf, id=182, 919.21542pt x 321.75784pt>
+[5 <./figs/hardware_n3_validation.pdf>]
+<figs/hardware_scaling.pdf, id=256, 919.21542pt x 321.75784pt>
 File: figs/hardware_scaling.pdf Graphic file (type pdf)
 <use figs/hardware_scaling.pdf>
-Package pdftex.def Info: figs/hardware_scaling.pdf  used on input line 547.
+Package pdftex.def Info: figs/hardware_scaling.pdf  used on input line 558.
 (pdftex.def)             Requested size: 516.0pt x 180.62012pt.
-[5 <./figs/hardware_n3_validation.pdf>]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 607.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 607.
+(hyperref)                removing `math shift' on input line 635.
 
-[6 <./figs/hardware_scaling.pdf>]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 635.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 
 LaTeX Font Warning: Font shape `OT1/ptm/m/scit' undefined
-(Font)              using `OT1/ptm/m/it' instead on input line 662.
+(Font)              using `OT1/ptm/m/it' instead on input line 693.
 
-<figs/hardware_topology.pdf, id=350, 969.54071pt x 280.93584pt>
+<figs/hardware_topology.pdf, id=262, 969.54071pt x 280.93584pt>
 File: figs/hardware_topology.pdf Graphic file (type pdf)
 <use figs/hardware_topology.pdf>
-Package pdftex.def Info: figs/hardware_topology.pdf  used on input line 686.
+Package pdftex.def Info: figs/hardware_topology.pdf  used on input line 717.
 (pdftex.def)             Requested size: 516.0pt x 149.52113pt.
-
-Underfull \hbox (badness 1442) in paragraph at lines 732--741
+[6]
+Underfull \hbox (badness 1442) in paragraph at lines 763--772
 \OT1/ptm/m/it/10 ogy: [][] \OT1/ptm/m/n/10 star $\OML/cmm/m/it/10 N[]\OT1/cmr/m
 /n/10 4$ \OT1/ptm/m/n/10 is max-i-mally un-equal even noise-lessly:
  []
 
-[7]
-Underfull \hbox (badness 10000) in paragraph at lines 822--830
+
+Underfull \vbox (badness 1286) has occurred while \output is active []
+
+ [7 <./figs/hardware_scaling.pdf>] [8 <./figs/hardware_topology.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 866--877
 []\OT1/ptm/b/n/10 Limitations. \OT1/ptm/m/n/10 Dis-crete strat-egy set $\OMS/cm
 sy/m/n/10 f\OML/cmm/m/it/10 D; H; Q[]\OMS/cmsy/m/n/10 g$
  []
 
 
-Underfull \hbox (badness 2318) in paragraph at lines 822--830
-\OT1/ptm/m/n/10 pend-ing. The ex-ploratory W $\OML/cmm/m/it/10 N[]\OT1/cmr/m/n/
-10 4$ \OT1/ptm/m/n/10 T9 pi-lot used one
+Underfull \hbox (badness 4556) in paragraph at lines 866--877
+\OT1/ptm/m/n/10 the sep-a-rate $\OML/cmm/m/it/10 N[]\OT1/cmr/m/n/10 3$ \OT1/ptm
+/m/n/10 val-i-da-tion used $\OT1/cmr/m/n/10 [136\OML/cmm/m/it/10 ; \OT1/cmr/m/n
+/10 143\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 142]$ \OT1/ptm/m/n/10 and
  []
 
-[8 <./figs/hardware_topology.pdf>]
-Underfull \hbox (badness 3954) in paragraph at lines 894--898
+
+Underfull \hbox (badness 3954) in paragraph at lines 945--949
 []\OT1/ptm/m/n/10 All cir-cuits, har-nesses, per-run cal-i-bra-tion snap-shots,
 
  []
@@ -661,7 +669,7 @@ Underfull \hbox (badness 1708) in paragraph at lines 35--40
 . K.
  []
 
-)
+[9])
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -673,7 +681,9 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[9] (main.aux)
+[10
+
+] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -682,13 +692,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 0C69CAF7D3E41792A6A43D40560A9CF1;5058.
  ) 
 Here is how much of TeX's memory you used:
- 11271 strings out of 467871
- 176589 string characters out of 5418376
- 624511 words of memory out of 5000000
+ 11272 strings out of 467871
+ 176596 string characters out of 5418376
+ 626827 words of memory out of 5000000
  39944 multiletter control sequences out of 15000+600000
  676274 words of font info for 145 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,1843b,446s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,10n,79p,2422b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/prith/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmex10.pfb><C:/Users/prith/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmmi10.pfb><C:/Users/prith/AppData/Local/Programs/MiKTeX/fonts/type1/p
@@ -715,9 +725,9 @@ sers/prith/AppData/Local/Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:
 /Users/prith/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C
 :/Users/prith/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C
 :/Users/prith/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (9 pages, 602563 bytes).
+Output written on main.pdf (10 pages, 606033 bytes).
 PDF statistics:
- 566 PDF objects out of 1000 (max. 8388607)
- 62 named destinations out of 1000 (max. 500000)
+ 572 PDF objects out of 1000 (max. 8388607)
+ 63 named destinations out of 1000 (max. 500000)
  228 words of extra memory for PDF output out of 10000 (max. 10000000)
 
