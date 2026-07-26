@@ -573,20 +573,28 @@ that pattern and is the authoritative check.
 
 ---
 
-## C. Run outcomes from repeat-judgments.json, both runs, all N
+## C. Run outcomes from repeat-judgments.json, runs 1–3, all N
 
 Single source for every value in this section:
 `results/hardware-scaling/repeat-judgments.json`, generated
-2026-07-26T08:33:55.512637+00:00 (repeat-judgments.json:2
-(`"generated_utc": "2026-07-26T08:33:55.512637+00:00",`)).
+2026-07-26T09:04:29.704493+00:00 (repeat-judgments.json:2
+(`"generated_utc": "2026-07-26T09:04:29.704493+00:00",`)).
 
 Regenerated 2026-07-26 after `scripts/judge_repeat_run.py` was corrected to
 prefer the submission-time calibration snapshot and to exclude runs that are
 not repeats of the registered batch. **Every judgment z-score is byte-identical
-to the previous generation** and `n_repeats_judged` is unchanged at 2 — the fix
-is preventive, not a correction. What changed is that the N=3..7 extension
-(`2026-07-25T180549Z`) is now listed under `excluded_runs` instead of being
-eligible to be swept in as a fourth repeat.
+to the previous generation** — the fix is preventive, not a correction. What
+changed is that the N=3..7 extension (`2026-07-25T180549Z`) is now listed under
+`excluded_runs` instead of being eligible to be swept in as a fourth repeat.
+
+**Re-generated again on 2026-07-26 after repeat run 4** (`2026-07-26T090122Z`,
+job `d9isp42br2fc73e55pvg`), which raised `n_repeats_judged` from 2 to 3
+(repeat-judgments.json:8 (`"n_repeats_judged": 3,`)). Run 4 was **appended**:
+`git diff` against the prior generation is exactly two hunks, the 11-line header
+(value changes only) and an insertion after line 825. **Every
+`repeat-judgments.json:NNN` line citation for runs 1–3 in this section therefore
+still resolves**, which was verified rather than assumed. Run 4's own values are
+not line-cited here; see section C6.
 
 Registration status is stated per subsection and sourced to
 `results/hardware-scaling/preregistration.json` or
@@ -599,12 +607,25 @@ Run 1 is `2026-07-16T074134Z` (repeat-judgments.json:11
 `2026-07-25T035623Z` (repeat-judgments.json:549
 (`"run": "2026-07-25T035623Z",`)).
 
-**Distinct calibration days is 2, not 3.** Run 2 carries
-`"distinct_calibration_vs_previous_runs": false` — it shares run 1's
-calibration stamp, so runs 1 and 2 are ONE calibration day. Run 3 is the first
-genuinely distinct one. The registered target is 3–5 distinct days, so this is
-2 of 3–5. Any cross-day uncertainty estimate must use this count, not the
-number of runs.
+**Distinct calibrations is 3 of the registered 3–5 — the minimum is met.**
+Run 2 carries `"distinct_calibration_vs_previous_runs": false` — it shares run
+1's calibration stamp, so runs 1 and 2 are ONE calibration epoch. The three
+distinct stamps are 2026-07-16 08:30:13+05:30 (runs 1+2), 2026-07-25
+08:15:48+05:30 (run 3) and 2026-07-26 13:29:01+05:30 (run 4), which are also
+three distinct calendar dates. Any cross-day uncertainty estimate must use this
+count of 3, not the count of 4 runs.
+
+**But only 2 of the 3 epochs are chain-matched, and that is the binding
+constraint on Fig. 6.** Runs 1, 2 and 4 executed on `[59,75,74,73,79]`; run 3
+executed on `[20,21,22,23,24]` because `hardware_scaling.find_chain` selected
+from live calibration. So an error bar over all three epochs would confound
+calibration drift with a change of physical qubits — the same class of confound
+that invalidated topology T4. `hardware_scaling.py` has no
+`resolve_pinned_set`; that fix (`f20521f`) landed only in
+`experiments/hardware_topology.py`, and the scaling `preregistration.json`
+records no pinned set. Run 4 was submitted with an explicit
+`--chain 59,75,74,73,79` for this reason. A third chain-matched epoch requires
+one further run after the next recalibration.
 
 ### C1. p_eff
 
@@ -757,6 +778,43 @@ Index 4 holds the maximum in all four vectors. `any_player_below_classical` is
 false in every block at every N in both runs.
 
 **Registration status: not preregistered.** See G18.
+
+### C6. Repeat run 4 (2026-07-26T090122Z)
+
+Values below are read from `results/hardware-scaling/2026-07-26T090122Z/result.json`
+and the run-4 entry of `repeat-judgments.json` (appended after line 825). Line
+numbers are deliberately **not** cited for this run: it is the last array entry,
+so any future repeat appends after it and its own offsets are the ones most
+likely to move. Read it by `judgments[-1]` or by matching `"run"`.
+
+| field | value |
+| --- | --- |
+| job id | `d9isp42br2fc73e55pvg` |
+| chain | `[59, 75, 74, 73, 79]` (explicit `--chain`, matches runs 1+2) |
+| calibration at submit | 2026-07-26 13:29:01+05:30 |
+| distinct_calibration_vs_previous_runs | true |
+| p_eff refit on this run's N=3 | 1.583262e-03 |
+| N=4 conditional | measured +0.7324 vs predicted +0.7437, z = −5.68, **FAIL** |
+| N=5 conditional | measured +0.5755 vs predicted +0.5941, z = −9.55, **FAIL** |
+| N=5 deficit | −0.0186, same sign as run 1 → reproduced **3 of 3** |
+| best registered baseline | `cz_exponential` at 82.0 (next: `transpiled_count_corrected` 29.9 → 121.3) |
+
+`git.dirty` is **false** with `captured: "before_submission"`, the `environment`
+block is present, and `calibration_at_submit.json` exists — the item-16
+validation, clean on this run.
+
+**This run's deficits are the largest of the four** (N=5 delta −0.0186 against
+−0.0101 / −0.0092 / −0.0094), so cross-epoch variance in the N=3→N=4,5 falloff is
+roughly 2×. That spread is the quantity item 3 exists to measure and it is wider
+than the two-point sample SD currently drawn in Fig. 6. `cz_exponential` remains
+best-of-five at N≤5 in 4 of 4 runs; this does not disturb the N=7 reversal
+recorded for `2026-07-25T180549Z`, which is excluded from this file as not the
+registered batch.
+
+**Registration status: judged against the frozen
+`results/hardware-scaling/preregistration.json`** by
+`scripts/judge_repeat_run.py`, which refuses to run unless that file is
+byte-identical to HEAD.
 
 ---
 
@@ -1187,10 +1245,11 @@ instance of G13.
 
 **G8. RESOLVED — not a defect; the original reading was wrong.**
 `n_repeats_judged` counts *repeats*, i.e. array entries other than the
-registration source run, not the array length. At two entries it read 1; after
-run 3 it reads 2 with three entries (repeat-judgments.json:8
-(`"n_repeats_judged": 2,`)), and exactly one entry carries
-`"is_registration_source": true`. The field has now been consistent at two
+registration source run, not the array length. At two entries it read 1; at
+three it read 2; after run 4 it reads 3 with four entries
+(repeat-judgments.json:8 (`"n_repeats_judged": 3,`)), and exactly one entry
+carries
+`"is_registration_source": true`. The field has now been consistent at three
 different array sizes, which is what distinguishes a convention from an
 off-by-one. *Consequence:* none. Consumers wanting the array length should read
 `len(judgments)`.

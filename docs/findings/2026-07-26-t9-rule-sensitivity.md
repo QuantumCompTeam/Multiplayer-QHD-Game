@@ -94,8 +94,12 @@ destroys the fixed point rather than merely slowing the approach to it.
    spread (0.111 vs 0.036) but confirming that would need the same
    cycle-characterization treatment. **Do not quote that comparison as a
    magnitude result.**
-3. **Only W N=4 is covered**, unchanged from the original pilot. Caveat 2 (W N=5,
-   ring N=5 — the headline asymmetry cases) remains open.
+3. **Only W N=4 is covered** by *this* run, unchanged from the original pilot.
+   Caveat 2 (W N=5, ring N=5) was closed separately the same day —
+   `docs/findings/2026-07-26-t9-caveat2-n5-ring.md`. W N=5 reproduces these
+   verdicts; ring N=5 never converges and fails in a different direction
+   (spread grows from a perfectly fair baseline at conserved mean welfare). The
+   simultaneous-rule cross-check above has *not* been extended to those cells.
 4. **Two rules, not all rules.** Fictitious play and regret matching are still
    untested. Simultaneous was chosen because it isolates the sequencing
    assumption; a belief-based rule like fictitious play is a genuinely different

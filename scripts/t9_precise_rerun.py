@@ -19,8 +19,10 @@ configs can run in parallel):
   python scripts/t9_precise_rerun.py w 4 0.02 --reverse-order
   python scripts/t9_precise_rerun.py w 4 0.05
 
-Saves results/t9-pilot/precise-<UTC stamp>-p<p>[-rev]/results.json, same schema
-as the fast-mode pilot runs plus the stopping-rule fields.
+Saves results/t9-pilot/precise-<UTC stamp>-<topology><N>-p<p>[-rev][-simul]/
+results.json, same schema as the fast-mode pilot runs plus the stopping-rule
+fields. Directories written before 2026-07-26 omit the <topology><N> segment;
+all of those are w4.
 """
 
 import json
@@ -155,7 +157,11 @@ def main():
     result = run_config(topology, N, p)
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
-    suffix = (f"p{p:g}" + ("-rev" if t9.REVERSE_ORDER else "")
+    # Topology and N stayed out of this name while every run was W N=4. Caveat 2
+    # adds ring and N=5, so two configs finishing in the same UTC minute would
+    # otherwise resolve to an identical path and the second would overwrite the
+    # first. Directories written before this change keep their old names.
+    suffix = (f"{topology}{N}-p{p:g}" + ("-rev" if t9.REVERSE_ORDER else "")
               + ("-simul" if t9.RULE == "simultaneous" else ""))
     outdir = os.path.join("results", "t9-pilot", f"precise-{stamp}-{suffix}")
     os.makedirs(outdir, exist_ok=True)

@@ -36,9 +36,9 @@ live convention V=4/C=3 unless marked retired.
 | `topology-controls/` | 2–5 | GHZ, ring, star, FC | p = 0→0.05 | one control run `2026-07-16T172737Z` |
 | `topology/` | per-topology | all 5 | 0 | per-topology reference runs |
 | `hardware-n3/` | 3 | GHZ | device | one run `2026-07-16T013912Z` |
-| `hardware-scaling/` | 3–**7** | GHZ | device | 3 runs at N=3–5 (**2 of 3–5 distinct calibration days**) + N=3–7 extension `2026-07-25T180549Z` |
+| `hardware-scaling/` | 3–**7** | GHZ | device | 4 runs at N=3–5 (**3 of 3–5 distinct calibrations — registered minimum met**; 2 of them chain-matched on `[59,75,74,73,79]`) + N=3–7 extension `2026-07-25T180549Z` |
 | `hardware-topology/` | 3–5 | **all 5** | device | one 49-pub batch `2026-07-25T114621Z` (topology + deviations + wirings + γ sweep) |
-| `t9-pilot/` | 4 | W | 0 / 0.02 / 0.05 | adaptation pilot (provisional) |
+| `t9-pilot/` | 4, **5** | W, **ring** | 0 / 0.02 / 0.05 | adaptation pilot (provisional); both self-raised caveats closed 2026-07-26 (rule, and N=5 × {W, ring}) |
 
 **Known coverage gaps** (unrun cells, not failures — see `src/experiment/report.py`,
 which lists skipped cells explicitly per run):

@@ -15,8 +15,16 @@ The compiled `main.pdf` is an evidence-preserving review draft, not a submission
   residual gain stays flat at ~380x the convergence bar
   (`docs/findings/2026-07-26-t9-rule-sensitivity.md`). So the limit cycle is a
   property of the noisy best-response map, not of round-robin ordering.
-  Fictitious play and regret matching remain untested, and only W `N=4` is
-  covered. Until sign-off the fairness paragraph stays hedged as exploratory,
+  **The cell-coverage doubt was also tested** (caveat 2,
+  `docs/findings/2026-07-26-t9-caveat2-n5-ring.md`): W `N=5` reproduces W `N=4`
+  verdict-for-verdict, and ring `N=5` never converges at any noise level,
+  failing in the opposite direction — it turns a perfectly fair `p=0` baseline
+  into spread 1.3329 at exactly conserved mean welfare. Both caveats the pilot
+  raised against its own verdict are now tested and neither is supported.
+  Fictitious play and regret matching remain untested, as do star and
+  fully-connected at `N=5`. The ring spread magnitudes are 50-round snapshots of
+  non-convergent trajectories and are deliberately **not** promoted into the
+  paper. Until sign-off the fairness paragraph stays hedged as exploratory,
   which is how it reads in Sec. IV-C and the conclusion — no text change is
   pending, only the decision.
 - Complete final author review of all sections drafted from repository artifacts.
