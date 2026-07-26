@@ -65,8 +65,31 @@ recover with `--from-job <id>`.
   `calibration_at_submit.json`; use that stamp for cross-day counting, not
   the analysis-time `calibration.json` (G15).
 
-**Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
+**Why:** One calibration epoch = one sample; IEEE-QCE reviewers expect run-to-run
 variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.
+
+**This is NOT a multi-day wait (observed 2026-07-26).** The registered criterion
+above is a *differing calibration stamp*, not a differing calendar date, and
+ibm_fez recalibrates several times per day. Three distinct stamps were observed
+on 2026-07-25 alone:
+
+| stamp (+05:30) | seen at |
+|---|---|
+| 2026-07-25 08:15:48 | topology registration |
+| 2026-07-25 16:05:46 | topology submission (job d9ia1pd0k0jc738jaqgg) |
+| 2026-07-25 22:32:49 | N=6,7 submission (job d9if010gk0ls73f4avkg) |
+
+That drift is real, not cosmetic — it moved the selector's chosen chain from
+`[20,21,22,23,24]` to `[137,147,146,145,144]` and is what confounded the
+topology batch's T4. So item 3 needs **two more `--hardware` runs on the
+untouched scaling script (~35 QPU-s each) submitted after a recalibration**,
+which can plausibly happen the same day; it does not need three calendar days.
+
+Counter-consideration to state honestly if collected same-day: recalibrations
+8 hours apart sample *recalibration-to-recalibration* variance, which is the
+registered criterion, but they may understate multi-day drift (thermal cycling,
+longer maintenance). If the repeats are same-day, say "distinct calibrations"
+rather than implying distinct days.
 
 **Pre-registration (frozen 2026-07-16, BEFORE any repeat):** each repeat must
 be judged against the frozen effective-p predictions in
@@ -98,7 +121,7 @@ level (`C:/Program Files/Git/etc/gitconfig`); no `.gitattributes` exists in the
 repo; of the 50 tracked files under `results/`, 34 are all-CRLF text and 16 are
 binary — zero files with mixed line endings on disk.
 
-## T9 adaptation & fairness pilot — DONE (provisional); follow-ups open
+## T9 adaptation & fairness pilot — DONE; both caveats closed, sign-off open
 
 **Done:** Pilot answering "does independent best-response adaptation restore
 per-player fairness under noise?" for W N=4. Verdict: no — it equalizes only by
@@ -107,12 +130,24 @@ cycle), or barely moves anything (p=0.05). Writeup:
 `docs/findings/2026-07-05-t9-adaptation-fairness.md`; code `scripts/t9_*.py`;
 data `results/t9-pilot/precise-*`.
 
-**Open follow-ups:**
-- Aasa to review the adaptation rule — "independent round-robin best response"
-  is provisional; simultaneous BR / fictitious play / a fairness-constrained
-  rule are alternatives that could change the p=0.02 verdict.
-- Extend to N=5 (W N=5 and ring N=5 — the headline asymmetry cases); the pilot
-  covers only W N=4.
+**Both caveats are now tested; neither is supported.**
+- ~~Caveat 1: the rule.~~ **Tested 2026-07-26**
+  (`docs/findings/2026-07-26-t9-rule-sensitivity.md`). Simultaneous BR removes
+  move order entirely and reproduces all three verdicts; the p=0.02 residual
+  stays flat at ~380x the convergence bar, so the non-convergence belongs to the
+  noisy best-response map, not to round-robin ordering. Fictitious play and
+  regret matching remain untested.
+- ~~Caveat 2: extend to N=5 (W N=5 and ring N=5).~~ **Done 2026-07-26**
+  (`docs/findings/2026-07-26-t9-caveat2-n5-ring.md`). W N=5 reproduces W N=4
+  verdict-for-verdict. Ring N=5 never converges at any p and is qualitatively
+  worse: it turns a perfectly fair p=0 baseline (spread 0.0000) into spread
+  1.3329 at *exactly conserved* mean welfare, and the divergence is strongest
+  noiselessly, so topology rather than noise drives it. Ring spread magnitudes
+  are 50-round snapshots and are not quotable as magnitude results.
+
+**Still open:** Aasa's sign-off (item 10) — a judgement, not a computation.
+Untested rules: fictitious play, regret matching, fairness-constrained. Untested
+cells: star and fully-connected at N=5; ring cycle-period characterization.
 
 Note: this is a *different* question from the "Noise-aware strategy
 optimization" item below (a symmetric-Q config-harness feature, still open).

@@ -53,6 +53,7 @@ PREREG = os.path.join(HW_DIR, "preregistration.json")
 BASELINES = os.path.join(HW_DIR, "preregistration-baselines.json")
 OUT = os.path.join(HW_DIR, "repeat-judgments.json")
 NS = (3, 4, 5)
+CHAIN_LEN = 5      # the registered batch's pinned chain width
 Z_CRIT = 1.96
 
 
@@ -65,15 +66,57 @@ def prereg_is_pristine() -> bool:
     return r.returncode == 0 and r.stdout.strip() == ""
 
 
-def load_runs() -> list[tuple[str, dict, dict | None]]:
+def load_calibration(run_dir: str) -> tuple[dict | None, str]:
+    """Calibration for a run, PREFERRING the submission-time snapshot.
+
+    calibration.json is fetched at ANALYSIS time, which can be hours after the
+    job ran; calibration_at_submit.json is snapshotted at submission and is the
+    one that identifies the calibration the job actually executed under (G15).
+    The cross-day distinctness count is computed from this stamp, so which file
+    it comes from matters.
+
+    Runs 1 and 2 predate item 16 and have no submit-time snapshot; they fall
+    back to the analysis-time file, and the returned source label records that
+    so the fallback is visible in the artifact rather than silent.
+    """
+    sub = os.path.join(run_dir, "calibration_at_submit.json")
+    if os.path.exists(sub):
+        with open(sub, encoding="utf-8") as fh:
+            return json.load(fh), "calibration_at_submit.json"
+    cal_path = os.path.join(run_dir, "calibration.json")
+    if os.path.exists(cal_path):
+        with open(cal_path, encoding="utf-8") as fh:
+            return json.load(fh), "calibration.json (analysis-time fallback)"
+    return None, "none"
+
+
+def is_registered_batch(res: dict) -> tuple[bool, str]:
+    """Is this run a repeat of the REGISTERED batch, or a different experiment?
+
+    results/hardware-scaling/ also holds runs that are not repeats -- the
+    N=3..7 extension (item 4) shares the directory but ran a different pub
+    count on a different, longer chain. Judging it against the N=3,4,5
+    registration would silently add a fourth 'repeat', inflate the cross-day
+    count and contaminate the five-model ranking the paper cites.
+    """
+    series = set(res.get("analysis", {}).get("series", {}))
+    want = {str(N) for N in NS}
+    if series != want:
+        return False, f"series {sorted(series)} != registered {sorted(want)}"
+    chain = res.get("analysis", {}).get("chain") or []
+    if len(chain) != CHAIN_LEN:
+        return False, f"chain length {len(chain)} != registered {CHAIN_LEN}"
+    return True, ""
+
+
+def load_runs() -> list[tuple[str, dict, dict | None, str]]:
     runs = []
     for path in sorted(glob.glob(os.path.join(HW_DIR, "*", "result.json"))):
-        d = os.path.basename(os.path.dirname(path))
+        run_dir = os.path.dirname(path)
+        d = os.path.basename(run_dir)
         res = json.load(open(path, encoding="utf-8"))
-        cal_path = os.path.join(os.path.dirname(path), "calibration.json")
-        cal = (json.load(open(cal_path, encoding="utf-8"))
-               if os.path.exists(cal_path) else None)
-        runs.append((d, res, cal))
+        cal, cal_source = load_calibration(run_dir)
+        runs.append((d, res, cal, cal_source))
     return runs
 
 
@@ -225,9 +268,21 @@ def main() -> None:
         sys.exit(1)
 
     judgments = []
+    excluded = []
     seen_cals: list = []
-    for run_id, res, cal in runs:
+    for run_id, res, cal, cal_source in runs:
+        ok, why = is_registered_batch(res)
+        if not ok:
+            # Not a repeat of the registered batch -- e.g. the N=3..7 extension
+            # shares this directory but ran a different pub count on a longer
+            # chain. Recorded, not silently dropped.
+            excluded.append({"run": run_id, "reason": why,
+                             "job_id": (res.get("job") or {}).get("job_id")})
+            print(f"\n=== {run_id} [EXCLUDED: not the registered batch] ===")
+            print(f"  {why}")
+            continue
         j = judge_run(run_id, res, cal, prereg, refs, source_id, seen_cals)
+        j["calibration_source"] = cal_source
         if cal:
             seen_cals.append(cal["calibration_last_update"])
         judgments.append(j)
@@ -277,6 +332,18 @@ def main() -> None:
             "p_eff_central": prereg["p_eff"]["central"],
         },
         "n_repeats_judged": n_rep,
+        "calibration_stamp_source": (
+            "calibration_at_submit.json where present (the snapshot taken at "
+            "submission, which identifies the calibration the job actually ran "
+            "under); calibration.json is an analysis-time fallback for runs "
+            "predating item 16. Per-run source is recorded in "
+            "judgments[].calibration_source."),
+        "excluded_runs": excluded,
+        "excluded_note": (
+            "Runs under results/hardware-scaling/ that are NOT repeats of the "
+            "registered N=3,4,5 batch -- listed rather than silently skipped, "
+            "so the repeat count cannot be inflated by a different experiment "
+            "sharing the directory."),
         "judgments": judgments,
     }
     with open(OUT, "w", encoding="utf-8") as fh:

@@ -1,0 +1,1457 @@
+{
+  "registered_utc": "2026-07-25T05:12:07.413095+00:00",
+  "purpose": "Frozen predictions for the ibm_fez multi-topology EWL batch (items 1, 2, 5, 6, 7), registered before the job was submitted. Predictions come from the mandatory dress rehearsal on the reduced device noise model; the registered tests are judged by scripts/judge_topology_run.py.",
+  "backend": "ibm_fez",
+  "git": {
+    "commit": "add4378f47707b1f4e39a8a6b25df027ee1224cd",
+    "dirty": true,
+    "dirty_files": [
+      "M experiments/hardware_topology.py",
+      "?? scripts/preregister_topology.py"
+    ]
+  },
+  "environment": {
+    "python": "3.10.20",
+    "qiskit": "1.3.2",
+    "qiskit_aer": "0.14.2",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "qiskit_ibm_runtime": "0.36.1"
+  },
+  "calibration_at_registration": {
+    "backend": "ibm_fez",
+    "calibration_last_update": "2026-07-25 08:15:48+05:30",
+    "pinned": [
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "readout_error": {
+      "20": 0.00732421875,
+      "21": 0.0048828125,
+      "22": 0.0025634765625,
+      "23": 0.0040283203125,
+      "24": 0.0057373046875
+    },
+    "t1_us": {
+      "20": 145.5530908648341,
+      "21": 237.19226225186688,
+      "22": 85.92957413772173,
+      "23": 101.80571790166857,
+      "24": 156.04083535083603
+    },
+    "t2_us": {
+      "20": 180.6256595190715,
+      "21": 182.66657469862082,
+      "22": 79.39897752899158,
+      "23": 90.988355355178,
+      "24": 115.27774606665712
+    },
+    "cz_error": {
+      "20_21": 0.0037876985155428367,
+      "21_22": 0.002674230068160588,
+      "22_23": 0.0018874523449260716,
+      "23_24": 0.004922835223598154
+    }
+  },
+  "protocol": {
+    "seed": 20260725,
+    "shots_used_to_predict": 200000,
+    "shots_registered": 4096,
+    "z_crit": 1.96,
+    "pinned": [
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "n_pubs": 49,
+    "model": "AerSimulator(method='density_matrix', noise_model=NoiseModel.from_backend(ibm_fez) reduced to the pinned set), per-pub seed = SEED + pub_index",
+    "advantage_convention": "advantage = measured profile payoff - analytic noiseless classical NE payoff 1/N. NOT comparable to the circuit-relative gap used by the simulation figures.",
+    "uncertainties_propagated": [
+      "multinomial shot noise at REGISTERED_SHOTS, per player and across-player mean"
+    ],
+    "uncertainties_excluded": [
+      "device-model error: NoiseModel.from_backend is a Pauli/readout approximation and omits coherent errors, crosstalk and leakage. This is the DOMINANT unmodelled term and is why T1-T3 are sign/threshold tests rather than z-tests.",
+      "calibration drift between registration and execution",
+      "readout-mitigation amplification of shot noise (the quoted sigmas are computed on the raw distribution)"
+    ],
+    "registered_tests": {
+      "T1_equilibrium": "At ghz N=3, gamma=pi/2, every unilateral Hawk deviation gap payoff_k(Q,Q,Q) - payoff_k(H at k) is >= 0. PASS iff all three gaps are >= 0 within 1.96 sigma_predictive. This is the restricted-menu {D,H,Q} equilibrium claim; it is NOT a full-SU(2) equilibrium claim.",
+      "T2_gamma_sign_change": "The same gap at position 0 is NEGATIVE at gamma=0.30pi and POSITIVE at gamma=0.45pi and 0.50pi, i.e. the cooperative profile becomes an equilibrium as entanglement increases. PASS iff both signs come back as registered at 0.30pi and 0.45pi. gamma=0.40pi is registered as MARGINAL (ideal gap +0.0469, within ~2 sigma of zero) and does not count toward pass/fail.",
+      "T3_wiring_invariance": "star N=4's per-player payoff vector is INVARIANT under wiring permutation: the position-locked unfairness is a property of the entanglement topology, not of which physical qubit a player was assigned. PASS iff, for each permuted wiring, max_j |v_perm[j] - v_identity[j]| <= the registered threshold. FAILURE would mean the paper's player-position claim must be narrowed to this device.",
+      "T4a_per_cell_advantage_uncorrected": "Each cell's measured mitigated fold-1 advantage vs the raw device-noise-model prediction; PASS iff |z| <= 1.96 with z = (measured - predicted) / sigma_predictive, sigma being shot noise only. REGISTERED EXPECTATION: this FAILS LOW and systematically. All 9 GHZ points in results/hardware-scaling/ over 3 calibration days missed in the same direction. It is registered anyway so the size of the device-model error is measured rather than assumed.",
+      "T4b_per_cell_advantage_cz_corrected": "The competing model: the same prediction plus a cz-linear bias correction fitted on those 9 GHZ points (beta per routed fold-1 cz, through the origin), with sigma = sqrt(shot^2 + fit residual^2). The substantive registered claim is that the device-model bias is a property of GATE COUNT and TRANSFERS ACROSS TOPOLOGIES: beta was fitted on GHZ alone and is applied here to ring, star, fully-connected and W. W N=3 at 42 cz is a 3x extrapolation beyond the 6-14 cz fitting range and is the sharpest discriminator -- the two models differ there by ~0.036, far outside shot noise. PASS iff |z| <= 1.96. Whichever of T4a/T4b scores better wins on the record; this mirrors the five-model comparison already in results/hardware-scaling/repeat-judgments.json.",
+      "T5_ring4_null": "ring N=4 is the only cell whose NOISELESS advantage is zero: its ideal circuit is deterministic on |1111> (all-Hawk). Registered: (a) its measured mitigated fold-1 advantage is the smallest of all 12 topology cells; (b) it is POSITIVE, i.e. device noise moves this cell AWAY from its ideal and toward advantage; (c) ZNE brings it back toward zero, |zne| < |raw|."
+    }
+  },
+  "device_model_bias_fit": {
+    "form": "delta = beta * routed_cz_at_fold1, fitted through the origin",
+    "beta": -0.0008480411943307529,
+    "residual_sd": 0.0014274306146645614,
+    "n_points": 9,
+    "fitted_cz_range": [
+      6,
+      14
+    ],
+    "constant_bias_baseline_residual_sd": 0.0037222241210209538,
+    "all_deltas_negative": true,
+    "points": [
+      {
+        "run": "2026-07-16T074134Z",
+        "N": 3,
+        "cz": 6,
+        "predicted": 0.9958970474892057,
+        "measured": 0.9919331910632498,
+        "delta": -0.0039638564259558695
+      },
+      {
+        "run": "2026-07-16T074134Z",
+        "N": 4,
+        "cz": 9,
+        "predicted": 0.7472263600460105,
+        "measured": 0.7384272699895833,
+        "delta": -0.008799090056427206
+      },
+      {
+        "run": "2026-07-16T074134Z",
+        "N": 5,
+        "cz": 14,
+        "predicted": 0.5961955133767891,
+        "measured": 0.5831190172535277,
+        "delta": -0.01307649612326145
+      },
+      {
+        "run": "2026-07-17T014458Z",
+        "N": 3,
+        "cz": 6,
+        "predicted": 0.9958970474892057,
+        "measured": 0.9927573727264236,
+        "delta": -0.0031396747627820965
+      },
+      {
+        "run": "2026-07-17T014458Z",
+        "N": 4,
+        "cz": 9,
+        "predicted": 0.7472263600460105,
+        "measured": 0.7415761349129972,
+        "delta": -0.005650225133013276
+      },
+      {
+        "run": "2026-07-17T014458Z",
+        "N": 5,
+        "cz": 14,
+        "predicted": 0.5961955133767891,
+        "measured": 0.5846250840823848,
+        "delta": -0.011570429294404327
+      },
+      {
+        "run": "2026-07-25T035623Z",
+        "N": 3,
+        "cz": 6,
+        "predicted": 0.9962748689447651,
+        "measured": 0.991493575318775,
+        "delta": -0.004781293625990113
+      },
+      {
+        "run": "2026-07-25T035623Z",
+        "N": 4,
+        "cz": 9,
+        "predicted": 0.7474566084450461,
+        "measured": 0.7377099059106058,
+        "delta": -0.009746702534440321
+      },
+      {
+        "run": "2026-07-25T035623Z",
+        "N": 5,
+        "cz": 14,
+        "predicted": 0.5949863716354806,
+        "measured": 0.5834020418336263,
+        "delta": -0.01158432980185431
+      }
+    ]
+  },
+  "predictions": {
+    "series": {
+      "fully-connected|N3|g1.570796|QQQ|w0-1-2": {
+        "topology": "fully-connected",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 10,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333341,
+        "ideal_advantage": 1.0000000000000009,
+        "mitigated_fold1": {
+          "advantage": 0.9940360025071724,
+          "sigma_predictive": 0.0012030669858915633,
+          "per_player": [
+            1.3303224409480592,
+            1.324763641519161,
+            1.3270219250542963
+          ],
+          "per_player_sigma": [
+            0.012169731293895729,
+            0.012148000163952849,
+            0.012146627131989919
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9855555905638649,
+          "correction": -0.00848041194330753,
+          "sigma_predictive": 0.0018667962749651763,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9914100000000001,
+          "p_ground": 0.415775
+        },
+        "zne_linear": {
+          "advantage": 0.9983042818179038
+        }
+      },
+      "fully-connected|N4|g1.570796|QQQQ|w0-1-2-3": {
+        "topology": "fully-connected",
+        "N": 4,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cz_fold1": 31,
+        "classical_ne_payoff": 0.25,
+        "ideal_payoff": 1.0000000000000004,
+        "ideal_advantage": 0.7500000000000004,
+        "mitigated_fold1": {
+          "advantage": 0.744968770957262,
+          "sigma_predictive": 0.0009565905894138554,
+          "per_player": [
+            1.0050768453674654,
+            0.9924619908375101,
+            0.9888245382335769,
+            0.9935117093904955
+          ],
+          "per_player_sigma": [
+            0.006990559007870042,
+            0.006352340458839795,
+            0.006593274970546849,
+            0.007747241949452121
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.7186794939330087,
+          "correction": -0.02628927702425334,
+          "sigma_predictive": 0.001718320027072022,
+          "extrapolates_beyond_fit": true
+        },
+        "raw_fold1": {
+          "advantage": 0.744945,
+          "p_ground": 0.876225
+        },
+        "zne_linear": {
+          "advantage": 0.7482423110392384
+        }
+      },
+      "ghz|N3|g0.942478|HQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 0.9424777960769379,
+        "gamma_over_pi": 0.3,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 4,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333302,
+        "ideal_advantage": 0.9999999999999969,
+        "mitigated_fold1": {
+          "advantage": 0.9986856266935984,
+          "sigma_predictive": 0.0005661008291228522,
+          "per_player": [
+            2.025823661265131,
+            0.9907548577797324,
+            0.9794783610359313
+          ],
+          "per_player_sigma": [
+            0.031016278732790004,
+            0.01591938267885283,
+            0.015757337082083468
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9952934619162754,
+          "correction": -0.0033921647773230115,
+          "sigma_predictive": 0.001535587284531631,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9951300000000001,
+          "p_ground": 0.00523
+        }
+      },
+      "ghz|N3|g0.942478|QQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 0.9424777960769379,
+        "gamma_over_pi": 0.3,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 8,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333306,
+        "ideal_advantage": 0.9999999999999973,
+        "mitigated_fold1": {
+          "advantage": 0.99496340340206,
+          "sigma_predictive": 0.00110609432306912,
+          "per_player": [
+            1.3320725594922749,
+            1.3288637422640455,
+            1.3239539084498593
+          ],
+          "per_player_sigma": [
+            0.005456534356851428,
+            0.005060368163696046,
+            0.005280842067732757
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.988179073847414,
+          "correction": -0.006784329554646023,
+          "sigma_predictive": 0.0018058246900536559,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9949999999999999,
+          "p_ground": 0.955465
+        }
+      },
+      "ghz|N3|g1.256637|HQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.2566370614359172,
+        "gamma_over_pi": 0.4,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 4,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.333333333333331,
+        "ideal_advantage": 0.9999999999999978,
+        "mitigated_fold1": {
+          "advantage": 0.9981167468992158,
+          "sigma_predictive": 0.0006774309629808496,
+          "per_player": [
+            1.279418830925688,
+            1.3618993289147598,
+            1.3530320808571994
+          ],
+          "per_player_sigma": [
+            0.028888732074246727,
+            0.014929092862357654,
+            0.01484752020995275
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9947245821218929,
+          "correction": -0.0033921647773230115,
+          "sigma_predictive": 0.001580022426830331,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9932050000000001,
+          "p_ground": 0.00329
+        }
+      },
+      "ghz|N3|g1.256637|QQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.2566370614359172,
+        "gamma_over_pi": 0.4,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 8,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333308,
+        "ideal_advantage": 0.9999999999999976,
+        "mitigated_fold1": {
+          "advantage": 0.994211802196856,
+          "sigma_predictive": 0.0011853078624736119,
+          "per_player": [
+            1.327944811165052,
+            1.3263486471618913,
+            1.3283419482636245
+          ],
+          "per_player_sigma": [
+            0.00538780843783227,
+            0.005019957914948577,
+            0.00535440350475036
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.98742747264221,
+          "correction": -0.006784329554646023,
+          "sigma_predictive": 0.0018554010047758976,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9942550000000001,
+          "p_ground": 0.95481
+        }
+      },
+      "ghz|N3|g1.413717|HQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.413716694115407,
+        "gamma_over_pi": 0.45,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 4,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333304,
+        "ideal_advantage": 0.9999999999999971,
+        "mitigated_fold1": {
+          "advantage": 0.9979835330415292,
+          "sigma_predictive": 0.0007009342293093029,
+          "per_player": [
+            1.071299066304099,
+            1.4661202601377685,
+            1.4565312726827195
+          ],
+          "per_player_sigma": [
+            0.02741120489621296,
+            0.014255886403743541,
+            0.014172652476773835
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9945913682642062,
+          "correction": -0.0033921647773230115,
+          "sigma_predictive": 0.0015902411620565837,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9926950000000001,
+          "p_ground": 0.002765
+        }
+      },
+      "ghz|N3|g1.413717|QQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.413716694115407,
+        "gamma_over_pi": 0.45,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 8,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333306,
+        "ideal_advantage": 0.9999999999999973,
+        "mitigated_fold1": {
+          "advantage": 0.9943797491919111,
+          "sigma_predictive": 0.0011680838246972262,
+          "per_player": [
+            1.327728321593015,
+            1.3257427469222358,
+            1.3296681790604818
+          ],
+          "per_player_sigma": [
+            0.0053590566978586615,
+            0.004971848040281958,
+            0.005302074974412204
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.987595419637265,
+          "correction": -0.006784329554646023,
+          "sigma_predictive": 0.0018444451689331803,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9944199999999999,
+          "p_ground": 0.955685
+        }
+      },
+      "ghz|N3|g1.570796|HQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 4,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333313,
+        "ideal_advantage": 0.999999999999998,
+        "mitigated_fold1": {
+          "advantage": 0.9979343498475197,
+          "sigma_predictive": 0.0007094134147651004,
+          "per_player": [
+            0.9996036178433085,
+            1.5010209645148327,
+            1.4931784671844173
+          ],
+          "per_player_sigma": [
+            0.026796159843963076,
+            0.013965878274108069,
+            0.013889808384686146
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9945421850701968,
+          "correction": -0.0033921647773230115,
+          "sigma_predictive": 0.001593996722935881,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.992515,
+          "p_ground": 0.00261
+        }
+      },
+      "ghz|N3|g1.570796|QHQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "H",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 6,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333313,
+        "ideal_advantage": 0.999999999999998,
+        "mitigated_fold1": {
+          "advantage": 0.9972222756709779,
+          "sigma_predictive": 0.0008223573585371536,
+          "per_player": [
+            1.5004493799153529,
+            1.0016828319375375,
+            1.4895346151600433
+          ],
+          "per_player_sigma": [
+            0.014091499151394082,
+            0.026739806872450065,
+            0.014096749723858323
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9921340285049933,
+          "correction": -0.0050882471659845175,
+          "sigma_predictive": 0.0016473705669404963,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.993555,
+          "p_ground": 0.0032
+        }
+      },
+      "ghz|N3|g1.570796|QQH|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "H"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 6,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.333333333333331,
+        "ideal_advantage": 0.9999999999999978,
+        "mitigated_fold1": {
+          "advantage": 0.9953355114864104,
+          "sigma_predictive": 0.0010646498310789556,
+          "per_player": [
+            1.490269946464849,
+            1.4885926628897967,
+            1.007143925104585
+          ],
+          "per_player_sigma": [
+            0.013984703967266641,
+            0.014080503435093403,
+            0.026763734264587998
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9902472643204259,
+          "correction": -0.0050882471659845175,
+          "sigma_predictive": 0.0017807406949070649,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9935500000000002,
+          "p_ground": 0.006685
+        }
+      },
+      "ghz|N3|g1.570796|QQQ|w0-1-2": {
+        "topology": "ghz",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 6,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333313,
+        "ideal_advantage": 0.999999999999998,
+        "mitigated_fold1": {
+          "advantage": 0.996299850616279,
+          "sigma_predictive": 0.0009486907968830647,
+          "per_player": [
+            1.3305731576257627,
+            1.3276181016322184,
+            1.330708292590856
+          ],
+          "per_player_sigma": [
+            0.005254159696682769,
+            0.004849022712535273,
+            0.004983570377559557
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9912116034502945,
+          "correction": -0.0050882471659845175,
+          "sigma_predictive": 0.0017139347676537377,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9963150000000001,
+          "p_ground": 0.960495
+        },
+        "zne_linear": {
+          "advantage": 0.9988322378274312
+        }
+      },
+      "ghz|N4|g1.570796|QQQQ|w0-1-2-3": {
+        "topology": "ghz",
+        "N": 4,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cz_fold1": 9,
+        "classical_ne_payoff": 0.25,
+        "ideal_payoff": 0.9999999999999984,
+        "ideal_advantage": 0.7499999999999984,
+        "mitigated_fold1": {
+          "advantage": 0.7474435966188814,
+          "sigma_predictive": 0.0006830050746731839,
+          "per_player": [
+            1.0016555454297844,
+            1.0001074903172218,
+            0.9917979943216878,
+            0.9962133564068316
+          ],
+          "per_player_sigma": [
+            0.005271464446795617,
+            0.004701816945104428,
+            0.004169788330295336,
+            0.0048975623357030785
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.7398112258699046,
+          "correction": -0.007632370748976776,
+          "sigma_predictive": 0.0015824203271289738,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.74746125,
+          "p_ground": 0.95278
+        },
+        "zne_linear": {
+          "advantage": 0.7492745492174743
+        }
+      },
+      "ghz|N5|g1.570796|QQQQQ|w0-1-2-3-4": {
+        "topology": "ghz",
+        "N": 5,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "cz_fold1": 14,
+        "classical_ne_payoff": 0.2,
+        "ideal_payoff": 0.7999999999999976,
+        "ideal_advantage": 0.5999999999999976,
+        "mitigated_fold1": {
+          "advantage": 0.5948493285274044,
+          "sigma_predictive": 0.000864879172566542,
+          "per_player": [
+            0.8001537038963317,
+            0.799492557300404,
+            0.788369203986824,
+            0.7837446182780899,
+            0.8024865591753726
+          ],
+          "per_player_sigma": [
+            0.005807356327459056,
+            0.0052582103042072646,
+            0.004251811527681707,
+            0.004505059126515262,
+            0.006193457326707103
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.5829767518067738,
+          "correction": -0.01187257672063054,
+          "sigma_predictive": 0.0016690039373293982,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.5949390000000001,
+          "p_ground": 0.922795
+        },
+        "zne_linear": {
+          "advantage": 0.5979101128148476
+        }
+      },
+      "ring|N3|g1.570796|QQQ|w0-1-2": {
+        "topology": "ring",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 10,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333341,
+        "ideal_advantage": 1.0000000000000009,
+        "mitigated_fold1": {
+          "advantage": 0.9940360025071724,
+          "sigma_predictive": 0.0012030669858915633,
+          "per_player": [
+            1.3303224409480592,
+            1.324763641519161,
+            1.3270219250542963
+          ],
+          "per_player_sigma": [
+            0.012169731293895729,
+            0.012148000163952849,
+            0.012146627131989919
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9855555905638649,
+          "correction": -0.00848041194330753,
+          "sigma_predictive": 0.0018667962749651763,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9914100000000001,
+          "p_ground": 0.415775
+        },
+        "zne_linear": {
+          "advantage": 0.9983042818179038
+        }
+      },
+      "ring|N4|g1.570796|QQQQ|w0-1-2-3": {
+        "topology": "ring",
+        "N": 4,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cz_fold1": 20,
+        "classical_ne_payoff": 0.25,
+        "ideal_payoff": 0.2500000000000001,
+        "ideal_advantage": 1.1102230246251565e-16,
+        "mitigated_fold1": {
+          "advantage": 0.05574468535852811,
+          "sigma_predictive": 0.003073840771441722,
+          "per_player": [
+            0.3034536279260346,
+            0.28653724948879983,
+            0.30255026951641095,
+            0.33043759450286714
+          ],
+          "per_player_sigma": [
+            0.006052703217211981,
+            0.005034192294795583,
+            0.006133533613525043,
+            0.007369490363367359
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.03878386147191305,
+          "correction": -0.01696082388661506,
+          "sigma_predictive": 0.003389108326368322,
+          "extrapolates_beyond_fit": true
+        },
+        "raw_fold1": {
+          "advantage": 0.06920625000000002,
+          "p_ground": 0.00042
+        },
+        "zne_linear": {
+          "advantage": 0.017563514421497062
+        }
+      },
+      "ring|N5|g1.570796|QQQQQ|w0-1-2-3-4": {
+        "topology": "ring",
+        "N": 5,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "cz_fold1": 28,
+        "classical_ne_payoff": 0.2,
+        "ideal_payoff": 0.800000000000001,
+        "ideal_advantage": 0.600000000000001,
+        "mitigated_fold1": {
+          "advantage": 0.5973567191362643,
+          "sigma_predictive": 0.0006208812695737111,
+          "per_player": [
+            0.795863349721665,
+            0.79708094415242,
+            0.802432317118225,
+            0.7981526360197481,
+            0.7932543486692641
+          ],
+          "per_player_sigma": [
+            0.01299968581336079,
+            0.013020441080748986,
+            0.013015685284131391,
+            0.01298730348919008,
+            0.012931252516916139
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.5736115656950033,
+          "correction": -0.02374515344126108,
+          "sigma_predictive": 0.0015566154665135224,
+          "extrapolates_beyond_fit": true
+        },
+        "raw_fold1": {
+          "advantage": 0.5967389999999999,
+          "p_ground": 0.109065
+        },
+        "zne_linear": {
+          "advantage": 0.5988524880513899
+        }
+      },
+      "star|N3|g1.570796|QQQ|w0-1-2": {
+        "topology": "star",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 5,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.3333333333333346,
+        "ideal_advantage": 1.0000000000000013,
+        "mitigated_fold1": {
+          "advantage": 0.9970514235834729,
+          "sigma_predictive": 0.0008471981500683987,
+          "per_player": [
+            1.3326645663262244,
+            1.336002683350935,
+            1.322487021073259
+          ],
+          "per_player_sigma": [
+            0.011852779788525463,
+            0.011914119149569325,
+            0.011818680939919385
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9928112176118191,
+          "correction": -0.004240205971653765,
+          "sigma_predictive": 0.0016599104991417352,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.9943599999999999,
+          "p_ground": 0.42269
+        },
+        "zne_linear": {
+          "advantage": 0.9991151568149701
+        }
+      },
+      "star|N4|g1.570796|QQQQ|w0-1-2-3": {
+        "topology": "star",
+        "N": 4,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cz_fold1": 9,
+        "classical_ne_payoff": 0.25,
+        "ideal_payoff": 1.0000000000000004,
+        "ideal_advantage": 0.7500000000000004,
+        "mitigated_fold1": {
+          "advantage": 0.7482213405564795,
+          "sigma_predictive": 0.0005700086847492557,
+          "per_player": [
+            0.27708981473104993,
+            1.2400358565638752,
+            1.2381328309640733,
+            1.2376268599669196
+          ],
+          "per_player_sigma": [
+            0.008090662237944845,
+            0.0134516955506039,
+            0.013477868502734422,
+            0.013490114808137214
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.7405889698075027,
+          "correction": -0.007632370748976776,
+          "sigma_predictive": 0.0015370322248968054,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.7482074999999999,
+          "p_ground": 0.23733
+        },
+        "zne_linear": {
+          "advantage": 0.7495197814856945
+        }
+      },
+      "star|N4|g1.570796|QQQQ|w1-2-3-0": {
+        "topology": "star",
+        "N": 4,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "cz_fold1": 10,
+        "classical_ne_payoff": 0.25,
+        "ideal_payoff": 1.0000000000000004,
+        "ideal_advantage": 0.7500000000000004,
+        "mitigated_fold1": {
+          "advantage": 0.7484380086709469,
+          "sigma_predictive": 0.0005342410467793555,
+          "per_player": [
+            0.2772675302424795,
+            1.2373154702638145,
+            1.238134104748184,
+            1.2410349294293095
+          ],
+          "per_player_sigma": [
+            0.007948515501925709,
+            0.013498512192964496,
+            0.013508969559562935,
+            0.01348629432344002
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.7399575967276394,
+          "correction": -0.00848041194330753,
+          "sigma_predictive": 0.0015241298027876592,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.7484250000000001,
+          "p_ground": 0.237585
+        }
+      },
+      "star|N4|g1.570796|QQQQ|w3-2-1-0": {
+        "topology": "star",
+        "N": 4,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "cz_fold1": 9,
+        "classical_ne_payoff": 0.25,
+        "ideal_payoff": 1.0000000000000004,
+        "ideal_advantage": 0.7500000000000004,
+        "mitigated_fold1": {
+          "advantage": 0.7484940459878243,
+          "sigma_predictive": 0.0005245900584318191,
+          "per_player": [
+            0.27401516668302256,
+            1.2386341844529496,
+            1.2391901328068062,
+            1.2421367000085186
+          ],
+          "per_player_sigma": [
+            0.007841655421790486,
+            0.013498160260741802,
+            0.013503714084660863,
+            0.013483982072674757
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.7408616752388475,
+          "correction": -0.007632370748976776,
+          "sigma_predictive": 0.0015207737797210822,
+          "extrapolates_beyond_fit": false
+        },
+        "raw_fold1": {
+          "advantage": 0.7484850000000001,
+          "p_ground": 0.2381
+        }
+      },
+      "star|N5|g1.570796|QQQQQ|w0-1-2-3-4": {
+        "topology": "star",
+        "N": 5,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "cz_fold1": 17,
+        "classical_ne_payoff": 0.2,
+        "ideal_payoff": 0.800000000000001,
+        "ideal_advantage": 0.600000000000001,
+        "mitigated_fold1": {
+          "advantage": 0.5980822389820581,
+          "sigma_predictive": 0.0005291730548075874,
+          "per_player": [
+            0.8823074561291301,
+            0.7740529803787435,
+            0.7768431544081118,
+            0.7788669840922189,
+            0.7783406199020859
+          ],
+          "per_player_sigma": [
+            0.013180453211594704,
+            0.012595897025898724,
+            0.012548028798806492,
+            0.012575789188436465,
+            0.012583112991611085
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.5836655386784353,
+          "correction": -0.0144167003036228,
+          "sigma_predictive": 0.0015223607593524084,
+          "extrapolates_beyond_fit": true
+        },
+        "raw_fold1": {
+          "advantage": 0.597369,
+          "p_ground": 0.114225
+        },
+        "zne_linear": {
+          "advantage": 0.5992611189348636
+        }
+      },
+      "w|N3|g1.570796|QQQ|w0-1-2": {
+        "topology": "w",
+        "N": 3,
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "profile": [
+          "Q",
+          "Q",
+          "Q"
+        ],
+        "wiring": [
+          0,
+          1,
+          2
+        ],
+        "cz_fold1": 42,
+        "classical_ne_payoff": 0.3333333333333333,
+        "ideal_payoff": 1.333333333333334,
+        "ideal_advantage": 1.0000000000000007,
+        "mitigated_fold1": {
+          "advantage": 0.9902003013566498,
+          "sigma_predictive": 0.0015391746905373113,
+          "per_player": [
+            1.3448925109220282,
+            1.3095231685086666,
+            1.3161852246392542
+          ],
+          "per_player_sigma": [
+            0.0248663691258497,
+            0.024648633088772652,
+            0.024673382901864545
+          ]
+        },
+        "mitigated_fold1_cz_corrected": {
+          "advantage": 0.9545825711947582,
+          "correction": -0.03561773016189162,
+          "sigma_predictive": 0.002099194342521024,
+          "extrapolates_beyond_fit": true
+        },
+        "raw_fold1": {
+          "advantage": 0.9900150000000003,
+          "p_ground": 0.234795
+        },
+        "zne_linear": {
+          "advantage": 0.9978472736721948
+        }
+      }
+    },
+    "T1_deviation_gaps": [
+      {
+        "position": 0,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "predicted_gap": 0.33096953978245414,
+        "sigma_predictive": 0.027306416398009185,
+        "ideal_gap": 0.3333333333333337,
+        "cooperative_payoff": 1.3305731576257627,
+        "deviator_payoff": 0.9996036178433085
+      },
+      {
+        "position": 1,
+        "profile": [
+          "Q",
+          "H",
+          "Q"
+        ],
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "predicted_gap": 0.3259352696946809,
+        "sigma_predictive": 0.027175913836384798,
+        "ideal_gap": 0.3333333333333337,
+        "cooperative_payoff": 1.3276181016322184,
+        "deviator_payoff": 1.0016828319375375
+      },
+      {
+        "position": 2,
+        "profile": [
+          "Q",
+          "Q",
+          "H"
+        ],
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "predicted_gap": 0.32356436748627093,
+        "sigma_predictive": 0.02722376618863692,
+        "ideal_gap": 0.3333333333333337,
+        "cooperative_payoff": 1.330708292590856,
+        "deviator_payoff": 1.007143925104585
+      }
+    ],
+    "T2_gamma_gap_sweep": [
+      {
+        "position": 0,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "gamma": 0.9424777960769379,
+        "gamma_over_pi": 0.3,
+        "predicted_gap": -0.6937511017728561,
+        "sigma_predictive": 0.031492591408418924,
+        "ideal_gap": -0.7031411751042429,
+        "cooperative_payoff": 1.3320725594922749,
+        "deviator_payoff": 2.025823661265131
+      },
+      {
+        "position": 0,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "gamma": 1.2566370614359172,
+        "gamma_over_pi": 0.4,
+        "predicted_gap": 0.04852598023936405,
+        "sigma_predictive": 0.029386856256163028,
+        "ideal_gap": 0.046858824895754436,
+        "cooperative_payoff": 1.327944811165052,
+        "deviator_payoff": 1.279418830925688
+      },
+      {
+        "position": 0,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "gamma": 1.413716694115407,
+        "gamma_over_pi": 0.45,
+        "predicted_gap": 0.2564292552889158,
+        "sigma_predictive": 0.02793015650785067,
+        "ideal_gap": 0.25991810777606417,
+        "cooperative_payoff": 1.327728321593015,
+        "deviator_payoff": 1.071299066304099
+      },
+      {
+        "position": 0,
+        "profile": [
+          "H",
+          "Q",
+          "Q"
+        ],
+        "gamma": 1.5707963267948966,
+        "gamma_over_pi": 0.5,
+        "predicted_gap": 0.33096953978245414,
+        "sigma_predictive": 0.027306416398009185,
+        "ideal_gap": 0.3333333333333337,
+        "cooperative_payoff": 1.3305731576257627,
+        "deviator_payoff": 0.9996036178433085
+      }
+    ],
+    "T3_wiring_invariance": {
+      "cell": {
+        "topology": "star",
+        "N": 4
+      },
+      "identity_wiring": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "identity_per_player": [
+        0.27708981473104993,
+        1.2400358565638752,
+        1.2381328309640733,
+        1.2376268599669196
+      ],
+      "identity_per_player_sigma": [
+        0.008090662237944845,
+        0.0134516955506039,
+        0.013477868502734422,
+        0.013490114808137214
+      ],
+      "ideal_per_player": [
+        0.2500000000000001,
+        1.2500000000000004,
+        1.2500000000000004,
+        1.2500000000000004
+      ],
+      "permutations": [
+        {
+          "wiring": [
+            1,
+            2,
+            3,
+            0
+          ],
+          "predicted_per_player": [
+            0.2772675302424795,
+            1.2373154702638145,
+            1.238134104748184,
+            1.2410349294293095
+          ],
+          "predicted_max_abs_deviation": 0.0034080694623899177,
+          "threshold": 0.057247766606600366
+        },
+        {
+          "wiring": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "predicted_per_player": [
+            0.27401516668302256,
+            1.2386341844529496,
+            1.2391901328068062,
+            1.2421367000085186
+          ],
+          "predicted_max_abs_deviation": 0.004509840041599045,
+          "threshold": 0.05723660630326906
+        }
+      ]
+    },
+    "T5_ring4_null": {
+      "ideal_payoff": 0.2500000000000001,
+      "ideal_advantage": 1.1102230246251565e-16,
+      "predicted_raw_advantage": 0.06920625000000002,
+      "predicted_zne_advantage": 0.017563514421497062
+    }
+  }
+}

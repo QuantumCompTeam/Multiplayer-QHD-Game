@@ -1,0 +1,51 @@
+# Item 15 phase 2. Phase-1 survey (TODOS.md, 2026-07-19): core.autocrlf=true set
+# at SYSTEM level on the author's machine, no .gitattributes in the repo, and of
+# the 50 tracked files under results/ 34 are all-CRLF text and 16 binary, with
+# zero mixed-ending files on disk.
+#
+# Without this file, what lands in a commit depends on each contributor's
+# personal core.autocrlf. That is the reproducibility hazard behind G20
+# (committed artifacts have come from interpreters on different operating
+# systems). Declaring it here makes normalisation a property of the REPO rather
+# than of whoever happens to be committing.
+
+# Default: git decides text vs binary, and stores text as LF in the index.
+# Working-copy endings still follow the platform on checkout.
+* text=auto
+
+# Evidence artifacts are byte-compared across machines and quoted line-by-line
+# in docs/VERIFIED-FACTS.md, so pin them to LF in the working copy too. A
+# result.json must hash the same on Windows and Linux.
+results/**/*.json  text eol=lf
+results/**/*.md    text eol=lf
+results/**/*.csv   text eol=lf
+results/**/*.yaml  text eol=lf
+
+# Source and docs: LF everywhere, so diffs never turn into whole-file rewrites.
+*.py    text eol=lf
+*.md    text eol=lf
+*.tex   text eol=lf
+*.bib   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.json  text eol=lf
+*.sh    text eol=lf
+*.toml  text eol=lf
+*.cfg   text eol=lf
+
+# Never touch these.
+*.png   binary
+*.pdf   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pyc   binary
+*.npy   binary
+*.npz   binary
+
+# NOTE: existing tracked files are deliberately NOT renormalised here. Running
+# `git add --renormalize .` would rewrite ~34 committed result artifacts in one
+# commit purely to change line endings. Those files are evidence; churning their
+# bytes for cosmetics buries the runs that produced them in the history. The
+# rules above govern everything committed from now on. If a full renormalisation
+# is ever wanted, do it as its own commit that touches nothing else.

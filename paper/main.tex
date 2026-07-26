@@ -19,7 +19,7 @@ $N$-Player Trading Games:\\ Simulation Landscape and Hardware Validation}
 \IEEEauthorblockA{VIT Vellore\\prithviraghu080706@gmail.com}
 \and
 \IEEEauthorblockN{Aasa Singh Bhui}
-\IEEEauthorblockA{VIT Vellore}
+\IEEEauthorblockA{VIT Vellore\\aasasingh2005@gmail.com}
 }
 
 \begin{document}
@@ -47,16 +47,27 @@ setting produced a beneficial converged fairness repair. Third, on an IBM Heron 
 (ibm\_fez), a scaling
 experiment at $N=3,4,5$ on one pinned qubit chain retains
 99.4\%/98.7\%/98.1\% of the ideal advantage $3/N$ after readout mitigation and
-zero-noise extrapolation. For the registration-source execution, a single
+zero-noise extrapolation, and a registered extension reaches $N{=}7$ at
+$98.1\%$ of ideal with state fidelity already down to $0.78$. A registered
+49-pub multi-topology batch puts the topology, equilibrium and fairness claims
+on device: all twelve runnable topology$\times N$ cells retain
+$97.9$--$99.6\%$ of their own ideal advantage; all three unilateral Hawk
+deviations at GHZ $N{=}3$ return positive gaps, establishing the
+restricted-menu equilibrium on hardware; and a wiring permutation that
+reassigns players to different physical qubits leaves the star $N{=}4$ hub's
+disadvantage intact, so position-locked unfairness is a property of the
+entanglement topology rather than of qubit allocation. For the registration-source execution, a single
 depolarizing parameter fitted to the $N{=}3$ point misses the registered
 mitigated-fold-1 endpoints at $N{=}4$ by $0.0043$ ($2.14\sigma$) and at
 $N{=}5$ by $0.0101$ ($5.17\sigma$); these source-run residuals are
 retrospective. The same-sign $N{=}5$ deficit recurs in the prospective repeat,
 although sign reproduction was not itself a registered test. The
-CZ-exponential baseline is the lowest-scoring of five registered candidates in
-both same-recorded-calibration executions, but it misses $N{=}5$ outside the
-shared comparison yardstick in both; the ranking is not yet a physical scaling
-law. The mean-payoff observable
+CZ-exponential baseline carries the best score of five registered candidates in
+all three executions at $N\le5$, but it misses $N{=}5$ outside the
+shared comparison yardstick, and in the registered $N{=}6,7$ extension both it
+and the depolarizing model fail their registered tests while the ranking
+between them inverts at $N{=}7$; the ranking is not a physical scaling law and
+does not extrapolate. The mean-payoff observable
 is first-order insensitive to single bit-flips, so the advantage decays several
 times slower than state fidelity --- a structural robustness with direct
 consequences for quantum market design.
@@ -414,6 +425,16 @@ per-player spread to $\sim0$. The disadvantage therefore follows the
 entangler's \emph{circuit position} (gate ordering), not the ideal state or
 the player identity.
 
+This is now confirmed on hardware. A registered wiring-permutation control on
+the star at $N{=}4$ (Sec.~\ref{sec:hwtopology},
+Fig.~\ref{fig:hwtopology}C) reassigns players to different physical qubits and
+moves the measured per-player payoff vector by at most $0.035$, inside the
+registered threshold, while the hub--leaf split itself
+($\approx 0.34$ against $\approx 1.21$) is unchanged. The simulation result
+above says the disadvantage is not carried by the player label; the hardware
+result adds that it is not carried by the \emph{qubit} either. What remains is
+the graph position.
+
 An exploratory W-state pilot at $N{=}4$ tested one provisional independent
 round-robin best-response rule. No tested setting produced a beneficial
 converged fairness repair: at $p=0$ the dynamics reached the 50-round cap
@@ -567,17 +588,177 @@ prospective registered repeat: its conditional $N=4$ endpoint passes and
 its $N=5$ endpoint misses by $0.0092$ ($4.74\sigma$). The repeated deficit
 sign is observational, not a registered sign test.
 
-The CZ-exponential baseline is the
-lowest-scoring of the five registered candidates in both
-same-recorded-calibration executions. It nevertheless
-misses $N=5$ outside the shared 95\% comparison yardstick in both runs; that
+The CZ-exponential baseline carries the smallest mean $|z|$ --- the best score
+--- of the five registered candidates in all three executions, including the
+cross-day repeat. It nevertheless
+misses $N=5$ outside the shared 95\% comparison yardstick in every run; that
 yardstick is for ranking, not a model-specific calibrated interval.
-Cross-day executions and model-specific predictive uncertainties are needed
-before interpreting the ranking as a physical scaling law.
+\textbf{That ranking is specific to $N\le 5$}: in the registered $N=6,7$
+extension (Sec.~\ref{sec:n67}) the CZ-exponential law loses to the depolarizing
+model at $N{=}7$ and both fail their registered tests, so the ranking is not a
+physical scaling law and does not extrapolate.
+Model-specific predictive uncertainties, and further cross-day executions,
+remain needed.
 % registered: results/hardware-scaling/preregistration.json and
 % preregistration-baselines.json; outcomes:
 % results/hardware-scaling/repeat-judgments.json
 % (run 1: cz 10.0 vs p_eff 31.3; run 2: cz 7.4 vs p_eff 23.4)
+
+\subsection{Extension to $N=6,7$}\label{sec:n67}
+% results/hardware-scaling/2026-07-25T180549Z/ (job d9if010gk0ls73f4avkg)
+% registered: results/hardware-scaling/preregistration-n67.json (commit 8d1e5d1)
+% judged: results/hardware-scaling/2026-07-25T180549Z/judgments-n67.json
+% finding: docs/findings/2026-07-25-scaling-n67-run1.md
+A later execution extends the curve to $N=3,\ldots,7$ on one pinned seven-qubit
+chain $[97,107,108,109,110,111,98]$ (17 pubs, 20 QPU-seconds). The chain was
+written into the registration and held at submission, so the executed qubits
+provably match the ones the predictions describe. Measured mitigated fold-1
+advantage retains $99.2\%$, $97.5\%$, $97.3\%$, $96.3\%$ and $98.1\%$ of the
+ideal $3/N$ at $N=3,\ldots,7$ while $P(\ket{0\ldots0})$ falls from $0.943$ to
+$0.784$: \textbf{the advantage survives to seven players at $98\%$ of ideal
+with the state fidelity already down to $0.78$}, which is the
+first-order-insensitivity mechanism operating across the full curve.
+
+Two competing one-parameter models were registered before submission, both
+fitted on the same $N{=}3$ point and extrapolated with no $N>3$ information: the
+depolarizing $p_{\mathrm{eff}}$ model and the CZ-exponential retention law
+$A_N = A^{\mathrm{ideal}}_N r^{\,\mathrm{cz}_N}$. \emph{Both failed the
+registered $1.96\sigma$ test at $N=6,7$}, and they failed differently: the
+depolarizing model over-predicts at every $N$, while the CZ-exponential model
+over-predicts at $N=4,5,6$ and then under-predicts at $N=7$. A one-parameter
+retention law fitted at $N{=}3$ cannot reproduce that curvature.
+
+The registered model race also split: the CZ-exponential law is closer at
+$N=4,5,6$ but the depolarizing model is closer at $N=7$. \textbf{The
+CZ-exponential ranking reported below therefore does not extrapolate past
+$N{=}5$}, and we scope it accordingly. Finally, measured advantage is strictly
+decreasing in $N$ (the registered monotonicity check), but \emph{retention} is
+not: $N{=}7$ keeps more of its ideal advantage than $N=4,5,6$ despite carrying
+the most gates and the lowest fidelity, and its ZNE estimate overshoots the
+noiseless ideal ($0.4437$ against $0.4286$), which no physical noise model can
+produce. We report this as an unexplained observation rather than a result;
+distinguishing payoff geometry at odd $N$ from an end-of-chain qubit effect or
+an extrapolation artefact requires the cross-day repeats that remain pending.
+
+\subsection{Topology, equilibrium and fairness on device}\label{sec:hwtopology}
+% results/hardware-topology/2026-07-25T114621Z/ (job d9ia1pd0k0jc738jaqgg)
+% registered: results/hardware-topology/preregistration.json (commit 46f43d4)
+% judged: .../judgments.json; finding: docs/findings/2026-07-25-topology-hardware-run1.md
+The experiments above are all GHZ. To put the paper's topology, equilibrium and
+fairness claims on device data we ran a single 49-pub batch (4096 shots,
+55 QPU-seconds) spanning five entangler topologies, unilateral strategy
+deviations, wiring permutations and an entanglement-angle sweep, with all
+predictions registered before submission. Cells were selected from
+\emph{measured} routed \textsc{cz} counts on the real coupling map rather than
+from pre-routing gate counts: on heavy-hex hardware the two differ sharply, and
+fully-connected $N{=}5$ ($67$ \textsc{cz}) and W $N{=}4,5$ ($107$, $219$) were
+excluded on that basis.
+
+\begin{table}[t]
+\centering
+\caption{Multi-topology batch on ibm\_fez (job \texttt{d9ia1pd0k0jc738jaqgg},
+4096 shots, one pinned qubit set). Retention is measured mitigated fold-1
+advantage as a fraction of \emph{that cell's own} noiseless advantage, which is
+not $3/N$ for every topology.}
+\label{tab:topology}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+topology & $N$ & cz & ideal adv & measured & retention\\
+\midrule
+GHZ             & 3 &  6 & 1.0000 & 0.9886 & 98.9\%\\
+GHZ             & 4 &  9 & 0.7500 & 0.7425 & 99.0\%\\
+GHZ             & 5 & 14 & 0.6000 & 0.5921 & 98.7\%\\
+ring            & 3 & 10 & 1.0000 & 0.9899 & 99.0\%\\
+ring            & 4 & 20 & 0.0000 & 0.0894 & ---\\
+ring            & 5 & 28 & 0.6000 & 0.5960 & 99.3\%\\
+star            & 3 &  5 & 1.0000 & 0.9934 & 99.3\%\\
+star            & 4 &  9 & 0.7500 & 0.7423 & 99.0\%\\
+star            & 5 & 17 & 0.6000 & 0.5977 & 99.6\%\\
+fully-conn.     & 3 & 10 & 1.0000 & 0.9887 & 98.9\%\\
+fully-conn.     & 4 & 31 & 0.7500 & 0.7389 & 98.5\%\\
+W               & 3 & 42 & 1.0000 & 0.9792 & 97.9\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{hardware_topology.pdf}
+  \caption{Multi-topology EWL batch on ibm\_fez (job
+  \texttt{d9ia1pd0k0jc738jaqgg}), 49 pubs $\times$ 4096 shots on one pinned
+  qubit set, all predictions registered before submission.
+  \textbf{(A)} Measured mitigated fold-1 advantage as a percentage of each
+  cell's \emph{own} noiseless advantage; every cell retains $97.9$--$99.6\%$.
+  ring $N{=}4$ carries no percentage because its noiseless advantage is exactly
+  zero --- its ideal circuit is deterministic on $\ket{1\ldots1}$, so the
+  $+0.089$ it measures is created by decoherence, and zero-noise extrapolation
+  correctly pulls it back toward zero ($+0.037$).
+  \textbf{(B)} Unilateral Hawk deviation gaps
+  $\pi_k(Q,Q,Q)-\pi_k(H\text{ at }k)$ at GHZ $N{=}3$: all three are positive,
+  so no deviation pays and the restricted-menu equilibrium holds on hardware.
+  \textbf{(C)} star $N{=}4$ per-player payoffs under three wirings. The hub
+  earns $\approx 0.34$ while each leaf earns $\approx 1.21$, and permuting
+  players across physical qubits does not move the pattern: the disadvantage is
+  locked to the graph position, not to the qubit.}
+  \label{fig:hwtopology}
+\end{figure*}
+
+Every cell retains $97.9$--$99.6\%$ of its own ideal advantage
+(Table~\ref{tab:topology}, Fig.~\ref{fig:hwtopology}A), including W $N{=}3$ at
+$42$ \textsc{cz} --- seven times the gate count of GHZ $N{=}3$. The
+mechanism therefore is not a GHZ artefact: ring $N{=}5$ and star $N{=}5$ sit at
+$P(\ket{0\ldots0}) \approx 0.10$--$0.11$, states that are wrecked by any
+fidelity measure, and still retain over $99\%$ of their advantage. The
+topology axis does not separate these systems by how much advantage they retain;
+it separates them by \emph{structure}, as the next two results show.
+
+\paragraph{The restricted-menu equilibrium holds on hardware}
+At GHZ $N{=}3$ the three unilateral Hawk deviation gaps measure $+0.2895$,
+$+0.2726$ and $+0.3512$ (Fig.~\ref{fig:hwtopology}B), all positive and many
+standard errors clear of zero. This was a registered test and it passed at every
+deviating position: the $(Q,Q,Q)$ profile is a pure Nash equilibrium in the
+restricted menu $\{D,H,Q_N\}$ on the device, not only in simulation. It remains
+\emph{not} a full-SU(2) equilibrium claim.
+
+A registered sweep of the same gap in the entanglement angle changes sign as
+predicted: $-0.6877$ at $\gamma=0.30\pi$ and $+0.2467$ at $\gamma=0.45\pi$. The
+intermediate point $\gamma=0.40\pi$ was registered in advance as marginal and
+excluded from the pass criterion; it returned $+0.0067$, statistically
+indistinguishable from zero. Entanglement strength is therefore what converts
+the cooperative profile into an equilibrium, measured on hardware, with the
+transition bracketed near $\gamma=0.4\pi$ at $N{=}3$.
+
+\paragraph{Position-locked unfairness is a property of the topology}
+star $N{=}4$ is maximally unequal even noiselessly: the analytic per-player
+vector is $(0.25,1.25,1.25,1.25)$, the hub being the loser. On device the
+measured vector is $(0.353,1.202,1.212,1.202)$, and under two wiring
+permutations that reassign players to different physical qubits it moves by at
+most $0.035$ (Fig.~\ref{fig:hwtopology}C) --- inside the registered threshold.
+The registered null therefore holds: \textbf{the disadvantaged position is
+determined by the entanglement topology, not by which physical qubit a player
+was allocated}. This is the hardware control that the position-locked
+unfairness claim of Sec.~\ref{sec:noise} previously lacked.
+
+\paragraph{A cell whose advantage is made of noise}
+ring $N{=}4$ is the one cell whose noiseless circuit is deterministic on
+$\ket{1\ldots1}$ --- the all-Hawk outcome --- so its ideal advantage is exactly
+zero. It measured $+0.089$, the smallest of the twelve cells but clearly
+positive, and zero-noise extrapolation pulled it back to $+0.037$. All three
+parts of that were registered in advance. A pipeline that merely inflated
+whatever it touched could not produce a cell where decoherence \emph{creates}
+apparent advantage and the extrapolation correctly removes it.
+
+\paragraph{What did not work}
+The registered per-cell predictions of \emph{absolute} advantage failed, in
+both the raw device-noise-model form and a CZ-linear bias-corrected form, and
+that comparison is additionally confounded: the provider recalibrated between
+registration and submission and the qubit selector moved the pinned set, so
+those $z$-scores mix model error with a change of qubits. The five results
+above are unaffected because each is a within-job differential --- a payoff
+difference between two profiles measured on the same qubits in the same job, a
+permutation against its own twin, or one cell ranked against the other eleven.
+Absolute-magnitude prediction of NISQ payoffs from a device noise model remains
+out of reach here; the structural claims do not depend on it.
 
 \subsection{Why the advantage outlives the state}
 Ground-state probability decays several times faster than the advantage
@@ -663,28 +844,48 @@ measurable advantage over the analytic classical baseline on the same device
 ($0.739 / 0.584$ of the ideal $0.75 / 0.60$).
 % results/hardware-scaling/2026-07-16T074134Z and 2026-07-17T014458Z
 The dichotomy --- equilibrium at $N{=}3$, cooperative profile beyond --- is
-real, and it is a feature of the game, not a defect of the experiment.
+real, and it is a feature of the game, not a defect of the experiment. The
+$N{=}3$ equilibrium is now established on device rather than inferred from it:
+a registered test of all three unilateral Hawk deviations returned positive
+gaps ($+0.2895$, $+0.2726$, $+0.3512$), so no deviation pays on hardware.
+% results/hardware-topology/2026-07-25T114621Z/judgments.json (T1 PASS)
+The curve also extends to $N{=}7$, where the cooperative advantage still
+retains $98.1\%$ of its ideal while state fidelity has fallen to $0.78$.
+% results/hardware-scaling/2026-07-25T180549Z/ (job d9if010gk0ls73f4avkg)
 
 Three structural findings carry the design weight. First, the mean-payoff
 observable is first-order insensitive to single bit-flips, so the advantage
 decays several times slower than the state fidelity: quantum market
-mechanisms degrade gracefully on NISQ devices. Second, the same flip terms
-that spare the mean concentrate loss on individual players. In one exploratory
+mechanisms degrade gracefully on NISQ devices, and this holds across five
+entangler topologies, not only GHZ --- ring and star at $N{=}5$ sit at
+$P(\ket{0\ldots0})\approx0.10$ and still retain over $99\%$ of their advantage.
+Second, the same flip terms
+that spare the mean concentrate loss on individual players, and that loss is
+locked to the \emph{graph position}: a registered wiring permutation on star
+$N{=}4$ reassigns players to different physical qubits and leaves the hub's
+disadvantage intact. In one exploratory
 W $N{=}4$ finite-round pilot, the provisional rule reached the 50-round cap
 without convergence at $p{=}0$, and no tested setting produced a beneficial
 converged fairness repair; this result does not generalize to the W $N{=}5$ or
-ring $N{=}5$ systems. Third, the CZ-exponential baseline is the lowest-scoring
-registered candidate in both
-scaling executions, but its $N{=}5$ misses and the shared ranking yardstick do
-not establish a physical scaling law; cross-day executions and model-specific
-predictive uncertainties remain necessary.
+ring $N{=}5$ systems. Third, the CZ-exponential baseline carries the best
+registered score in all three
+scaling executions at $N\le5$, but its $N{=}5$ misses and the shared ranking
+yardstick do not establish a physical scaling law --- and in the registered
+$N{=}6,7$ extension it loses to the depolarizing model at $N{=}7$ while both
+models fail their registered tests. The ranking does not extrapolate.
 % results/hardware-scaling/repeat-judgments.json
+% results/hardware-scaling/2026-07-25T180549Z/judgments-n67.json (T3 SPLIT)
 
 The limitations are the same honesty notes threaded through the text: the
 $N{=}4,5$ curve measures a fixed cooperative protocol, not an equilibrium;
-the two scaling executions provide same-recorded-calibration repeatability,
-not cross-day uncertainty; and the adaptation evidence is limited to one
-exploratory W $N{=}4$ finite-round pilot using a provisional rule. Within those
+two of the three scaling executions share one recorded calibration, so cross-day
+uncertainty rests on two distinct days rather than the registered target of
+three to five; the adaptation evidence is limited to one
+exploratory W $N{=}4$ finite-round pilot using a provisional rule; and
+\emph{no} registered model predicted absolute advantage magnitudes
+successfully at any $N$, so the quantitative noise models here are descriptive
+rather than predictive. The structural claims above are differential
+measurements and do not depend on them. Within those
 bounds the design implication is concrete ---
 entanglement topology is a market-design variable whose noise cost is budgeted per
 two-qubit gate, and its benefit should be read at the per-player floor.
