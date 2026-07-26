@@ -1,7 +1,49 @@
 # Project Status — one page (re-orient in 60 s)
 
-**Last updated:** 2026-07-25 (dev @ f20521f, pushed to fork/dev). Read first
-when returning cold.
+**Last updated:** 2026-07-26 (dev @ the plotter/paper commit, pushed to
+fork/dev; PR #19 open into `QuantumCompTeam/dev`). Read first when returning
+cold.
+
+## Head of the line (2026-07-26)
+
+**Item 3's registered target is met, and Fig. 6 is a real cross-calibration
+figure for the first time.** Repeat run 4 (`2026-07-26T090122Z`, job
+`d9isp42br2fc73e55pvg`, ~35 QPU-s) landed on a distinct calibration stamp
+(`2026-07-26 13:29:01+05:30`), taking item 3 to **3 of the registered 3–5**.
+
+- **There was never a multi-day wait.** The registered criterion is a differing
+  calibration *stamp*; ibm_fez recalibrates several times a day.
+- **`hardware_scaling.py` does NOT have `resolve_pinned_set`** — that fix
+  (`f20521f`) landed only in `hardware_topology.py`, and the scaling
+  registration records no pinned set. Left alone, `find_chain` would have taken
+  `[58,71,70,69,68]`, a *fourth* chain. Run 4 used the pre-existing `--chain`
+  flag to hold `[59,75,74,73,79]`, so the script stays byte-comparable for
+  `--from-job` recovery of runs 1–3.
+- **Chain-matching, not count, is now the binding constraint.** Only 2 of the 3
+  epochs are on the anchor chain (run 3 took `[20,21,22,23,24]`). A third
+  chain-matched epoch needs one more run after the next recalibration.
+- **Both registered conditional tests FAIL on run 4** (N=4 z=−5.68, N=5
+  z=−9.55) and the N=5 same-signed deficit reproduces **3 of 3**. Its magnitude
+  is *not* stable across epochs — 0.0092 to 0.0186, a factor of two — which is
+  now stated in the paper.
+- **`plot_hardware_scaling.py` had two defects, now fixed.** It aggregated every
+  dir with a `result.json`, folding the N=6,7 run that the judge *excludes* into
+  the N=3,4,5 curve; and it reported first-run chain and job id as if they
+  covered the aggregate. Selection now matches the judge and prints every
+  exclusion. Error bars are cross-*epoch*, with same-stamp runs averaged first.
+- **Item 10 caveat 2 closed** (`docs/findings/2026-07-26-t9-caveat2-n5-ring.md`):
+  W N=5 reproduces W N=4; ring N=5 never converges at any p and fails in the
+  *opposite* direction, spreading a perfectly fair baseline apart at exactly
+  conserved mean welfare, most strongly at zero noise. Both caveats the pilot
+  raised against itself are now tested and neither is supported. Sign-off is
+  still Aasa's.
+- **A paper claim was wrong, not just stale, and is corrected.** The text said
+  the N=7 anomaly needs "the cross-day repeats that remain pending". It does
+  not: item 3 repeats N=3,4,5 and Task 9 repeats the topology batch, so neither
+  re-runs N=6,7. Settling it needs a dedicated `--ns 3,4,5,6,7` submission.
+- **Paper is now 10 pages** (was 9) — the honesty additions cost about a page,
+  against a typical IEEE QCE limit of 8. Venue is still Prithvi's call.
+- **Quota:** 157 QPU-s all time, 155 in July.
 
 ## Head of the line (2026-07-25)
 

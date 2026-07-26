@@ -53,9 +53,20 @@ The compiled `main.pdf` is an evidence-preserving review draft, not a submission
   because the selector re-ran against fresh calibration. Runs since then hold
   the registered qubits explicitly. Any comparison across artifacts must check
   the pinned set, not only the date.
-- Existing Figure 6 error bars are the two-point sample SD and do not include
-  within-run uncertainty; a future cross-day figure should separate within-run
-  and between-day uncertainty.
+- ~~Existing Figure 6 error bars are the two-point sample SD and do not include
+  within-run uncertainty.~~ **Fixed 2026-07-26.** Figure 6 is now a genuine
+  cross-calibration aggregate: three executions in **two distinct calibration
+  epochs**, all on chain `[59,75,74,73,79]`, with executions sharing a
+  calibration stamp averaged into one point before the spread is taken. The bars
+  still exclude within-run multinomial and weighted-fit error, so they are a
+  stated lower bound rather than a total-uncertainty estimate.
+- **`scripts/plot_hardware_scaling.py` had two defects that corrupted the
+  aggregate; both fixed 2026-07-26.** It aggregated every directory containing a
+  `result.json`, which folded the `N=3..7` extension into the `N=3,4,5` curve
+  even though `judge_repeat_run.py` excludes it explicitly; and it reported
+  chain and job id from the first run as if they covered the aggregate, emitting
+  a caption asserting one chain for runs that used three. Selection now matches
+  the judge, and every exclusion is printed.
 
 ## Hardware evidence: resolved 2026-07-25
 
@@ -76,17 +87,31 @@ The compiled `main.pdf` is an evidence-preserving review draft, not a submission
 
 ## Hardware evidence still in progress
 
-- **Cross-day executions: 2 of the registered 3--5 distinct calibration days.**
-  Three scaling runs exist but runs 1 and 2 share one calibration stamp (run 2
-  carries `distinct_calibration_vs_previous_runs: false`). Figure 6's error bars
-  are still the two-point sample SD and still are not a cross-day estimate; that
-  replacement is blocked on further distinct days, not on code.
-- Make the repeat judge consume the submission-time calibration snapshot or document a manual verification step.
-- **The N=7 retention anomaly is unexplained.** Retention is non-monotone
-  (99.2/97.5/97.3/96.3/98.1%) and the `N=7` ZNE estimate overshoots the
-  noiseless ideal, which no physical noise model can do. Reported in the text as
-  an observation, not a result. Needs repeats before it is either explained or
-  promoted.
+- **Cross-calibration executions: 3 of the registered 3--5 — the minimum is
+  met.** Four scaling runs exist; runs 1 and 2 share one calibration stamp, so
+  the distinct stamps are 2026-07-16 08:30:13, 2026-07-25 08:15:48 and
+  2026-07-26 13:29:01. **The binding constraint is now chain-matching, not
+  count:** only 2 of the 3 epochs ran on `[59,75,74,73,79]`, because run 3 took
+  `[20,21,22,23,24]` from live calibration. `hardware_scaling.py` has no
+  `resolve_pinned_set` (that fix landed only in `hardware_topology.py`) and its
+  registration records no pinned set, so run 4 was submitted with an explicit
+  `--chain`. A third chain-matched epoch needs one further run after the next
+  recalibration.
+- **The `N=5` deficit magnitude is not stable across epochs** (0.0092 to 0.0186,
+  a factor of two), which is now stated in Sec. IV and the limitations. The
+  same-signed reproduction is 3 of 3.
+- ~~Make the repeat judge consume the submission-time calibration snapshot.~~
+  Done — it prefers `calibration_at_submit.json` and records the source per run;
+  the figure now reads the same stamp for its epoch grouping.
+- **The N=7 retention anomaly is unexplained, and neither repeat track will
+  settle it.** Retention is non-monotone (99.2/97.5/97.3/96.3/98.1%) and the
+  `N=7` ZNE estimate overshoots the noiseless ideal, which no physical noise
+  model can do. Reported in the text as an observation, not a result. **The
+  paper previously said this needed "the cross-day repeats that remain pending";
+  that was wrong and is corrected.** Item 3 re-executes the registered
+  `N=3,4,5` batch and plan Task 9 re-executes the topology batch — neither
+  re-runs `N=6,7`. Settling it requires a dedicated
+  `--ns 3,4,5,6,7 --chain-len 7` submission, which has not been run.
 - **No registered model predicts absolute advantage magnitude.** Both the
   device-noise model and the CZ-exponential law failed their registered tests at
   `N=6,7`, and the topology batch's per-cell predictions failed and were
@@ -94,7 +119,8 @@ The compiled `main.pdf` is an evidence-preserving review draft, not a submission
   The paper now says this explicitly and scopes the five-model ranking to
   `N <= 5`. If a reviewer asks for predictive noise modelling, the honest answer
   is that we do not have it.
-- Regenerate the scaling figure and any cross-day uncertainty summary only after new repository artifacts exist.
+- ~~Regenerate the scaling figure and any cross-day uncertainty summary only after new repository artifacts exist.~~ Done 2026-07-26 against run 4; `paper/figs/hardware_scaling.pdf` now comes from `results/hardware-scaling/2026-07-26T090122Z/plots/`.
+- **Page count is now 10, against a typical IEEE QCE limit of 8.** The 2026-07-26 honesty additions (Fig. 6 caption, the T9 robustness checks, the corrected `N=7` resolution path, the deficit-stability statement) cost roughly one page. The `N=6,7` subsection remains the most compressible block if the venue is confirmed at 8.
 
 ## Submission checks
 
