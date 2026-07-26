@@ -41,6 +41,8 @@ from experiment.topology_registry import canonical  # noqa: E402
 
 GAIN_TOL = 1e-4  # residual unilateral gain below this after a full pass => converged
 MAX_ROUNDS = 50  # generous cap; reaching it => honest non-convergence
+# --rounds overrides it. Reaching the cap is reported as non-convergence
+# either way, so a smaller budget can only ever UNDER-claim convergence.
 
 
 def adapt_precise(topology, N, p):
@@ -53,7 +55,7 @@ def adapt_precise(topology, N, p):
     history = []
     for rnd in range(1, MAX_ROUNDS + 1):
         rounds = rnd
-        profile, gain = t9.best_response_round(profile, topology, N, p, rnd == 1)
+        profile, gain = t9.br_round(profile, topology, N, p, rnd == 1)
         probs = build_ewl_circuit_noisy(
             N, profile, topology=topology, gamma=GAMMA, p=p
         )
@@ -74,8 +76,8 @@ def adapt_precise(topology, N, p):
 
 def run_config(topology, N, p):
     print(f"=== T9 precise rerun: topology={topology} N={N} p={p:g} "
-          f"(V={V:g}, C={C:g}, gamma=pi/2, reverse_order={t9.REVERSE_ORDER}) ===",
-          flush=True)
+          f"(V={V:g}, C={C:g}, gamma=pi/2, rule={t9.RULE}, "
+          f"reverse_order={t9.REVERSE_ORDER}) ===", flush=True)
 
     baseline = t9.noisy_payoffs([q_strategy(N)] * N, topology, N, p)
     mean_b, spread_b = float(baseline.mean()), float(baseline.max() - baseline.min())
@@ -95,7 +97,7 @@ def run_config(topology, N, p):
     status = ("converged" if converged
               else f"DID NOT CONVERGE (residual gain still >= {GAIN_TOL:g} "
                    f"at the {MAX_ROUNDS}-round cap)")
-    print(f"Adapted (independent best response, provisional rule): {status} "
+    print(f"Adapted ({t9.RULE} best response, provisional rule): {status} "
           f"after {rounds} round(s); residual max unilateral gain={residual:.2e}")
     print(f"  {np.round(adapted, 6)}")
     print(f"  mean={mean_a:.6f}  spread={spread_a:.6f}")
@@ -124,33 +126,56 @@ def run_config(topology, N, p):
 
 
 def main():
-    flags = {"--reverse-order"}
-    args = [a for a in sys.argv[1:] if a not in flags]
+    raw = sys.argv[1:]
     t9.FAST = False
-    t9.REVERSE_ORDER = "--reverse-order" in sys.argv[1:]
+    t9.REVERSE_ORDER = "--reverse-order" in raw
+    global MAX_ROUNDS
+    if "--rounds" in raw:
+        i = raw.index("--rounds")
+        if i + 1 >= len(raw):
+            sys.exit("--rounds needs a value")
+        MAX_ROUNDS = int(raw[i + 1])
+        raw = raw[:i] + raw[i + 2:]
+    if "--rule" in raw:
+        i = raw.index("--rule")
+        if i + 1 >= len(raw):
+            sys.exit("--rule needs a value: round-robin | simultaneous")
+        t9.RULE = raw[i + 1]
+        if t9.RULE not in ("round-robin", "simultaneous"):
+            sys.exit(f"unknown --rule {t9.RULE!r}")
+        raw = raw[:i] + raw[i + 2:]      # strip the flag AND its value
+    args = [a for a in raw if a != "--reverse-order"]
     topology = args[0] if len(args) > 0 else "w"
     N = int(args[1]) if len(args) > 1 else 4
     if len(args) != 3:
-        sys.exit("usage: t9_precise_rerun.py TOPOLOGY N P [--reverse-order]")
+        sys.exit("usage: t9_precise_rerun.py TOPOLOGY N P [--reverse-order] "
+                 "[--rule round-robin|simultaneous] [--rounds K]")
     p = float(args[2])
 
     result = run_config(topology, N, p)
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
-    suffix = f"p{p:g}" + ("-rev" if t9.REVERSE_ORDER else "")
+    suffix = (f"p{p:g}" + ("-rev" if t9.REVERSE_ORDER else "")
+              + ("-simul" if t9.RULE == "simultaneous" else ""))
     outdir = os.path.join("results", "t9-pilot", f"precise-{stamp}-{suffix}")
     os.makedirs(outdir, exist_ok=True)
     with open(os.path.join(outdir, "results.json"), "w", encoding="utf-8") as f:
         json.dump({"config": {"topology": topology, "N": N, "ps": [p],
                               "V": V, "C": C, "gamma": GAMMA, "fast_mode": False,
                               "reverse_order": t9.REVERSE_ORDER,
-                              "gain_tol": GAIN_TOL, "max_rounds": MAX_ROUNDS,
-                              "stopping_rule": "converged when a full round-robin "
-                                               "pass has max unilateral gain < "
-                                               "gain_tol; else stop at max_rounds "
-                                               "and report non-convergence",
-                              "rule": "independent round-robin best response "
-                                      "(provisional)"},
+                              # One key each. This dict previously carried TWO
+                              # "rule" entries and TWO "max_rounds" entries; the
+                              # later literal silently won, so every artifact
+                              # claimed round-robin regardless of what ran.
+                              "rule": t9.RULE,
+                              "rule_note": ("independent best response, "
+                                            "provisional pending review"),
+                              "max_rounds": MAX_ROUNDS,
+                              "gain_tol": GAIN_TOL,
+                              "stopping_rule": "converged when a full pass has "
+                                               "max unilateral gain < gain_tol; "
+                                               "else stop at max_rounds and "
+                                               "report non-convergence"},
                    "results": [result]}, f, indent=2)
     print(f"\nSaved: {outdir}/results.json")
 

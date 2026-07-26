@@ -65,8 +65,31 @@ recover with `--from-job <id>`.
   `calibration_at_submit.json`; use that stamp for cross-day counting, not
   the analysis-time `calibration.json` (G15).
 
-**Why:** One calibration day = one sample; IEEE-QCE reviewers expect run-to-run
+**Why:** One calibration epoch = one sample; IEEE-QCE reviewers expect run-to-run
 variance. 3–5 repeats ≈ 15% of the monthly open-plan quota.
+
+**This is NOT a multi-day wait (observed 2026-07-26).** The registered criterion
+above is a *differing calibration stamp*, not a differing calendar date, and
+ibm_fez recalibrates several times per day. Three distinct stamps were observed
+on 2026-07-25 alone:
+
+| stamp (+05:30) | seen at |
+|---|---|
+| 2026-07-25 08:15:48 | topology registration |
+| 2026-07-25 16:05:46 | topology submission (job d9ia1pd0k0jc738jaqgg) |
+| 2026-07-25 22:32:49 | N=6,7 submission (job d9if010gk0ls73f4avkg) |
+
+That drift is real, not cosmetic — it moved the selector's chosen chain from
+`[20,21,22,23,24]` to `[137,147,146,145,144]` and is what confounded the
+topology batch's T4. So item 3 needs **two more `--hardware` runs on the
+untouched scaling script (~35 QPU-s each) submitted after a recalibration**,
+which can plausibly happen the same day; it does not need three calendar days.
+
+Counter-consideration to state honestly if collected same-day: recalibrations
+8 hours apart sample *recalibration-to-recalibration* variance, which is the
+registered criterion, but they may understate multi-day drift (thermal cycling,
+longer maintenance). If the repeats are same-day, say "distinct calibrations"
+rather than implying distinct days.
 
 **Pre-registration (frozen 2026-07-16, BEFORE any repeat):** each repeat must
 be judged against the frozen effective-p predictions in

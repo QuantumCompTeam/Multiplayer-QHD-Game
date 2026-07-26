@@ -163,11 +163,19 @@ email, item-10 T9 sign-off (keeps the fairness paragraph hedged as
 
 ## Hardware runs
 
-- **Item 3** (cross-day repeats): **2 of 3–5 distinct calibration days.** Three
+- **Item 3** (cross-day repeats): **2 of 3–5 distinct calibrations.** Three
   runs exist, but runs 1 and 2 share one calibration stamp — run 2 carries
-  `"distinct_calibration_vs_previous_runs": false`. Run 3 (`2026-07-25T035623Z`,
-  job `d9i379d0k0jc738j18fg`) is the first genuinely distinct day. Fig. 6's
+  `"distinct_calibration_vs_previous_runs": false` despite being 18 hours later
+  *and* spanning an IBM maintenance window. Run 3 (`2026-07-25T035623Z`,
+  job `d9i379d0k0jc738j18fg`) is the first genuinely distinct one. Fig. 6's
   cross-day error bars (plan Task 11 Step 4) depend on this count being 2.
+- **Item 3 is NOT a multi-day wait.** The registered criterion is a *differing
+  calibration stamp*, not a differing date, and ibm_fez recalibrated **three
+  times on 2026-07-25** (08:15:48 / 16:05:46 / 22:32:49 +05:30). So item 3
+  needs two more `--hardware` runs on the untouched scaling script (~35 QPU-s
+  each) submitted after a recalibration — plausibly the same day. Detail and
+  the honest counter-argument (same-day epochs may understate multi-day drift)
+  are in `TODOS.md`.
 - **Item 4** (five-model ranking) accumulated on run 3.
 - **Item 16** (env-block capture) validated on run 3's artifact: `environment`
   and `calibration_at_submit.json` are both present.

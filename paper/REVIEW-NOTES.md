@@ -6,13 +6,19 @@ The compiled `main.pdf` is an evidence-preserving review draft, not a submission
 
 - ~~Add Aasa Singh Bhui's preferred publication email to the IEEE author
   block.~~ **Done 2026-07-26:** `aasasingh2005@gmail.com`.
-- **Still open — Aasa's game-theory sign-off on the T9 rule (item 10).** This
-  cannot be closed from the repository side; it is a judgement about whether
-  "independent round-robin best response" is the right rule. Simultaneous best
-  response, fictitious play, or a fairness-constrained rule could change the
-  `p=0.02` limit-cycle verdict specifically. Until sign-off the fairness
-  paragraph stays hedged as exploratory, which is how it currently reads in
-  Sec. IV-C and the conclusion — no text change is pending, only the decision.
+- **Still open — Aasa's game-theory sign-off on the T9 rule (item 10)**, but the
+  decision is now evidence-backed. It cannot be closed from the repository side;
+  it is a judgement about whether "independent round-robin best response" is the
+  right rule. **What has changed:** the sequencing axis of that doubt was
+  tested. Simultaneous best response — which removes move order entirely —
+  reproduces all three verdicts, including the `p=0.02` non-convergence, whose
+  residual gain stays flat at ~380x the convergence bar
+  (`docs/findings/2026-07-26-t9-rule-sensitivity.md`). So the limit cycle is a
+  property of the noisy best-response map, not of round-robin ordering.
+  Fictitious play and regret matching remain untested, and only W `N=4` is
+  covered. Until sign-off the fairness paragraph stays hedged as exploratory,
+  which is how it reads in Sec. IV-C and the conclusion — no text change is
+  pending, only the decision.
 - Complete final author review of all sections drafted from repository artifacts.
 
 ## Bibliography verification

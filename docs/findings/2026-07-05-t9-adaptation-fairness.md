@@ -92,11 +92,22 @@ worse off — a quantum-game analogue of a price-of-anarchy effect under noise.
 
 ## Open items / caveats
 
-1. **Modeling rule pending review.** "Independent round-robin best response" is
-   one of several defensible adaptation models (simultaneous best response,
-   fictitious play, regret matching, a welfare-aware or fairness-constrained
-   rule). Aasa's sign-off on the rule is required before any of this is quoted
-   as a result. A different rule could change the verdict, especially at p=0.02.
+1. **Modeling rule pending review — but now TESTED on the sequencing axis.**
+   "Independent round-robin best response" is one of several defensible
+   adaptation models (simultaneous best response, fictitious play, regret
+   matching, a welfare-aware or fairness-constrained rule). Aasa's sign-off is
+   still required before any of this is quoted as a result.
+
+   The specific worry recorded here — "a different rule could change the
+   verdict, especially at p=0.02" — **has been tested against simultaneous best
+   response and is not supported**
+   (`docs/findings/2026-07-26-t9-rule-sensitivity.md`). All three verdicts are
+   identical under both rules; at p=0 the adapted means agree to 0.15%, at
+   p=0.05 to 1e-4, and at p=0.02 the dynamics fail to settle under *both*, with
+   the simultaneous residual gain flat at ~380x the convergence bar. Since
+   simultaneous updates remove move order entirely, the p=0.02 non-convergence
+   is a property of the noisy best-response map rather than of round-robin
+   sequencing. Fictitious play and regret matching remain untested.
 2. **Scope.** Only W, N=4 is covered. The headline asymmetry (W N=5, two players
    negative; ring N=5) is *not* tested here. Extending to N=5 is the obvious next
    step but was left out of the pilot deliberately to keep cost bounded.

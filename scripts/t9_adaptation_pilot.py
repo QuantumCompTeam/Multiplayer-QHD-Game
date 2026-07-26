@@ -67,6 +67,8 @@ FAST = False  # set by the --fast CLI flag in main()
 REVERSE_ORDER = False  # --reverse-order: round-robin N-1..0 instead of 0..N-1
 # (confound check: does the post-adaptation advantage follow circuit position
 # or move order?)
+RULE = "round-robin"  # --rule {round-robin,simultaneous}; default is the
+# provisional pilot rule, so every committed artifact reproduces unchanged.
 
 
 def _maximize_fast(objective, starts):
@@ -117,6 +119,53 @@ def best_response_round(profile, topology, N, p, first_round):
     return profile, max_gain
 
 
+def simultaneous_best_response_round(profile, topology, N, p, first_round):
+    """One SIMULTANEOUS pass; returns (new profile, max unilateral gain seen).
+
+    Every player best-responds to the SAME frozen profile from the start of the
+    round, and all updates are applied together. This is the canonical
+    alternative to the round-robin rule above, which is sequential: there, a
+    player moving later in a round already sees the earlier movers' new
+    strategies.
+
+    Why it exists: the T9 finding's caveat 1 is that the provisional
+    round-robin rule might be driving the p=0.02 limit cycle, and that a
+    different rule "could change the verdict". Sequencing is the assumption that
+    doubt attaches to, so removing sequencing entirely is the sharpest test of
+    it. Note that simultaneous best response is, if anything, MORE prone to
+    oscillation than sequential -- so if it also fails to settle, the
+    non-convergence is a property of the noisy best-response map rather than of
+    the move order.
+    """
+    profile = [tuple(s) for s in profile]
+    frozen = list(profile)
+    max_gain = 0.0
+    new_profile = list(profile)
+    for i in range(N):
+        def own_payoff(params: StrategyParams, _i=i):
+            prof = list(frozen)          # frozen, NOT partially updated
+            prof[_i] = tuple(params)
+            return float(noisy_payoffs(prof, topology, N, p)[_i])
+
+        anchors = [frozen[i], q_strategy(N), DOVE, HAWK]
+        starts = anchors if first_round else anchors[:2]
+        old = own_payoff(frozen[i])
+        maximize = _maximize_fast if FAST else _maximize
+        best_params, best_val, _ = maximize(own_payoff, starts)
+        if best_val > old:
+            max_gain = max(max_gain, best_val - old)
+            new_profile[i] = tuple(best_params)
+    return new_profile, max_gain
+
+
+def br_round(profile, topology, N, p, first_round):
+    """Dispatch to the configured adaptation rule (default: round-robin)."""
+    if RULE == "simultaneous":
+        return simultaneous_best_response_round(
+            profile, topology, N, p, first_round)
+    return best_response_round(profile, topology, N, p, first_round)
+
+
 def adapt(topology, N, p):
     """Noisy best-response dynamics from the (Q_N,...,Q_N) baseline."""
     profile = [q_strategy(N)] * N
@@ -129,7 +178,7 @@ def adapt(topology, N, p):
     history = []
     for rnd in range(1, max_rounds + 1):
         rounds = rnd
-        profile, gain = best_response_round(profile, topology, N, p, rnd == 1)
+        profile, gain = br_round(profile, topology, N, p, rnd == 1)
         probs = build_ewl_circuit_noisy(
             N, profile, topology=topology, gamma=GAMMA, p=p
         )
@@ -183,7 +232,7 @@ def run_config(topology, N, p):
     mean_a, spread_a = float(adapted.mean()), float(adapted.max() - adapted.min())
 
     status = "converged" if converged else "DID NOT CONVERGE (cycling/cap)"
-    print(f"Adapted (independent best response, provisional rule): {status} "
+    print(f"Adapted ({RULE} best response, provisional rule): {status} "
           f"after {rounds} round(s); residual max unilateral gain={residual:.2e}")
     print(f"  {np.round(adapted, 6)}")
     print(f"  mean={mean_a:.6f}  spread={spread_a:.6f}")

@@ -1,11 +1,20 @@
 {
-  "generated_utc": "2026-07-25T03:57:31.164219+00:00",
+  "generated_utc": "2026-07-26T08:33:55.512637+00:00",
   "preregistration": {
     "path": "results/hardware-scaling/preregistration.json",
     "registered_utc": "2026-07-16T17:04:36.363760+00:00",
     "p_eff_central": 0.001837649512845019
   },
   "n_repeats_judged": 2,
+  "calibration_stamp_source": "calibration_at_submit.json where present (the snapshot taken at submission, which identifies the calibration the job actually ran under); calibration.json is an analysis-time fallback for runs predating item 16. Per-run source is recorded in judgments[].calibration_source.",
+  "excluded_runs": [
+    {
+      "run": "2026-07-25T180549Z",
+      "reason": "series ['3', '4', '5', '6', '7'] != registered ['3', '4', '5']",
+      "job_id": "d9if010gk0ls73f4avkg"
+    }
+  ],
+  "excluded_note": "Runs under results/hardware-scaling/ that are NOT repeats of the registered N=3,4,5 batch -- listed rather than silently skipped, so the repeat count cannot be inflated by a different experiment sharing the directory.",
   "judgments": [
     {
       "run": "2026-07-16T074134Z",
@@ -274,7 +283,8 @@
             "any_player_below_classical": false
           }
         }
-      }
+      },
+      "calibration_source": "calibration.json (analysis-time fallback)"
     },
     {
       "run": "2026-07-17T014458Z",
@@ -543,7 +553,8 @@
             "any_player_below_classical": false
           }
         }
-      }
+      },
+      "calibration_source": "calibration.json (analysis-time fallback)"
     },
     {
       "run": "2026-07-25T035623Z",
@@ -812,7 +823,8 @@
             "any_player_below_classical": false
           }
         }
-      }
+      },
+      "calibration_source": "calibration_at_submit.json"
     }
   ]
 }

@@ -577,8 +577,16 @@ that pattern and is the authoritative check.
 
 Single source for every value in this section:
 `results/hardware-scaling/repeat-judgments.json`, generated
-2026-07-25T03:57:31.164219+00:00 (repeat-judgments.json:2
-(`"generated_utc": "2026-07-25T03:57:31.164219+00:00",`)).
+2026-07-26T08:33:55.512637+00:00 (repeat-judgments.json:2
+(`"generated_utc": "2026-07-26T08:33:55.512637+00:00",`)).
+
+Regenerated 2026-07-26 after `scripts/judge_repeat_run.py` was corrected to
+prefer the submission-time calibration snapshot and to exclude runs that are
+not repeats of the registered batch. **Every judgment z-score is byte-identical
+to the previous generation** and `n_repeats_judged` is unchanged at 2 — the fix
+is preventive, not a correction. What changed is that the N=3..7 extension
+(`2026-07-25T180549Z`) is now listed under `excluded_runs` instead of being
+eligible to be swept in as a fourth repeat.
 
 Registration status is stated per subsection and sourced to
 `results/hardware-scaling/preregistration.json` or
