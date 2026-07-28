@@ -296,11 +296,13 @@ Represent fairness with
 \boldsymbol{\pi}=(\pi_1,\ldots,\pi_N)
 \]
 
-and an explicit spread such as
+and use the payoff range as the manuscript's primary scalar fairness summary:
 
 \[
 S_\pi=\max_j\pi_j-\min_j\pi_j.
 \]
+
+The full vector remains primary evidence; $S_\pi$ is a compact comparison, not a replacement for player-level reporting.
 
 ### 5.5 Noise and mitigation
 
@@ -346,15 +348,15 @@ p(0^N)=1,
 
 For $V=4,C=3$, derive the analytic-baseline advantage $3/N$ using the paper's exact baseline convention.
 
-#### Proposition 3: restricted-deviation condition
+#### Restricted-deviation result
 
-Derive the unilateral deviation gaps for $D$ and $H$ wherever analytically supportable. The observed expression
+Attempt a complete analytic derivation of the unilateral deviation gaps for $D$ and $H$. The observed expression
 
 \[
 \pi_j(H,Q_{N,-j})=2+2\cos(2\pi/N)
 \]
 
-must not be called a theorem unless a valid derivation is supplied and independently checked. Otherwise it remains a computationally verified identity over the tested range.
+becomes a numbered proposition only if a valid derivation is supplied and independently checked. If that derivation does not survive verification, present the finite-menu inequalities and tested values as a clearly labelled computational result rather than forcing an unsupported proof.
 
 #### Proposition 4: bit-flip insensitivity
 
@@ -441,7 +443,7 @@ Additional requirements:
 
 ### 8.1 Manuscript ownership
 
-`paper/qhd.tex` is canonical. Documentation and compatibility entry points must delegate to it rather than duplicate manuscript content.
+`paper/qhd.tex` is canonical. Update `paper/README.md` so the documented build target is `qhd.tex`. Replace `paper/main.tex` with a compatibility wrapper that contains no manuscript prose and delegates directly to `qhd.tex`; this preserves existing automation without maintaining two sources.
 
 ### 8.2 Scientific-data boundary
 
@@ -510,7 +512,7 @@ The redesign is complete when:
 1. `paper/qhd.tex` is the single authoritative manuscript;
 2. the paper follows the approved topology-as-mechanism-design narrative;
 3. the classical and quantum games are mathematically self-contained;
-4. the five central propositions are proved in the main body to the extent analytically valid;
+4. the welfare, GHZ cooperative-profile, bit-flip-insensitivity, and permutation-covariance propositions are proved in the main body, while the restricted-deviation identity is either proved and independently verified or explicitly labelled computational;
 5. all figures have one clear claim and no heterogeneous composite panels;
 6. Figure 4 explicitly shows Player 0's zero at $N=4$;
 7. the former Figure 6 panels are independent figures with meaningful prose between them;
