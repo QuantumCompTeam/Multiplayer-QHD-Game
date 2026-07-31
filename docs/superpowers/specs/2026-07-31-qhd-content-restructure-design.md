@@ -1,16 +1,16 @@
 # QHD Paper Content Restructure Design
 
-**Date:** 2026-07-31 (v2 — revised after review: venue locked, subsections consolidated, figure specification and style guide added, approval gates batched, data availability added)
+**Date:** 2026-07-31 (v3 — revised after engineering review: TQE manuscript shell migration added, entangler-family vocabulary adopted, hardware-evidence decision rule defined, general-$\gamma$ cooperative proposition added, notation and audit contracts strengthened, gates G1--G5 explicitly authorized)
 **Status:** Approved architecture
 **Target manuscript:** `paper/qhd.tex`
 
 ## 1. Purpose
 
-Restructure the QHD paper into an accessible but mathematically detailed research narrative. The paper studies an $N$-player quantum Hawk--Dove trading game under multiple entanglement topologies, simulated noise, and IBM hardware validation.
+Restructure the QHD paper into an accessible but mathematically detailed research narrative. The paper studies an $N$-player quantum Hawk--Dove trading game under multiple entangler families, simulated noise, and IBM hardware validation.
 
 The restructuring will not simplify the science by removing mathematics. It will simplify the reading experience by introducing concepts in dependency order, defining every quantity before use, separating distinct scientific questions, and making the theory, simulation, and hardware evidence form one continuous argument.
 
-The paper will be rewritten collaboratively, one section at a time, with subsections drafted in dependency order and reviewed in batches. Each section must be reviewed for readability, mathematical correctness, citation support, flow, and consistency before work moves to the next section.
+The paper will be rewritten collaboratively, one section at a time, with subsections drafted in dependency order and reviewed at the five authorized gates (Section 11). Each section must be reviewed for readability, mathematical correctness, citation support, flow, and consistency before work moves to the next section.
 
 ## 2. Target Venue and Format
 
@@ -18,14 +18,14 @@ The paper will be rewritten collaboratively, one section at a time, with subsect
 
 Consequences, fixed for the whole program:
 
-- Template: IEEEtran two-column, as currently used. No template migration.
+- **Manuscript shell migration (first execution task).** The manuscript currently uses `\documentclass[conference]{IEEEtran}` and the repository contains a competing entry point (`paper/main.tex`, still built by `paper/README.md`, which also still names IEEE QCE). Before any prose is rewritten: diff `main.tex` against `qhd.tex` and resolve any divergence explicitly (verified content must not silently disappear); migrate `qhd.tex` to the official TQE journal template from the IEEE Author Center; make `paper/qhd.tex` the canonical manuscript; convert `paper/main.tex` into a thin wrapper or remove it; update `paper/README.md` to name TQE and build `qhd.tex`.
 - Length target: approximately 16--20 pages including appendices. TQE has no hard page limit, but clarity and correctness take priority over artificial compression; repetition and operational detail must be removed from the main narrative.
 - Appendices remain in-paper (TQE style), not a separate supplement.
 - TQE is open access; the reproducibility posture in Section 10 (archived artifacts with a DOI) matches the venue's expectations.
 - All display math, matrices, and tables must fit a single column unless explicitly designed as a two-column (`figure*`/`table*`) float; column-width fit is checked at every compile gate.
 - Abstract: single paragraph, approximately 150--250 words, structured as problem, approach, three pillars of evidence, and the headline quantitative findings. No citations, no undefined acronyms.
 
-## 3. Agreed Reader and Scope
+## 3. Agreed Reader, Scope, and Vocabulary
 
 ### 3.1 Target reader
 
@@ -42,15 +42,27 @@ The main reader is a mixed technical reader who is expected to know undergraduat
 
 Every paper-specific metric and restricted claim must be defined explicitly.
 
-### 3.2 Mathematical depth
+### 3.2 Comparison vocabulary (binding)
+
+The five compared entanglers are not all graphs, so the paper adopts two-level vocabulary:
+
+- **Entangler family** — the umbrella term for the five-way comparison: GHZ, W, ring, star, and complete. Every five-way statement says "entangler family," never "topology."
+- **Graph topology** — reserved for the pairwise-graph families only (ring, star, complete), where an edge set $E(G)$ genuinely exists. Graph-position language (hub, leaf, orbit) applies only here.
+- Because GHZ and W use a single global interpolation angle while pairwise families compose per-edge rotations, equal $\gamma$ does not mean equal total interaction strength across families. The paper defines a **normalized interaction-strength convention** in III-D and reports a sensitivity control under it in Section V, so family comparisons are not confounded by raw coupling budget.
+
+### 3.3 Target-state naming (binding)
+
+The quantity $P(0^N)$ is canonically named the **all-zero target-state population** (shorthand after first definition: *target-state population*). It must never be called "ground-state population" (the all-zero computational basis state is not a Hamiltonian ground state) and never "state fidelity" unless an actual full-state fidelity is computed.
+
+### 3.4 Mathematical depth
 
 All central mathematical definitions and derivations will remain in the main paper. Appendices will contain supporting reproducibility material, circuit expansions, secondary analyses, and full numerical tables rather than core proofs.
 
-### 3.3 Literature depth
+### 3.5 Literature depth
 
 The final paper will target more than 50 peer-reviewed sources across the relevant research strands. Every citation must support a specific sentence or comparison. Bibliography size must not be increased through irrelevant padding.
 
-### 3.4 Narrative balance
+### 3.6 Narrative balance
 
 The paper will use a three-stage argument in which all three pillars are major contributions:
 
@@ -60,11 +72,11 @@ The paper will use a three-stage argument in which all three pillars are major c
 
 ## 4. Central Research Question
 
-> When the two-player quantum Hawk--Dove mechanism is extended to $N$ players, how do entanglement topology, player count, and noise jointly determine cooperative payoff, incentive compatibility, and player-level fairness, and which of those effects survive simulation controls and registered IBM hardware tests?
+> When the two-player quantum Hawk--Dove mechanism is extended to $N$ players, how do entangler family, player count, and noise jointly determine cooperative payoff, incentive compatibility, and player-level fairness, and which of those effects survive simulation controls and registered IBM hardware tests?
 
 A secondary distinction will run through the paper:
 
-> Which observed effects arise from the ideal entanglement graph, which arise from its compiled circuit implementation, and which are specific to the physical device?
+> Which observed effects arise from the ideal entangler family, which arise from its compiled circuit implementation, and which are specific to the physical device?
 
 ## 5. Core Narrative Principle
 
@@ -100,18 +112,20 @@ Introduce Hawk--Dove as a model of aggressive versus cooperative trading behavio
 
 Explain intuitively how the EWL protocol modifies strategic incentives through interference and correlation rather than external regulation.
 
-## I-C. Why Player Count and Entanglement Topology Matter
+## I-C. Why Player Count and Entangler Structure Matter
 
-Explain why topology is not a meaningful design choice for two players but becomes central for $N\geq3$.
+Explain why the choice of entangler is not a meaningful design decision for two players but becomes central for $N\geq3$, and preview the entangler-family versus graph-topology distinction.
 
 ## I-D. Research Questions
 
 State four accessible questions:
 
-1. How does topology affect cooperative payoff?
+1. How does the entangler family affect cooperative payoff?
 2. When is the cooperative quantum profile an equilibrium?
 3. Why can payoff remain stable while the quantum state degrades?
-4. Does topology create unequal benefits between players?
+4. Does the entangler family create unequal benefits between players?
+
+Hardware cross-cuts the questions rather than being a question of its own: each question is answered at up to three evidence levels — analytical prediction, simulation behavior, and hardware survival — and every result is labeled with the level it attains.
 
 ## I-E. Contributions and Paper Roadmap
 
@@ -135,9 +149,9 @@ Cover classical payoff conflict, Nash equilibrium, welfare loss, multiplayer ext
 
 Cover foundational quantum games, the EWL construction, quantum strategies, entanglement-assisted equilibria, and limitations and criticism of equilibrium claims.
 
-## II-C. Multiplayer Quantum Games and Entanglement Topology
+## II-C. Multiplayer Quantum Games and Entanglement Structure
 
-Review $N$-player quantum games, multiplayer strategy spaces, GHZ and W-state games, computational scaling, graph-based entanglement, ring, star, and complete-network structures, including topology-dependent symmetry and circuit cost.
+Review $N$-player quantum games, multiplayer strategy spaces, GHZ and W-state games, computational scaling, graph-based entanglement, ring, star, and complete-network structures, including structure-dependent symmetry and circuit cost.
 
 ## II-D. Quantum Economics and Trading Applications
 
@@ -151,7 +165,7 @@ Review experimental quantum games, superconducting hardware, observable estimati
 
 End with one precise gap:
 
-> Existing work does not jointly study a fixed multiplayer economic game across entanglement topology, player count, equilibrium, fairness, circuit noise, and registered hardware validation.
+> Existing work does not jointly study a fixed multiplayer economic game across entangler family, player count, equilibrium, fairness, circuit noise, and registered hardware validation.
 
 # III. Mathematical Framework
 
@@ -195,9 +209,9 @@ This identity must later explain why mean payoff can survive substantial state d
 
 Define the complete SU(2) strategy matrix, classical strategies, $Q_N$, entangling and disentangling operations, output state, and measurement probabilities. Anchored by the protocol schematic (Figure F1 in Section 8).
 
-## III-D. Entanglement Topologies and Graph Symmetry
+## III-D. Entangler Families and Graph Symmetry
 
-Formally define GHZ, W, ring, star, and fully connected entanglers. Define graph automorphisms and derive the equality of ideal payoffs for equivalent graph positions. Anchored by the topology gallery (Figure F2 in Section 8).
+Formally define the GHZ, W, ring, star, and fully connected entanglers, using the two-level vocabulary of Section 3.2. Define graph automorphisms for the pairwise families and derive the equality of ideal payoffs for equivalent graph positions. Define the normalized interaction-strength convention that Section V's sensitivity control uses. Anchored by the entangler-family gallery (Figure F2 in Section 8).
 
 ## III-E. Expected Payoff, Advantage, Equilibrium, and Fairness
 
@@ -216,7 +230,7 @@ The vector remains primary evidence. Scalar fairness summaries must not replace 
 
 ## III-F. GHZ Cooperative Benchmark
 
-Prove:
+Prove the benchmark at maximal entanglement:
 
 \[
 p(0^N)=1,
@@ -226,30 +240,43 @@ p(0^N)=1,
 \Delta_{\mathrm{ana}}=\frac{C}{N}.
 \]
 
-For $V=4,C=3$:
+For $V=4,C=3$: $\Delta_{\mathrm{ana}}=3/N$.
+
+**General-$\gamma$ cooperative invariance (new proposition).** State and prove that for the GHZ entangler the cooperative output is invariant in $\gamma$:
 
 \[
-\Delta_{\mathrm{ana}}=\frac{3}{N}.
+J_{\mathrm{GHZ}}^\dagger(\gamma)\,Q_N^{\otimes N}\,J_{\mathrm{GHZ}}(\gamma)\,|0^N\rangle=-\,|0^N\rangle
+\quad\text{for every }\gamma .
 \]
+
+The proof is four lines: $J_{\mathrm{GHZ}}(\gamma)|0^N\rangle=\cos(\gamma/2)|0^N\rangle+i\sin(\gamma/2)|1^N\rangle$; $Q_N=U(0,\pi/N,\pi/N)$ multiplies the all-zero branch by $e^{iN\pi/N}=-1$ and the all-one branch by $e^{-iN\pi/N}=-1$ — the same phase — so the state is exactly $-J_{\mathrm{GHZ}}(\gamma)|0^N\rangle$ and the disentangler returns $|0^N\rangle$ up to global phase. Numerically confirmed for $N=2,\ldots,5$ and $\gamma\in\{0,0.2\pi,0.4\pi,0.5\pi\}$ (minimum $P(0^N)$ within $2\times10^{-16}$ of 1). This proposition is what makes III-G meaningful: $\gamma$ moves the deviation incentive while leaving the cooperative payoff exactly unchanged.
 
 ## III-G. Incentive Compatibility and the Entanglement-Angle Boundary
 
-Derive unilateral Dove and Hawk deviation payoffs. Establish the restricted-equilibrium boundary at $N=2,3$ versus $N\geq4$. Include the general-$\gamma$ relation so the reader sees how entanglement can modify incentive compatibility without necessarily changing the cooperative payoff.
+Derive unilateral Dove and Hawk deviation payoffs. Establish the restricted-equilibrium boundary at $N=2,3$ versus $N\geq4$. Include the general-$\gamma$ relation so the reader sees how entanglement strength modifies incentive compatibility while (by the III-F invariance) the cooperative payoff is unchanged. The Dove deviation receives the same treatment as the Hawk deviation: a closed form verified numerically before publication, plus the non-binding inequality across the stated $(N,\gamma)$ scope — analytic non-bindingness at $\gamma=\pi/2$ is not assumed to extend elsewhere without a check.
 
 ## III-H. Circuit Realization, Noise Channels, and Hardware Estimators
 
 Separate the four implementation layers:
 
-1. ideal entanglement topology;
+1. ideal entangler family;
 2. compiled gate-level circuit;
 3. simulated noise;
 4. physical-device noise.
 
-Define one- and two-qubit depolarizing channels and explain how two-qubit gate count and routing affect topology comparisons. Then define the hardware estimators applied in Section VI: assignment matrices, constrained probability reconstruction, gate-fold factors, weighted ZNE regression, extrapolated intercepts, and uncertainty conventions. This subsection defines estimators; it reports no results.
+Define one- and two-qubit depolarizing channels with strength $\eta$ and explain how two-qubit gate count and routing affect family comparisons.
+
+Then define the hardware estimators applied in Section VI: assignment matrices, constrained probability reconstruction, gate-fold scales $s\in\{1,3,5\}$, weighted ZNE regression, extrapolated intercepts, and uncertainty conventions.
+
+**Symbol discipline (binding):** $\eta$ is the depolarizing probability; $s$ is the ZNE fold scale; $\gamma$ is the entanglement angle; $\lambda$ is not used for any of these. No symbol is defined twice with different meanings.
+
+**Independence assumption (binding):** the tensor-product assignment model $A=\bigotimes_jA_j$ assumes separable per-qubit readout errors and does not model correlated readout crosstalk (this limitation is already documented in `src/hardware/mitigation.py`). The assumption is stated directly beside the equation, and correlated readout error is listed among the excluded uncertainty/model components.
+
+**Registered decision rule (binding, new):** one uncertainty convention is defined here and applied to *every* hardware sign or threshold claim in Section VI — the equilibrium gaps, the entanglement-angle sign change (including the marginal point near $0.4\pi$), the ring-$N{=}4$ special case, and the hub-versus-leaf separation. A positive point estimate is never sufficient: each claim states a one-sided interval at a declared level (or a registered non-inferiority margin) and passes or fails by that rule.
 
 ## III-I. Structural Robustness of the Payoff Observable
 
-Prove why single-bit-flip outcomes preserve total welfare and why mean payoff can be more stable than ground-state population. Scope the result to the payoff observable and avoid implying preservation of the complete state.
+Prove why single-bit-flip outcomes preserve total welfare and why mean payoff can be more stable than the all-zero target-state population. Scope the result to the payoff observable and avoid implying preservation of the complete state.
 
 ## III-J. Player-Level Redistribution and Position-Locked Fairness
 
@@ -275,13 +302,13 @@ State:
 
 Explain the difference between decreasing absolute advantage and constant multiplicative advantage over the classical payoff. Predict that the cooperative profile is incentive-compatible for $N=2,3$ and that a Hawk deviation becomes profitable for $N\geq4$.
 
-## IV-C. Topology and Entanglement-Angle Effects
+## IV-C. Entangler-Family and Entanglement-Angle Effects
 
-Predict how topology can change output distributions, payoff gaps, equilibrium status, player symmetry, and exceptional interference cells. Use the general-$\gamma$ derivation to predict changes in unilateral-deviation incentives as entanglement strength varies.
+Predict how the entangler family can change output distributions, payoff gaps, equilibrium status, player symmetry, and exceptional interference cells. Use the general-$\gamma$ derivation plus the III-F invariance to predict that unilateral-deviation incentives move with entanglement strength while the cooperative payoff does not.
 
 ## IV-D. Robustness and Fairness Under Noise
 
-Predict that mean payoff will decay more slowly than ground-state population because only all-Hawk probability reduces total welfare. Predict graph-orbit equality, hub-versus-leaf separation, invariance under player-to-qubit reassignment, and the difference between mean payoff and worst-player payoff.
+Predict that mean payoff will decay more slowly than the all-zero target-state population because only all-Hawk probability reduces total welfare. Predict graph-orbit equality, hub-versus-leaf separation, invariance under player-to-qubit reassignment, and the difference between mean payoff and worst-player payoff.
 
 ## IV-E. Prediction Ledger for Simulation and Hardware
 
@@ -293,15 +320,15 @@ End with numbered predictions P1--P8. Later result subsections must cite these i
 
 ## V-A. Simulation Design and Verification of the GHZ Scaling Law
 
-Define player counts, topology set, strategy menu, $\gamma$ range, noise range, simulation paths, comparison rules, and recorded estimands. Show that the implementation reproduces the analytical GHZ payoff and advantage before any new claims are made.
+Define player counts, entangler-family set, strategy menu, $\gamma$ range, noise range, simulation paths, comparison rules, and recorded estimands. Show that the implementation reproduces the analytical GHZ payoff and advantage before any new claims are made.
 
-## V-B. Controlled Topology Intervention and Exceptional Cells
+## V-B. Controlled Entangler-Family Intervention and Exceptional Cells
 
-Hold $Q_N$, $V$, $C$, $N$, and $\gamma$ fixed while changing only the entangler. Describe the result as a controlled topology comparison, not a strategy-optimization claim. Focus on ring $N=4$, star $N=6$, W-state differences, and topology-specific equilibrium markers.
+Hold $Q_N$, $V$, $C$, $N$, and $\gamma$ fixed while changing only the entangler. Describe the result as a controlled family comparison, not a strategy-optimization claim. Report the normalized interaction-strength sensitivity control from III-D so family effects are not confounded by raw coupling budget. Focus on ring $N=4$, star $N=6$, W-state differences, and family-specific equilibrium markers.
 
 ## V-C. Entanglement-Angle Transition
 
-Separate payoff-gap behavior, equilibrium-status transition, and topology-specific response.
+Separate payoff-gap behavior, equilibrium-status transition, and family-specific response.
 
 ## V-D. Player-Level Fairness in the Star Topology
 
@@ -309,7 +336,7 @@ Report the complete payoff vector, identify Player 0 as the hub, and show both p
 
 ## V-E. Noise Robustness and Circuit-Cost Controls
 
-Compare restricted-equilibrium survival, circuit-relative payoff-gap survival, and analytic-baseline retention. Separate ideal topology effects from compiled-circuit effects through natural-budget, gate-count, matched-count, and normalized-decay comparisons.
+Compare restricted-equilibrium survival, circuit-relative payoff-gap survival, and analytic-baseline retention. Separate ideal family effects from compiled-circuit effects through natural-budget, gate-count, matched-count, and normalized-decay comparisons.
 
 ## V-F. Simulation Synthesis and Hardware Predictions
 
@@ -321,7 +348,7 @@ Map the simulation predictions to the hardware tests that follow.
 
 ## VI-A. Experimental Protocol, Registration, and Uncertainty
 
-Explain device use, registration, circuit-identity checks, simulator dry runs, physical-qubit selection, shot counts, and the difference between registered and exploratory analyses. Apply the estimators from Section III-H. Distinguish within-run, between-run, between-epoch, and excluded uncertainty sources.
+Explain device use, registration, circuit-identity checks, simulator dry runs, physical-qubit selection, shot counts, and the difference between registered and exploratory analyses. Apply the estimators and the registered decision rule from Section III-H. Distinguish within-run, between-run, between-epoch, and excluded uncertainty sources (including correlated readout error, per III-H).
 
 ## VI-B. $N=3$ Validation: Output Distribution and Player Payoffs
 
@@ -329,23 +356,27 @@ Use one figure to answer whether the hardware produced the predicted cooperative
 
 ## VI-C. Advantage Scaling and the ZNE Diagnostic
 
-Present $N=3,4,5$ measured advantage across chain-matched calibration epochs, keeping scaling separate from state quality. Show fold-$1,3,5$ data and the weighted extrapolation. State limitations and avoid treating every increased intercept as proof of successful mitigation.
+Present $N=3,4,5$ measured advantage across chain-matched calibration epochs, keeping scaling separate from state quality. Show fold-$s\in\{1,3,5\}$ data and the weighted extrapolation. State limitations and avoid treating every increased intercept as proof of successful mitigation.
 
 ## VI-D. State Quality Versus Payoff Robustness
 
-Compare ground-state population with payoff-advantage retention and connect the result to the welfare identity.
+Compare the all-zero target-state population with payoff-advantage retention and connect the result to the welfare identity.
 
 ## VI-E. Extension to $N=6,7$
 
 Present the larger-$N$ run as an external scaling test. Preserve both the high payoff retention and the unresolved ZNE/model behavior.
 
-## VI-F. Topology, Equilibrium, and Entanglement Angle on Device
+## VI-F. Entangler Families, Equilibrium, and Entanglement Angle on Device
 
-Compare each topology with its own ideal, treating ring $N=4$ separately because its ideal advantage is zero and its retention ratio is undefined. Present all three unilateral-deviation gaps at GHZ $N=3$, keeping the claim explicitly restricted to the tested strategy menu. Show the sign change in deviation payoff across registered $\gamma$ values and explain the marginal point near $0.4\pi$.
+Compare each entangler family with its own ideal, treating ring $N=4$ separately because its ideal advantage is zero and its retention ratio is undefined.
+
+**Hardware equilibrium evidence rule (new).** The restricted menu is $\{D,H,Q_N\}$, so a hardware equilibrium claim at GHZ $N=3$ requires $g_j(D)\geq0$ *and* $g_j(H)\geq0$ for every player — six gaps, not three. Before drafting: check the archived hardware artifacts for Dove-deviation executions. If the six gaps exist in the registered data, report all six under the III-H decision rule. If Dove-deviation circuits were never executed (no new IBM jobs are in scope), the claim is narrowed to exactly: "no profitable unilateral **Hawk** deviation was observed within the tested menu," and the Dove gap is labeled analytically predicted, hardware-untested. The manuscript must state which branch applies.
+
+Show the sign change in deviation payoff across registered $\gamma$ values under the III-H decision rule, and explain the marginal point near $0.4\pi$ as marginal rather than resolved if its interval includes zero.
 
 ## VI-G. Wiring-Permutation Test of Graph-Position Fairness
 
-Test whether the hub disadvantage follows the player label, physical qubit, or graph position.
+Test whether the hub disadvantage follows the player label, physical qubit, or graph position, judged under the III-H decision rule.
 
 ## VI-H. Failed Predictions and Negative Results
 
@@ -355,9 +386,9 @@ Report failed absolute payoff predictions, calibration and chain confounding, fa
 
 *(Consolidated from ten subsections to six.)*
 
-## VII-A. What Entanglement Topology Actually Controls
+## VII-A. What the Entangler Family Actually Controls
 
-Separate topology's effects on ideal interference, equilibrium status, payoff allocation, graph symmetry, and implementation cost. Interpret the natural-budget and matched-gate controls: mathematical graph effects versus routing and gate-cost effects.
+Separate the family's effects on ideal interference, equilibrium status, payoff allocation, graph symmetry, and implementation cost. Interpret the natural-budget and matched-gate controls: mathematical structure effects versus routing and gate-cost effects. Matched gate count is a partial control, not a complete device-noise causal control, and the prose must say so.
 
 ## VII-B. Payoff, Equilibrium, and State Quality Are Three Different Claims
 
@@ -377,11 +408,11 @@ Present possible market and allocation applications as interpretations rather th
 
 ## VII-F. Limitations and Future Research
 
-Collect all claim boundaries in one location. Cover continuous strategies, topology-optimized strategies, correlated noise, alternative hardware, larger $N$, fairness-aware objectives, more graph families, and predictive uncertainty.
+Collect all claim boundaries in one location. Cover continuous strategies, family-optimized strategies, correlated noise (including correlated readout), alternative hardware, larger $N$, fairness-aware objectives, more graph families, and predictive uncertainty.
 
 # VIII. Conclusion
 
-No subsection heads. Two paragraphs: (1) direct, brief answers to the four Introduction questions; (2) the closing design principle that entanglement topology must be evaluated by cooperative payoff, incentive compatibility, noise resilience, fairness, and physical implementation cost.
+No subsection heads. Two paragraphs: (1) direct, brief answers to the four Introduction questions, each labeled with the evidence level it attained; (2) the closing design principle that an entangler family must be evaluated by cooperative payoff, incentive compatibility, noise resilience, fairness, and physical implementation cost.
 
 ## 7. Prose Style Guide
 
@@ -396,7 +427,7 @@ This guide is binding for every drafted subsection. It will be saved as `paper/S
 ### 7.2 Paragraph discipline
 
 - Every paragraph opens with a topic sentence stating its claim; the rest of the paragraph supports only that claim.
-- Maximum paragraph length approximately 180 words (about 12 lines in one IEEEtran column).
+- Maximum paragraph length approximately 180 words (about 12 lines in one column).
 - No paragraph may contain more than two displayed equations without intervening explanatory prose.
 - Every displayed equation is followed within two sentences by a plain-language reading of what it says.
 
@@ -410,7 +441,9 @@ This guide is binding for every drafted subsection. It will be saved as `paper/S
 ### 7.4 Terminology and notation
 
 - One name per concept, from `paper/CLAIM-SOURCE-MAP.md`; synonyms are defects.
-- Every symbol defined before first use; no symbol redefined with a different meaning.
+- Every symbol defined before first use; no symbol redefined with a different meaning. Canonical assignments: $\eta$ depolarizing probability, $s$ ZNE fold scale, $\gamma$ entanglement angle.
+- "Entangler family" for the five-way comparison; "graph topology" only for ring, star, complete (Section 3.2).
+- $P(0^N)$ is the "all-zero target-state population" (shorthand "target-state population"); "ground-state population" and unsupported "state fidelity" are banned (Section 3.3).
 - Acronyms expanded at first use in the abstract and again at first use in the body (EWL, GHZ, ZNE, NISQ).
 - The two advantage metrics are always named in full ("analytic-baseline advantage", "circuit-relative payoff gap"), never abbreviated to "advantage" alone where ambiguous.
 
@@ -426,32 +459,32 @@ After all subsections of a section are drafted and individually correct, one ded
 
 ## 8. Figure Redesign Specification
 
-The current manuscript's seven figures are data plots only; there is no protocol schematic and no topology diagram, which is why the reader cannot picture the mechanism. Figure work is executed as its own plan after Section III prose is approved, against this specification.
+The current manuscript's seven figures are data plots only; there is no protocol schematic and no entangler-family diagram, which is why the reader cannot picture the mechanism. Figure work is executed as its own plan after Section III prose is approved, against this specification.
 
 ### 8.1 Principles (binding for every figure)
 
 - **One figure, one claim.** Each figure's caption begins with its takeaway as a declarative sentence ("Hardware preserves the cooperative advantage at $N=3$"), then describes panels, then gives provenance. Never a bare label ("Results for $N=3$").
 - **Vector only.** All plots regenerated as PDF; the four current PNGs (`advantage_vs_N`, `topology_heatmap`, `advantage_vs_gamma_N4`, `per_player_advantage_star`) are replaced by vector versions from the same pipelines.
-- **One visual language.** A single color assignment per topology (GHZ, W, ring, star, complete) used identically in every figure; a single marker convention for ideal / simulated / hardware values; colorblind-safe palette; identical axis labels and units for the same quantity everywhere.
+- **One visual language.** A single color assignment per entangler family (GHZ, W, ring, star, complete) used identically in every figure; a single marker convention for ideal / simulated / hardware values; colorblind-safe palette; identical axis labels and units for the same quantity everywhere.
 - **Column-fit legibility.** Minimum 8 pt effective font in every figure at final size; single-column width by default, `figure*` only for the two wide hardware aggregates.
 - **Prediction linkage.** Every results figure states in its caption which prediction (P1--P8) it tests.
 
 ### 8.2 Required new figures
 
 - **F1 — Protocol schematic** (new, Section III-C): the EWL pipeline as a circuit-style diagram — initial state, entangler $J_T(\gamma)$, local strategy gates $U_j$, disentangler, measurement, payoff evaluation. This is the figure the current paper most obviously lacks.
-- **F2 — Topology gallery** (new, Section III-D): the five entanglement graphs drawn side by side with qubit labels, hub highlighted in the star, plus per-topology two-qubit gate counts. Replaces a paragraph of prose description.
+- **F2 — Entangler-family gallery** (new, Section III-D): the five entangler families drawn side by side with qubit labels, the graph-topology subset (ring, star, complete) visually distinguished from the global-interpolation families (GHZ, W), hub highlighted in the star, plus per-family two-qubit gate counts. Replaces a paragraph of prose description.
 
 ### 8.3 Redesign of existing figures
 
 | Current figure | Disposition |
 |---|---|
 | `advantage_vs_N.png` | Regenerate as vector; add analytic $3/N$ curve overlay; caption keyed to P1. |
-| `topology_heatmap.png` | Regenerate as vector; annotate the exceptional cells (ring $N=4$, star $N=6$) directly on the heatmap; caption keyed to the topology predictions. |
+| `topology_heatmap.png` | Regenerate as vector; annotate the exceptional cells (ring $N=4$, star $N=6$) directly on the heatmap; caption keyed to the entangler-family predictions. |
 | `advantage_vs_gamma_N4.png` | Regenerate as vector; mark the equilibrium-transition angle; caption keyed to the entanglement-angle prediction. |
 | `per_player_advantage_star.png` | Regenerate as vector; show the full payoff vector with hub emphasized; caption keyed to the fairness prediction. |
 | `hardware_n3_validation.pdf` | Restructure as a two-panel figure: measured vs predicted distribution; measured vs predicted payoffs (serves VI-B alone). |
 | `hardware_scaling.pdf` | Keep as `figure*`; visually separate raw, mitigated, and extrapolated values; caption keyed to the scaling prediction. |
-| `hardware_topology.pdf` | Keep as `figure*`; add per-topology ideal reference lines; flag ring $N=4$ as undefined-retention explicitly. |
+| `hardware_topology.pdf` | Keep as `figure*`; add per-family ideal reference lines; flag ring $N=4$ as undefined-retention explicitly. |
 
 ### 8.4 Caption standard
 
@@ -465,7 +498,7 @@ pipeline or device/job reference, and the prediction identifier tested.>
 
 ### Appendix A. Gate-Level Circuit Constructions
 
-Detailed topology-specific decompositions and native-gate counts.
+Detailed family-specific decompositions and native-gate counts.
 
 ### Appendix B. Simulation Reproducibility
 
@@ -485,7 +518,7 @@ Job identifiers, physical qubits, calibration records, registration artifacts, s
 
 ### Appendix F. Supplementary Player-Level and Topology Tables
 
-Complete payoff vectors, deviation tables, fairness metrics, and topology-specific numerical values.
+Complete payoff vectors, deviation tables, fairness metrics, and family-specific numerical values.
 
 ## 10. Reference Strategy and Data Availability
 
@@ -510,17 +543,35 @@ The literature audit will seek peer-reviewed sources across:
 15. observable-specific error resilience;
 16. experimental reproducibility and preregistration.
 
-Each citation must be verified against an authoritative publisher, DOI record, or equivalent bibliographic source before inclusion.
+### 10.2 Verification standard (strengthened)
 
-### 10.2 Data and code availability (new requirement)
+Metadata verification alone does not establish that a source supports a claim. `paper/LITERATURE-AUDIT.md` records, for every source:
+
+- BibTeX key, research strand, claim supported, publication, year, peer-review status, DOI/publisher URL (as before);
+- **evidence access:** full text / abstract only;
+- **locator:** page, section, theorem, figure, or quoted passage that supports the claim;
+- **support type:** direct / contextual / criticism;
+- **verification notes.**
+
+Sources verified only through an abstract must not support detailed mathematical or methodological claims. **Staging:** the ~18 Section III sources are verified to the full standard before Section III drafting; remaining strands are audited strand-by-strand as their sections are drafted, so the audit does not serialize weeks of reading ahead of all prose.
+
+### 10.3 Data and code availability
 
 - Before submission, the simulation code, hardware raw counts, registration artifacts, and figure-generation pipelines are archived to Zenodo (or equivalent) and assigned a DOI.
 - The manuscript carries explicit Data Availability and Code Availability statements citing that DOI.
-- The registered-protocol claims in Section VI must be checkable against the archived registration artifacts, not only against Appendix E prose. This converts "we registered our predictions" from an assertion into a verifiable fact — a major credibility asset at review.
+- The registered-protocol claims in Section VI must be checkable against the archived registration artifacts, not only against Appendix E prose.
 
 ## 11. Collaborative Rewrite Process
 
-The manuscript will be rewritten in dependency order, drafting one subsection at a time but **reviewing in batches** to preserve momentum and global judgment.
+The manuscript will be rewritten in dependency order, drafting one subsection at a time but **reviewing at five authorized gates**. This gate structure supersedes any per-subsection approval language: the gates are exactly
+
+- **G1** — baseline build, terminology table, style guide, and claim-scope contract;
+- **G2** — Section III literature audit;
+- **G3** — the first drafted subsection (III-A), as a style-calibration gate: the user corrects voice and density once, early;
+- **G4** — the high-stakes III-G incentive-compatibility derivation;
+- **G5** — the complete Section III after its flow pass.
+
+Later phases define analogous per-section gates (one per section after its flow pass, plus individual gates for VI-H negative results and any subsection the user flags).
 
 For each subsection draft:
 
@@ -531,37 +582,35 @@ For each subsection draft:
 5. verify every mathematical statement;
 6. verify every numerical claim against its artifact;
 7. check citation support;
-8. compile the manuscript.
-
-**Approval gates (batched):**
-
-- one gate after the *first* drafted subsection of the program (style calibration — the user corrects voice and density once, early, instead of eleven times);
-- one gate per completed section, after that section's flow pass (Section 7.5);
-- individual gates are retained only for high-stakes subsections: III-G (incentive-compatibility derivation) and VI-H (failed predictions and negative results).
+8. compile the manuscript;
+9. record commands, test results, warnings, page counts, evidence classifications, and approved exceptions in `paper/SECTION-III-EXECUTION-LOG.md` (and analogous logs for later phases).
 
 Recommended rewrite order:
 
-1. terminology, metric definitions, and style guide;
-2. Section III mathematical framework;
-3. Section IV analytical predictions;
-4. figure redesign (Section 8), which needs the P1--P8 ledger;
-5. Section V simulation landscape;
-6. Section VI hardware validation;
-7. Section II literature synthesis;
-8. Section VII discussion;
-9. appendices and availability statements;
-10. Section I Introduction;
-11. Section VIII Conclusion;
-12. abstract and keywords last.
+1. TQE manuscript shell migration and canonical entry point;
+2. terminology, metric definitions, and style guide;
+3. Section III mathematical framework;
+4. Section IV analytical predictions;
+5. figure redesign (Section 8), which needs the P1--P8 ledger;
+6. Section V simulation landscape;
+7. Section VI hardware validation;
+8. Section II literature synthesis;
+9. Section VII discussion;
+10. appendices and availability statements;
+11. Section I Introduction;
+12. Section VIII Conclusion;
+13. abstract and keywords last.
 
 ## 12. Acceptance Criteria
 
 The content restructure is successful when:
 
+- the manuscript builds from the official TQE journal shell with `paper/qhd.tex` as the single canonical entry point and `paper/README.md` updated to match;
 - a mixed technical reader can identify the problem before encountering the formalism;
-- every symbol and metric is defined before use;
-- every central mathematical claim is derived in the main text;
-- proof, simulation, and hardware evidence are labeled distinctly;
+- every symbol and metric is defined before use, with $\eta$/$s$/$\gamma$ used per the canonical assignment and no symbol defined twice;
+- every central mathematical claim is derived in the main text, including the general-$\gamma$ cooperative invariance proposition with proof and regression check;
+- proof, simulation, and hardware evidence are labeled distinctly, and every hardware sign/threshold claim passes or fails by the single registered decision rule in III-H;
+- the hardware equilibrium claim follows the VI-F evidence rule (six gaps, or the explicitly narrowed Hawk-only claim);
 - simulation and hardware subsections follow the same prediction order;
 - one subsection has one primary scientific purpose, and no section exceeds the consolidated subsection count in Section 6;
 - every drafted section has passed a flow pass against the style guide before approval;
@@ -569,16 +618,19 @@ The content restructure is successful when:
 - all figures are vector, colorblind-safe, and use the single shared visual language;
 - the two advantage metrics are never conflated;
 - restricted-menu equilibrium is never described as full-SU(2) equilibrium;
+- $P(0^N)$ is named per Section 3.3 everywhere, and "state fidelity" appears only where full-state fidelity is computed;
+- the entangler-family / graph-topology vocabulary of Section 3.2 is used consistently, with the normalized interaction-strength control reported;
 - mean payoff is never used as a substitute for player-level fairness;
-- ideal topology effects are distinguished from compiled-circuit effects;
+- ideal family effects are distinguished from compiled-circuit effects;
 - failed predictions and negative results remain visible;
 - secondary operational detail is moved to appendices;
-- the bibliography contains more than 50 relevant, verified, peer-reviewed sources;
+- the bibliography contains more than 50 relevant, verified, peer-reviewed sources meeting the Section 10.2 locator standard;
 - the archived-artifact DOI exists and the Data/Code Availability statements cite it;
-- the final paper fits approximately 16--20 IEEEtran pages without repeated result ledgers;
+- `paper/SECTION-III-EXECUTION-LOG.md` (and successors) record every gate decision;
+- the final paper fits approximately 16--20 TQE pages without repeated result ledgers;
 - Introduction questions, analytical predictions, simulation results, hardware tests, Discussion, and Conclusion align one-to-one.
 
-## 13. Explicit Non-Goals for This Phase
+## 13. Explicit Non-Goals for This Program Phase
 
 This design phase does not:
 
@@ -586,5 +638,8 @@ This design phase does not:
 - generate figures (figure *specification* is Section 8; figure *execution* is a later plan);
 - change scientific claims;
 - add unverified citations;
-- optimize strategies separately for each topology;
-- convert restricted equilibrium claims into unrestricted equilibrium claims.
+- run new IBM hardware jobs;
+- claim unrestricted SU(2) equilibrium;
+- optimize a different strategy for each entangler family;
+- resolve continuous-strategy or mixed-strategy equilibria;
+- treat matched gate count as a complete device-noise causal control.
