@@ -4,6 +4,8 @@
 
 **Version:** v3 — revised after engineering review: TQE manuscript shell migration added as Task 1, entangler-family vocabulary and $P(0^N)$ renaming adopted, general-$\gamma$ cooperative proposition added, $\lambda$ symbol collision fixed ($\eta$ depolarizing, $s$ fold scale), exhaustive payoff-tensor test, Dove-deviation and permutation-covariance coverage, existing-test reuse mandated, semantic anchors replace authoritative line numbers, execution log added, gates G1--G5 confirmed.
 
+> **Execution status (2026-08-04):** Tasks 1–12 and Gates G1–G3 are complete at checkpoint commit `86495d7`. Resume at Task 13 only. The unchecked boxes below are the original executable specification, not current completion tracking. Use `paper/SECTION-III-EXECUTION-LOG.md` and `docs/QHD-TASK12-HANDOFF.md` for the durable completion record.
+
 **Goal:** Establish a verified terminology, citation, style, and mathematical foundation for the QHD paper, then rewrite Section III one subsection at a time with the five authorized approval gates and a mandatory section-level flow pass.
 
 **Architecture:** This is the first execution plan derived from `docs/superpowers/specs/2026-07-31-qhd-content-restructure-design.md` (v3). It covers the TQE shell migration, the dependency-setting work, and Section III. Each subsection follows the same evidence chain: define its reader question, verify formulas against code or symbolic derivation, add only verified peer-reviewed citations, edit `paper/qhd.tex` following `paper/STYLE-GUIDE.md`, and compile in an isolated build directory. User approval happens at five gates: (G1) shell migration + baseline + terminology + style guide, (G2) literature audit, (G3) first drafted subsection III-A for style calibration, (G4) the high-stakes III-G derivation, (G5) the complete Section III after its flow pass. Sections IV--VIII and the figure redesign receive separate plans only after Section III is approved.
@@ -1149,8 +1151,8 @@ State explicitly: by III-F the cooperative payoff is $\gamma$-invariant, so the 
 - [ ] **Step 6: Run the deviation tests**
 
 ```bash
-python -m pytest tests/test_paper_claims.py -k "hawk_deviation or dove_deviation" -v
-python -m pytest tests/test_ne_guard.py -v
+conda run -n entangled-equilibria python -m pytest tests/test_paper_claims.py -k "hawk_deviation or dove_deviation" -v
+conda run -n entangled-equilibria python -m pytest tests/test_ne_guard.py -v
 ```
 
 Expected: PASS.

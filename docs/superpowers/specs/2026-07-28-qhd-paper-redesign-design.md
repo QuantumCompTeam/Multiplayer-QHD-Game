@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-28  
 **Canonical manuscript:** `paper/qhd.tex`  
-**Status:** Approved design
+**Status:** Superseded by `docs/superpowers/specs/2026-07-31-qhd-content-restructure-design.md`; retained for history only
 
 ## 1. Purpose
 

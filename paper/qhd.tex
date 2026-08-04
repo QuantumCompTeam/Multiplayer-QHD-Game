@@ -1,9 +1,10 @@
 % Editable LaTeX source for the complete QHD paper.
-% Build from the paper/ directory:
-%   pdflatex -interaction=nonstopmode -halt-on-error qhd.tex
-%   bibtex qhd
-%   pdflatex -interaction=nonstopmode -halt-on-error qhd.tex
-%   pdflatex -interaction=nonstopmode -halt-on-error qhd.tex
+% Build from the paper/ directory into an isolated output directory:
+%   mkdir .qhd-build-check
+%   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
+%   bibtex .qhd-build-check/qhd
+%   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
+%   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
 % For Overleaf, upload qhd.tex, references.bib, ieeeaccess.cls, the TQE shell
 % image assets, and the figs/ directory, then set qhd.tex as the main document.
 % Official shell: IEEE Template Selector, TQE_Template.zip (March 2020 sample).
@@ -437,13 +438,16 @@ convention of Sec.~\ref{sec:notation}. The two equations say that the protocol
 is a map from a strategy profile to a distribution over the same classical
 outcomes the classical game had; the payoff rule is untouched, and every result
 in this paper comes from moving probability between those outcomes. The
-entanglement angle $\gamma$ measures how strongly the register is correlated
-before the players act: every family we study satisfies $J_T(0)=I$, the identity
-on all $N$ qubits, so
-$\gamma=0$ returns the classical game exactly, and $\gamma=\pi/2$ is the
-maximally entangled setting~\cite{chappell2012} (that work writes the same angle
-as $\theta$). The subscript $T$ is the only thing left undefined here; the five
-entangler families it ranges over are the subject of the next subsection.
+entanglement angle $\gamma$ controls the interpolation used to correlate the
+register before the players act: every family we study satisfies $J_T(0)=I$,
+the identity on all $N$ qubits, so $\gamma=0$ returns the classical game
+exactly. We use $\gamma=\pi/2$ as the largest nominal interpolation angle in the
+study; whether that endpoint is maximally entangled depends on the family and
+entanglement measure and is not assumed uniformly across the five families.
+Chappell et al. use the symbol $\theta$ for the corresponding GHZ-family
+angle~\cite{chappell2012}. The subscript $T$ is the only thing left undefined
+here; the five entangler families it ranges over are the subject of the next
+subsection.
 
 One scope limit must be stated before any equilibrium claim. Players physically
 hold the whole strategy space of Eq.~\eqref{eq:strategy-unitary}, but the

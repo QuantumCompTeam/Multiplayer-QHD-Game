@@ -1,6 +1,8 @@
 # QHD Paper Redesign Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **SUPERSEDED 2026-07-31 — DO NOT EXECUTE.** Use `docs/superpowers/plans/2026-07-31-qhd-mathematical-framework-rewrite.md` and resume from the status recorded in `docs/QHD-TASK12-HANDOFF.md`. Commands below are retained only as historical planning context.
+
+> **Historical instruction:** Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Rebuild the QHD manuscript into a mathematically rigorous, readable, evidence-traceable quantum-game-theory paper organized around entanglement topology as a mechanism-design variable.
 

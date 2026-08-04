@@ -48,7 +48,7 @@ The five compared entanglers are not all graphs, so the paper adopts two-level v
 
 - **Entangler family** — the umbrella term for the five-way comparison: GHZ, W, ring, star, and complete. Every five-way statement says "entangler family," never "topology."
 - **Graph topology** — reserved for the pairwise-graph families only (ring, star, complete), where an edge set $E(G)$ genuinely exists. Graph-position language (hub, leaf, orbit) applies only here.
-- Because GHZ and W use a single global interpolation angle while pairwise families compose per-edge rotations, equal $\gamma$ does not mean equal total interaction strength across families. The paper defines a **normalized interaction-strength convention** in III-D and reports a sensitivity control under it in Section V, so family comparisons are not confounded by raw coupling budget.
+- Because GHZ and W use a single global interpolation angle while pairwise families compose per-edge rotations, equal $\gamma$ does not mean equal total interaction strength across families. III-D defines a **normalized interaction-strength convention**, but the normalization and sensitivity sweep remain unimplemented in the current Phase 1 plan. Section V must report that control only after a separate implementation and verification task has run it; until then, every comparison must disclose the unnormalized equal-$\gamma$ setting.
 
 ### 3.3 Target-state naming (binding)
 

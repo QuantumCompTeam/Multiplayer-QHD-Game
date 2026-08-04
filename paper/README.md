@@ -9,18 +9,20 @@ as a deprecated compatibility wrapper.
 Overleaf: upload this complete `paper/` folder, including `ieeeaccess.cls` and
 the TQE shell image assets, then set `qhd.tex` as the main document.
 
-Run from the `paper/` directory:
+Run from the `paper/` directory and build into an isolated output directory:
 
 ```bash
-pdflatex -interaction=nonstopmode -halt-on-error qhd.tex
-bibtex qhd
-pdflatex -interaction=nonstopmode -halt-on-error qhd.tex
-pdflatex -interaction=nonstopmode -halt-on-error qhd.tex
+rm -rf .qhd-build-check
+mkdir .qhd-build-check
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
+bibtex .qhd-build-check/qhd
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
 ```
 
-The expected manuscript artifact is `qhd.pdf`. These commands use the official
-TQE LaTeX shell distributed by the IEEE Template Selector in
-`TQE_Template.zip`.
+The review artifact is `.qhd-build-check/qhd.pdf`. Do not compile directly over
+the protected local `paper/qhd.pdf`. These commands use the official TQE LaTeX
+shell distributed by the IEEE Template Selector in `TQE_Template.zip`.
 
 ## Status / division of labor
 
@@ -37,8 +39,9 @@ TQE LaTeX shell distributed by the IEEE Template Selector in
 - The review draft includes Aasa's email as recorded in the canonical manuscript.
 - Aasa must review the game-theory wording and sign off on the exploratory T9
   learning rule.
-- All eight cited publications were checked against authoritative publisher/DOI
-  records; every entry includes a verified DOI, and no unverified citation remains.
+- The 27-source Section III literature audit is recorded in
+  `LITERATURE-AUDIT.md`; every accepted entry includes a verified DOI or
+  publisher record, evidence-access classification, and claim-use boundary.
 - Table I reports the registration-source hardware execution;
   `figs/hardware_scaling.pdf` is a two-execution aggregate whose result
   artifacts carry the same recorded result-write-time calibration snapshot.
