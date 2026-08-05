@@ -43,6 +43,7 @@ htmlcov/
 # Agent tooling / local session state
 .claude/
 .context/
+.superpowers/brainstorm/.last-token
 
 # OS cruft
 .DS_Store

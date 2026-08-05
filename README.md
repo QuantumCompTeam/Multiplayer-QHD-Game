@@ -10,6 +10,10 @@
 
 This project extends the 2-player quantum Hawk-Dove trading game from Khan et al. (2025) — which demonstrated quantum Nash equilibrium advantage on a real ion-trap quantum computer — to N players with five distinct entanglement topologies: GHZ state, W state, ring, star, and fully-connected. We use the Eisert-Wilkens-Lewenstein (EWL) protocol implemented in Qiskit to compute per-player payoffs and Nash equilibria across all (N, topology, noise) configurations. Our key metric is quantum advantage: the difference between the quantum and classical Nash equilibrium payoffs. The project targets a co-authored Q1 journal paper in *Quantum Economics and Finance* or *npj Quantum Information*.
 
+## 1. Current Project Handoff
+
+The mathematical-framework rewrite is complete through Task 12 and paused before the Section III-G incentive-boundary rewrite. See [`docs/QHD-TASK12-HANDOFF.md`](docs/QHD-TASK12-HANDOFF.md) for the full Task 1–12 history, verification evidence, binding decisions, protected-file rules, and exact Task 13 instructions.
+
 ---
 
 ## 2. Research Questions
