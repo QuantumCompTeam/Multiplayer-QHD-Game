@@ -23,12 +23,11 @@ No new physics: every payoff is one ``build_ewl_circuit`` statevector fed to
 beta), NOT over the 3^N discrete profile grid, so it scales in the same 2^N
 statevector cost as the rest of the codebase.
 
-Scope: symmetric (player-identical) strategies.  For vertex-transitive
-topologies (GHZ, ring, fully-connected, W) the optimal play is symmetric, so a
-symmetric search is exact.  The star is NOT vertex-transitive (hub != leaf): a
-symmetric gate is a constrained sub-optimum there, so its Nash result is flagged
-``symmetric_caveat=True``.  Recommended N <= 6 (matches expected_payoff's stable
-shape contract and the sweep range).
+Scope: candidate searches are constrained to symmetric strategies. Symmetry
+does not guarantee a globally optimal symmetric profile or exclude asymmetric
+equilibria. Best responses to each candidate are certified by a quadratic-form
+eigenvalue calculation, independently of candidate-search convergence. The star
+also carries ``symmetric_caveat=True`` for its distinct hub/leaf roles.
 """
 
 from __future__ import annotations
@@ -46,6 +45,7 @@ from circuits.n_player import build_ewl_circuit
 from circuits.topologies import Entangler, ghz_entangler
 from config import C as DEFAULT_C, GAMMA, V as DEFAULT_V
 from game.payoffs import expected_payoff
+from game.best_response import best_response
 
 # Convergence / certification tolerances.
 NASH_TOL = 1e-6  # nash_gap below this certifies a symmetric Nash equilibrium
@@ -210,14 +210,13 @@ def nash_gap(
     """
     base_vec = _profile_payoffs([tuple(base)] * N, N, entangler, gamma, V, C)
     worst = -np.inf
-    starts = _starts(seed, extra=[base])
     players = range(N) if check_all_players else range(1)
     for player in players:
         def dev_obj(p: StrategyParams, _player: int = player) -> float:
             return _deviator_payoff(base, p, _player, N, entangler, gamma, V, C)
 
-        _, best_dev, _ = _maximize(dev_obj, starts)
-        worst = max(worst, best_dev - float(base_vec[player]))
+        response = best_response(dev_obj, float(base_vec[player]))
+        worst = max(worst, response.gain)
     return float(worst)
 
 
@@ -245,7 +244,7 @@ def cooperative_strategy(
     params, payoff, converged = _maximize(obj, starts)
     gap = nash_gap(
         params, N, entangler, gamma, V, C, seed=seed,
-        check_all_players=symmetric_caveat,
+        check_all_players=True,
     )
     return StrategyOptResult(
         params=params,
@@ -295,7 +294,6 @@ def nash_strategy(
     over_budget = lambda: time_budget is not None and (time.perf_counter() - t_start) > time_budget  # noqa: E731
 
     best: StrategyOptResult | None = None
-    br_starts = _starts(seed, n_random=1)
     for start in seeds:
         if best is not None and over_budget():
             break
@@ -307,7 +305,8 @@ def nash_strategy(
             def br_obj(p: StrategyParams, _base: StrategyParams = current) -> float:
                 return _deviator_payoff(_base, p, 0, N, entangler, gamma, V, C)
 
-            nxt, _, _ = _maximize(br_obj, br_starts + [current])
+            response = best_response(br_obj, br_obj(current))
+            nxt = response.params
             cur_probs = build_ewl_circuit(N, [current] * N, entangler=entangler, gamma=gamma)
             nxt_probs = build_ewl_circuit(N, [tuple(nxt)] * N, entangler=entangler, gamma=gamma)
             current = tuple(nxt)
@@ -355,7 +354,7 @@ def nash_strategy(
     # player position checked, but only this once (not per seed).
     final_gap = nash_gap(
         best.params, N, entangler, gamma, V, C, seed=seed,
-        check_all_players=symmetric_caveat,
+        check_all_players=True,
     )
     return replace(best, nash_gap=final_gap, is_nash=final_gap <= NASH_TOL)
 
