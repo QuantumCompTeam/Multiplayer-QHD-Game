@@ -19,7 +19,9 @@ environment, whose freeze accompanies the pilot registration.
 
 Validation: 858 tests passed, 3 skipped in the historical pinned environment
 on 7 September 2026; 40 extension tests also passed in the isolated current
-hardware environment. Legacy Qiskit deprecation warnings remain. The LaTeX
+hardware environment. Legacy Qiskit deprecation warnings remain.
+Final focused evidence/manuscript check: 425 passed, 3 skipped, including
+raw-count replay for all three new jobs. The LaTeX
 build checks for unresolved references/citations; inherited class output-box
 warnings require visual inspection rather than treating every warning as an
 unreadable page.
