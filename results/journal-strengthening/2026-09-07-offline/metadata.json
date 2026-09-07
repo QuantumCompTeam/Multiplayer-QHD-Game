@@ -1,0 +1,36 @@
+{
+  "experiment": "journal-strengthening",
+  "created_utc": "2026-09-07T11:58:37.004798+00:00",
+  "git": {
+    "commit": "ec23cada3a2553f12d8ecdd0ddd092c2c25a5f2e",
+    "dirty": true
+  },
+  "python": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
+  "params": {
+    "bootstrap": 2000,
+    "seed": 20260907,
+    "hardware_submitted": false,
+    "sources": [
+      {
+        "path": "results/hardware-scaling/2026-07-16T074134Z/result.json",
+        "sha256": "79622840bc65be62657fb8136b894f71c6f2dbb9eaac6941cf66dfcaf011aff3"
+      },
+      {
+        "path": "results/hardware-scaling/2026-07-17T014458Z/result.json",
+        "sha256": "a88bc4c0b64657732338b37d63cb2558ee1d2523a9e44fe87b630ef007f91c9f"
+      },
+      {
+        "path": "results/hardware-scaling/2026-07-25T035623Z/result.json",
+        "sha256": "cdba4bdf4a7d65afeae00e4bdb2d5e2c115b5aa92a18e48f67c131fc398b0934"
+      },
+      {
+        "path": "results/hardware-scaling/2026-07-25T180549Z/result.json",
+        "sha256": "bb7c1f9674e7f6341c78039b4a0113775443a6b491eac3c6baab85babc3b2cf5"
+      },
+      {
+        "path": "results/hardware-scaling/2026-07-26T090122Z/result.json",
+        "sha256": "ebfe04838e606cb08372e2afdddcb89d555be7e4582f7d0db618e4f6e08ed5bd"
+      }
+    ]
+  }
+}

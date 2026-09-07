@@ -1,5 +1,10 @@
 # QHD Claim and Source Map
 
+The 2026-09-07 submission revision adds proved phase branches, compact
+evaluation, payoff sensitivity, and new hardware tests. Its claim-to-evidence
+addendum is [JOURNAL-REVISION-LOG.md](JOURNAL-REVISION-LOG.md); historical
+statuses below describe the earlier gated revision and remain for provenance.
+
 | Term | Canonical meaning | Must not be called | Primary implementation/evidence |
 |---|---|---|---|
 | entangler family | one of GHZ, W, ring, star, complete — the umbrella for five-way comparisons | topology (for the five-way set) | `src/circuits/topologies.py` |

@@ -50,10 +50,10 @@ def _compact(text: str) -> str:
     return re.sub(r"\s+", "", text)
 
 
-def test_section_iii_does_not_claim_unsupported_state_fidelity():
+def test_section_iii_limits_fidelity_to_explicit_pure_target():
     block = _section_iii_block(PAPER.read_text(encoding="utf-8"))
-    unsupported = block.replace("not state fidelity", "")
-    assert "state fidelity" not in unsupported
+    assert r"F(\rho,\ket{0^N})=\bra{0^N}\rho\ket{0^N}" in block
+    assert "not fidelity to an arbitrary ideal entangled state" in block
 
 
 def test_section_iii_e_has_canonical_heading_and_label():
@@ -100,13 +100,14 @@ def test_section_iii_e_keeps_advantage_metrics_distinct():
     assert compact.count("circuit-relativepayoffgap") >= 2
 
 
-def test_section_iii_e_defines_all_zero_population_as_not_fidelity():
+def test_section_iii_e_defines_all_zero_population_and_fidelity_scope():
     block = _section_iii_e_block(PAPER.read_text(encoding="utf-8"))
     compact = _compact(block)
     assert "all-zero target-state population" in block
     assert "target-state population" in block
     assert r"P(0^N)\equivp_T(0^N\mid\boldsymbolU)" in compact
-    assert "not state fidelity" in block
+    assert "explicit pure target" in block
+    assert "not fidelity to an arbitrary ideal entangled state" in block
 
 
 def test_section_iii_e_defines_vector_first_fairness_summaries():

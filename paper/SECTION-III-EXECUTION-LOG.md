@@ -721,3 +721,11 @@ Nothing. The replaced `Topology definitions` and `Gate-native realisation` block
 - Gate status: this closure claims no user approval and no Gate G4 approval.
 - Next action: Task 13, III-G incentive boundary. After Task 13 and its clean
   review, stop at Gate G4 for explicit user approval.
+
+## 2026-09-07 submission revision continuation
+
+The user subsequently authorized implementation, commits and hardware runs:
+"commit and run, no need of my approval whatever is best do it". The earlier
+Task 12 stop is superseded for this scoped revision. See
+[JOURNAL-REVISION-LOG.md](JOURNAL-REVISION-LOG.md) for the III-G proof,
+claim/evidence addendum, new source audit, and hardware registration policy.

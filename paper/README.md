@@ -6,6 +6,11 @@ as a deprecated compatibility wrapper.
 
 ## Build
 
+For the September 2026 journal revision, run `python scripts/build_submission.py`
+from the repository root. It creates a separate draft PDF and portable source
+archive in `paper/submission/`. See `JOURNAL-REVISION-LOG.md` for updated evidence
+and `submission/README.md` for the author-facing upload checklist.
+
 Overleaf: upload this complete `paper/` folder, including `ieeeaccess.cls` and
 the TQE shell image assets, then set `qhd.tex` as the main document.
 

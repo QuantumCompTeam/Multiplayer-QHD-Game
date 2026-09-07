@@ -1,0 +1,82 @@
+% Journal extension: tests/test_journal_extensions.py and journal-strengthening artifacts.
+\subsection{Incentive-Compatibility Boundary}\label{sec:archinterp}
+\label{sec:incentive-boundary}
+The cooperative output does not determine whether a player benefits from
+departing from it. We characterize the original phase choice and then
+introduce a distinct branch that changes its restricted incentives.
+
+Let $Q_{N,m}=U(0,\alpha_m,\alpha_m)$, where
+$\alpha_m=m\pi/N$ and $m$ is an integer. The historical strategy $Q_N$
+remains $Q_{N,1}$. Both GHZ branches acquire the common phase $(-1)^m$, so
+the proof in Sec.~\ref{sec:ghz-benchmark} gives cooperative payoff $V/N$
+for every branch and every $\gamma$. The identity branch $m=0$ also
+cooperates in outcome; that observation alone establishes no incentive compatibility.
+
+\begin{proposition}[Restricted phase-branch incentives]
+For $N\ge2$, $V>0$, $C>0$, and $t=\sin^2\gamma\sin^2\alpha_m$, the
+unilateral Hawk and Dove payoffs against $Q_{N,m}$ are
+\begin{equation}
+\begin{split}
+\pi_j(H,Q_{N,m,-j})&=V(1-t),\\
+\pi_j(D,Q_{N,m,-j})&=(V-Ct)/N.
+\end{split}
+\label{eq:phase-deviations}
+\end{equation}
+The cooperative profile is a Nash equilibrium within
+$\{D,H,Q_{N,m}\}$ if and only if
+\begin{equation}
+\sin^2\gamma\sin^2\alpha_m\ge1-\frac1N.
+\label{eq:phase-boundary}
+\end{equation}
+\end{proposition}
+The inequality requires sufficient entanglement and an appropriate cooperative
+phase; it is not an equilibrium condition for arbitrary SU(2) operations.
+
+\begin{proof}
+The other players contribute total phase
+$(N-1)\alpha_m=m\pi-\alpha_m$. For a Hawk deviation, applying $J^\dagger$
+leaves support on the deviator-only Hawk outcome $e_j$ and its complement.
+The probability of $e_j$ is
+$|\cos^2(\gamma/2)e^{-i\alpha_m}
++\sin^2(\gamma/2)e^{i\alpha_m}|^2=1-t$.
+The deviator earns $V$ on $e_j$ and zero on its complement.
+A Dove deviation leaves support on $0^N$ and $1^N$, with probabilities
+$1-t$ and $t$, respectively, giving $(V-Ct)/N$. Comparing each payoff
+with $V/N$ proves the condition, since Dove never benefits and Hawk
+does not benefit exactly when $t\ge1-1/N$.
+\end{proof}
+
+For the original branch at $\gamma=\pi/2$, the Hawk payoff is
+$V\cos^2(\pi/N)$, equal to $2+2\cos(2\pi/N)$ at $V=4$.
+It exceeds $V/N$ for $N\ge4$, reproducing the previously reported
+fixed-profile boundary. Define a separate alternative strategy
+\begin{equation}
+Q_N^\star=Q_{N,\lfloor N/2\rfloor}.
+\label{eq:alternative-phase}
+\end{equation}
+This selects the cooperative phase closest to $\pi/2$ from below.
+For even $N$ the Hawk payoff is zero at maximal entanglement; for odd
+$N\ge3$ it is $V\sin^2(\pi/(2N))<V/N$, since
+$\sin^2(\pi/(2N))<\pi^2/(4N^2)<1/N$.
+The Dove inequality is also strict. Thus $Q_N^\star$ is a strict
+$\{D,H,Q_N^\star\}$ equilibrium for every $N\ge2$ in the ideal
+maximally entangled game. Mixtures over the same menu cannot improve on
+its best pure deviation. The old and alternative menus are explicitly
+different; no historical simulation or hardware result is relabeled.
+
+The unrestricted boundary is explicit. Against $Q_{N,m}$,
+$U(\pi,0,-\alpha_m)$ yields the sole-Hawk outcome $e_j$ with certainty:
+the two amplitudes contributing to $e_j$ have equal phase and their
+weights sum to $\cos^2(\gamma/2)+\sin^2(\gamma/2)=1$.
+The payoff is $V$, a gain of $V(1-1/N)$, for every $\gamma$.
+Neither cooperative branch is therefore an equilibrium against all SU(2)
+deviations. This is a profile-specific witness, not a nonexistence theorem
+for other pure or mixed equilibria; the importance of specifying the
+strategy space is established in~\cite{benjamin2001comment}.
+
+Ideal existence also differs from uniform robustness. For even $N$,
+Eq.~\eqref{eq:phase-boundary} gives
+$\gamma_c=\arccos(1/\sqrt N)$ on $[0,\pi/2]$, so the permitted angle
+window narrows as $N$ grows, while absolute incentive margins decrease.
+The simulation section evaluates the alternative branch separately from
+the historical fixed-strategy landscape.
