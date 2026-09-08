@@ -1,0 +1,55 @@
+\section{Evaluation Questions and Evidence Boundaries}\label{sec:evaluation}
+The study addresses four questions with different units of evidence.
+First, which cooperative phase profiles resist unilateral deviations in
+the specified game? Second, how do entangler families change payoffs and
+fairness at a fixed strategy? Third, which apparent robustness differences
+survive controls for circuit implementation? Fourth, which ideal properties
+remain supportable on a finite noisy processor? Table~\ref{tab:evidence-boundaries}
+states the operational test and interpretation of each question.
+
+\begin{table*}[t]
+\centering
+\caption{Evaluation questions, evidence layers, and interpretation boundaries.}
+\label{tab:evidence-boundaries}
+\begin{tabular}{p{.19\textwidth}p{.25\textwidth}p{.23\textwidth}p{.23\textwidth}}
+\toprule
+Question & Operational test & Evidence & Interpretation permitted\\
+\midrule
+Which phases support cooperation? & Compare every named unilateral strategy
+with the cooperative payoff. & Phase-boundary proof, unrestricted witness,
+and dense-circuit cross-checks. & Exact ideal statements for the specified
+operator and menu; no unrestricted equilibrium claim.\\
+How does the entangler affect payoffs? & Evaluate the same fixed strategy
+and enumerate finite-menu best replies. & Five-family noiseless landscape,
+per-player vectors, and graph-symmetry checks. & A fixed-strategy comparison;
+not each family's globally optimal play.\\
+What determines noise robustness? & Compare payoff gaps and equilibrium
+status; vary compilation and match gate counts. & Gate-level sweeps,
+implementation controls, and wiring permutations. & Production-circuit
+robustness; geometry and synthesis are not interchangeable.\\
+What survives on hardware? & Test all-player deviation gaps under a frozen
+confidence rule; inspect welfare and population separately. & Registered
+circuits, raw counts, calibration records, and repeated batches. & Bounded
+implemented-game evidence; no distributed-market deployment claim.\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Mathematical identities and empirical estimands}
+The phase boundary and four-product-state representation are algebraic
+properties of the ideal GHZ protocol. Finite floating-point tests check
+their implementation but do not establish the all-$N$ statements by
+themselves. Hardware probabilities instead estimate repeated circuit
+outcomes. The mean payoff, each player's payoff, the worst unilateral
+gain, and the all-zero population are distinct estimands. In particular,
+high mean payoff cannot substitute for a player-level incentive test.
+
+\subsection{Evidence hierarchy and negative findings}
+Historical runs, retrospective reweighting, and prospectively registered
+tests retain their separate status. Failed noise predictions remain in
+the record. The alternative-phase repeat is judged under the same rule
+as the first batch, without pooling to reverse a failed acceptance test.
+No result on a finite device is promoted to a statement about unlimited
+physical scaling. Compact classical evaluation is reported as an analysis
+tool, while physical player count remains the number of simultaneously
+represented qubits in the executed protocol.

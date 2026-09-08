@@ -8,11 +8,24 @@
 ![Status: Active Research](https://img.shields.io/badge/Status-Active%20Research-orange)
 ![arXiv: Coming Soon](https://img.shields.io/badge/arXiv-Coming%20Soon-red)
 
-This project extends the 2-player quantum Hawk-Dove trading game from Khan et al. (2025) — which demonstrated quantum Nash equilibrium advantage on a real ion-trap quantum computer — to N players with five distinct entanglement topologies: GHZ state, W state, ring, star, and fully-connected. We use the Eisert-Wilkens-Lewenstein (EWL) protocol implemented in Qiskit to compute per-player payoffs and Nash equilibria across all (N, topology, noise) configurations. Our key metric is quantum advantage: the difference between the quantum and classical Nash equilibrium payoffs. The project targets a co-authored Q1 journal paper in *Quantum Economics and Finance* or *npj Quantum Information*.
+This project studies an N-player shared-resource allocation game using the
+Eisert-Wilkens-Lewenstein (EWL) protocol, five entangler families, exact
+simulation, and IBM hardware through seven players. Equilibrium statements
+refer to named finite strategy menus; both cooperative GHZ phase families
+admit a profitable unrestricted SU(2) deviation. Payoff retention, player
+incentives, and physical implementation are measured separately. The manuscript
+targets IEEE Transactions on Quantum Engineering. Khan et al. (2025) is prior
+multiplayer trading-game work, not a two-player-only baseline for novelty.
 
 ## 1. Current Project Handoff
 
-The mathematical-framework rewrite is complete through Task 12 and paused before the Section III-G incentive-boundary rewrite. See [`docs/QHD-TASK12-HANDOFF.md`](docs/QHD-TASK12-HANDOFF.md) for the full Task 1–12 history, verification evidence, binding decisions, protected-file rules, and exact Task 13 instructions.
+The journal revision includes the phase-boundary proof, compact ideal GHZ
+evaluation through N=128, payoff sensitivity, and two complete registered
+hardware batches. Both batches support the incentive criterion at N=4,6;
+both fail the overall five-size criterion. See [WHAT-WAS-ADDED.md](WHAT-WAS-ADDED.md)
+and [the revision log](paper/JOURNAL-REVISION-LOG.md). The Task 12 handoff remains
+a historical record. The September 8 audit additionally hardens invalid-input
+handling and aligns the manuscript with the supplied FQCNN reference layout.
 
 ---
 
@@ -186,7 +199,7 @@ python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # Install dependencies — versions PINNED to match pyproject.toml.
-# Unpinned installs pull qiskit 2.x, which is incompatible with this code
+# Keep the historical simulator pins; current IBM execution uses a separate environment
 # (targets qiskit==1.3.2); the sign/basis conventions differ.
 pip install "qiskit==1.3.2" "qiskit-aer==0.14.2" "nashpy==0.0.19" \
             "networkx==3.3" "numpy==1.26.4" "scipy==1.13.1" \

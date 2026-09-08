@@ -1,5 +1,9 @@
 # QHD Literature Audit
 
+The 2026-09-07 source addendum for Landsburg (full-text methodological
+precedent) and Koh et al. (abstract-level context only) is recorded in
+[JOURNAL-REVISION-LOG.md](JOURNAL-REVISION-LOG.md).
+
 Task 4 consolidation of three read-only research lanes (quantum/entanglement,
 classical/network game theory, noise/mitigation) plus the audit of the 8
 pre-existing `paper/references.bib` entries. This file supersedes the four

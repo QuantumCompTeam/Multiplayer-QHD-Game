@@ -33,9 +33,10 @@ See src/cpu_limit.py.
 import math
 
 V: float = 4.0  # resource value
-C: float = 3.0  # conflict cost (C > V/2 ensures Hawk-Dove dynamics are non-trivial)
+C: float = 3.0  # conflict cost; V > C gives strict classical Hawk dominance here
 
 GAMMA: float = math.pi / 2
 # CRITICAL: maximum entanglement requires gamma = pi/2.
-# Symptom of wrong gamma: (Q,Q) payoff falls below (2,2) and Nash property fails.
-# Do not change without re-running test_two_player.py.
+# Cooperative phase-branch payoff remains V/N at every gamma. Incentives depend
+# on gamma and the selected phase; see game.phase_branches for the exact boundary.
+# Keep this historical benchmark fixed; angle sweeps pass gamma explicitly.

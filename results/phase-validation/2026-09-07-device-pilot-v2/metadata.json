@@ -1,0 +1,13 @@
+{
+  "experiment": "phase-validation-draft",
+  "created_utc": "2026-09-07T12:13:36.182384+00:00",
+  "git": {
+    "commit": "ec23cada3a2553f12d8ecdd0ddd092c2c25a5f2e",
+    "dirty": true
+  },
+  "python": "3.10.20 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:42:35) [MSC v.1942 64 bit (AMD64)]",
+  "params": {
+    "backend": "ibm_fez",
+    "shots": 4096
+  }
+}

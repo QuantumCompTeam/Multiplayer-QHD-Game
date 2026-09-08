@@ -95,8 +95,6 @@ def q_strategy(N: int) -> StrategyParams:
 
     Derivation sketch:
       J_N(pi/2)|00...0> = (|00...0> + i|11...1>) / sqrt(2)
-      Q_N^(x)N maps |00...0> -> (i)^N * e^(i*(N-1)*alpha)|00...0>
-                           ...  but the key is the RELATIVE phase:
       Q_N^(x)N on the two-component state:
         |00...0> component gains phase (e^(i*alpha))^N = e^(i*pi) = -1
         |11...1> component gains phase (e^(-i*alpha))^N = e^(-i*pi) = -1
@@ -113,9 +111,9 @@ def q_strategy(N: int) -> StrategyParams:
                N=k -> U(0, pi/k, pi/k)
 
     FINDING (paper-worthy): the quantum strategy scales as pi/N.
-    The N=2 strategy Q is not universal — it fails for N>2 under the X^(x)N
-    entangler because 2*(pi/2) = pi but 3*(pi/2) ≠ pi. This was discovered
-    during Month-2 simulation (simulation result, not prior assumption).
+    The N=2 strategy Q is not universal: at odd N its phase does not preserve
+    the cooperative branch. At even N it is another cooperative phase branch;
+    see game.phase_branches for the full family and incentive boundary.
     """
     alpha = math.pi / N
     return (0.0, alpha, alpha)

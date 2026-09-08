@@ -1,0 +1,7 @@
+{
+  "job_id": "dafce6642tqs73avos70",
+  "registration_sha256": "e2706f8cdc2d6cde2bffba3eb539a58adfecfc18c24cbb4797dbb8dccbc8b9e9",
+  "submitted_utc": "2026-09-07T14:15:52.054008+00:00",
+  "backend": "ibm_fez",
+  "cap_seconds": 60
+}

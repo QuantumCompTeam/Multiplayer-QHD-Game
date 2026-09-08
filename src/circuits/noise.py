@@ -49,6 +49,8 @@ def build_noise_model(p: float, p2_ratio: float = 1.0) -> NoiseModel:
     """
     if not 0.0 <= p <= 1.0:
         raise ValueError(f"noise p must be in [0, 1], got {p}")
+    if not np.isfinite(p2_ratio) or p2_ratio < 0:
+        raise ValueError("p2_ratio must be finite and nonnegative")
     p2 = min(1.0, p * p2_ratio)
     nm = NoiseModel()
     if p > 0.0:
@@ -93,6 +95,8 @@ def build_ewl_circuit_noisy(
     if not 0.0 <= p <= 1.0:
         raise ValueError(f"noise p must be in [0, 1], got {p}")
 
+    if len(strategies) != N:
+        raise ValueError(f"expected exactly {N} player strategies, got {len(strategies)}")
     j_t, jdag_t = _transpiled_entangler(topology, N, gamma)
 
     qc = QuantumCircuit(N)

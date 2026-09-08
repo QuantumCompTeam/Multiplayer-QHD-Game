@@ -1,0 +1,32 @@
+{
+  "files": {
+    "evaluation-boundaries.tex": "6dbb65bc9eeab61a1e0c4cb829b643038c76d6b815431ba0b79201a13600d4c6",
+    "figs/advantage_vs_gamma_N4.png": "4156f036bfc7fdb2876b5e80065370f48771f67a0a3a854a824ca450ff2fe3e3",
+    "figs/advantage_vs_N.png": "5835e51133d91ad13ec17d58e077bde171620558fb80515e0d3d907e9e7b5d83",
+    "figs/hardware_n3_validation.pdf": "f6a9e44c0d7a863e3f45de42b9bc9e24f4b1dc6f30fa3338849444f7e1f9a847",
+    "figs/hardware_scaling.pdf": "82d3753c11054e3567c24f117ad96b5efd95d2e549453b1cb136aa585023b7ae",
+    "figs/hardware_scaling_advantage.pdf": "75d230bc8f45eaf7f4b8773c4e0ff87c43e35aca1080672137a910152fc09aa1",
+    "figs/hardware_scaling_population.pdf": "768c15a12b491d08130e8eeca2ebad40d1077d819f0942f3a1fc0a46ca2e8df5",
+    "figs/hardware_scaling_zne.pdf": "7410bf22a89a84c54ffb5b9744ead83eee7a8d6160bddc639c287f6d8dd4075c",
+    "figs/hardware_topology.pdf": "7b5d7ab2981408950abd35412a1197749610039b4fdb0a319c909ae6af6c1876",
+    "figs/journal_extensions.pdf": "1e86fceebf1ae58bb36a747c292bc28e3f0258883b09e3a6483507046dffbc94",
+    "figs/per_player_advantage_star.png": "fb7e0e3b192040d81fb465bd5b398770652fc6b4a5ca9d4e877cb61293023d2a",
+    "figs/topology_heatmap.png": "7d380936b157716ed88fa3060cca02f3016f7f4c036657cbf7f02c20d5a55d95",
+    "hardware-setup.tex": "90ffcd911de7e02105679bd961cad3f047f5d2288d51f85fc63af7e9dc8878e0",
+    "incentive-boundary.tex": "55ffef63eefe27ff030ad2ca2dd87c652931a40f622cb18d3b38ada580973952",
+    "journal-limitations.tex": "b94ba1b3ae76ab470783d22768d3e55ae20ec4572e7d89fd5e81d0f91576a3c0",
+    "journal-results.tex": "39e8913603b4583cfba61f9be4e20ce576ec8b020cdf7265fe1d0f89bd13109e",
+    "phase-hardware-results.tex": "bba7ee8721755043fbf3a694f1b61b149adec651b616c5df5e9838d035c4c7f6",
+    "qhd.tex": "b9660a6af4ef9698b2b04ee88b26d2de8caaf18063a36e2e237e433d656e7f4b",
+    "references.bib": "73ee593c50cf406e495634b0b721bc7e76c11af22f6932e6be39595df905b261",
+    "validation-methods.tex": "7f2e3cf45639c94f74791ec8330d16cf396b227d6968bc78e34f6f5c3601ca96"
+  },
+  "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
+  "ieeetran_bst_sha256": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
+  "bbl_sha256": "8589b372f59c1098cfe0a6947ea10b7436d21d30b8f11229cc3844edfc4e03ce",
+  "pdf_sha256": "5b880d7b7b44ae227678a0e7b28c8f11d72eea430a84fdfd2cc166c526e7ea30",
+  "code_and_data_sha256": "829185edea24ea4e3699cba51d5d5e5e62b3445cfee5788fe1225ffa16b64804",
+  "git_head": "7ad5829f6064b9c2edb0aef914a2ee295da589bd",
+  "git_status": " M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "note": "Source hashes identify exact content; git status records uncommitted work at build."
+}

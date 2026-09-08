@@ -8,6 +8,8 @@ __pycache__/
 venv/
 .venv/
 .venv-win/
+.venv-hardware/
+paper/.journal-build/
 env/
 .env
 .env.*

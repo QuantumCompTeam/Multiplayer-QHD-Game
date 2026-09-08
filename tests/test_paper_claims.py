@@ -128,8 +128,8 @@ def _assert_ghz_cooperative_benchmark_contract(text):
     assert r"\pi_j=\frac{4}{N},\qquad\Delta_{\mathrm{ana}}=\frac{3}{N}" in compact
     assert (
         "For the cooperative benchmark, $\\gamma$ is therefore a pure incentive dial: "
-        "it can move the deviation incentives registered for the planned Section III-G "
-        "analysis while leaving the cooperative payoff exactly unchanged."
+        "it can move the deviation incentives characterized in Sec.~\\ref{sec:incentive-boundary} "
+        "while leaving the cooperative payoff exactly unchanged."
     ) in prose
 
 

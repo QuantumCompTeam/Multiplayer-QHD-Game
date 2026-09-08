@@ -1,4 +1,4 @@
-"""N-player Hawk-Dove payoff functions (Benjamin-Hayden formula).
+"""N-player Hawk-Dove payoffs for the specified shared-resource allocation rule.
 
 Interface contract (consumer side):
   expected_payoff(probs, N, V, C) accepts probs of shape (2**N,) — the direct
@@ -27,12 +27,12 @@ def index_to_bitstring(i: int, n: int) -> str:
 
 
 def outcome_payoff(i: int, N: int, V: float, C: float) -> npt.NDArray[np.float64]:
-    """Return per-player payoffs for basis state index i (Benjamin-Hayden formula).
+    """Return per-player payoffs for basis state index i (allocation rule).
 
     Player j is Hawk iff (i >> j) & 1 == 1  (Qiskit little-endian, see config.py).
     k = number of Hawks = popcount(i).
 
-    Benjamin-Hayden formula:
+    Specified allocation rule (separate from the quantization protocol):
       k == 0:      all Dove  — each player gets V/N
       0 < k < N:   Hawks take all — each Hawk gets V/k, each Dove gets 0
       k == N:      all Hawk  — each player gets (V-C)/k  (conflict cost shared)
@@ -63,7 +63,7 @@ def _payoff_matrix(N: int, V: float, C: float) -> npt.NDArray[np.float64]:
 
     Built once per (N, V, C) and reused for every expected_payoff call, replacing
     the per-call Python loop over all 2**N outcomes.  Encodes the same
-    Benjamin-Hayden formula as outcome_payoff (verified against it in tests):
+    allocation rule as outcome_payoff (verified against it in tests):
       k == 0:      all Dove  -> V / N for every player
       0 < k < N:   each Hawk -> V / k, each Dove -> 0
       k == N:      all Hawk  -> (V - C) / k for every player
@@ -95,6 +95,10 @@ def expected_payoff(
     # Interface contract (spec §4 / config.py, Month-4 D6): probs must be shape
     # (2**N,), non-negative, and normalised. The density-matrix noisy path can
     # emit ~1e-16 negatives; those are clamped, anything larger is a real bug.
+    if not isinstance(N, (int, np.integer)) or N < 2:
+        raise ValueError("expected_payoff: N must be an integer >= 2")
+    if not np.isfinite([V, C]).all() or not np.isfinite(probs).all():
+        raise ValueError("expected_payoff: probabilities and V,C must be finite")
     if probs.shape != (2 ** N,):
         raise ValueError(
             f"expected_payoff: probs shape {probs.shape} does not match (2**{N},) = "

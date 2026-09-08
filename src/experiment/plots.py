@@ -88,10 +88,10 @@ def _varying(results: list[CellResult]) -> dict[str, bool]:
 
 
 def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> str:
-    series: dict[str, list[tuple[int, float]]] = {}
+    series: dict[str, list[tuple[int, float, bool]]] = {}
     for r in ok:
         key = r.cell.topology + _secondary_label(r, vary)
-        series.setdefault(key, []).append((r.cell.N, float(r.advantage)))  # type: ignore[arg-type]
+        series.setdefault(key, []).append((r.cell.N, float(r.advantage), bool(r.q_is_nash)))  # type: ignore[arg-type]
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
     for i, (label, pts) in enumerate(sorted(series.items())):
@@ -103,8 +103,11 @@ def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> s
         xq, yq = _smooth_curve(xs, ys)
         (line,) = ax.plot(xq, yq, label=label, **style)  # smooth curve, no markers
         # Real computed points marked on the curve.
-        ax.plot(xs, ys, linestyle="none", marker=marker, color=line.get_color(),
-                alpha=0.8, markersize=6, zorder=style["zorder"])
+        for n, advantage, is_nash in pts:
+            ax.plot([n], [advantage], linestyle="none", marker=marker,
+                    color=line.get_color(),
+                    markerfacecolor=line.get_color() if is_nash else "white",
+                    alpha=0.8, markersize=6, zorder=style["zorder"])
     ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
     ax.set_xlabel("N (players)")
     ax.set_ylabel("quantum advantage (Q-profile − classical NE)")
@@ -376,9 +379,12 @@ def _per_player_advantage(ok: list[CellResult], plots_dir: Path) -> list[str]:
         x = np.arange(len(ns), dtype=float)
         w = 0.28
         fig, ax = plt.subplots(figsize=(1.3 * len(ns) + 3, 4.5))
-        ax.bar(x - w, hub, width=w, label="hub (player 0)", color="#c44e52", alpha=0.9)
-        ax.bar(x, leaf, width=w, label="leaf (players 1..N-1)", color="#4c72b0", alpha=0.9)
-        ax.bar(x + w, mean, width=w, label="mean (per-player)", color="#55a868", alpha=0.6)
+        hub_bars = ax.bar(x - w, hub, width=w, label="hub (player 0)", color="#c44e52", alpha=0.9)
+        leaf_bars = ax.bar(x, leaf, width=w, label="leaf (players 1..N-1)", color="#4c72b0", alpha=0.9)
+        mean_bars = ax.bar(x + w, mean, width=w, label="mean (per-player)", color="#55a868", alpha=0.6)
+        for bars in (hub_bars, leaf_bars, mean_bars):
+            ax.bar_label(bars, fmt="%.2f", padding=3, fontsize=9)
+        ax.margins(y=0.12)
         ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
         ax.set_xticks(x, [str(n) for n in ns])
         ax.set_xlabel("N (players)")

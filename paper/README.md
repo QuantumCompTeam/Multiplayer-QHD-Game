@@ -6,8 +6,17 @@ as a deprecated compatibility wrapper.
 
 ## Build
 
-Overleaf: upload this complete `paper/` folder, including `ieeeaccess.cls` and
-the TQE shell image assets, then set `qhd.tex` as the main document.
+For the September 2026 journal revision, run `python scripts/build_submission.py`
+from the repository root. It creates a separate draft PDF and portable source
+archive in `paper/submission/`. See `JOURNAL-REVISION-LOG.md` for updated evidence
+and `submission/README.md` for the author-facing upload checklist.
+
+Overleaf: upload `submission/qhd-latex-source.zip` and select `qhd.tex`.
+The current layout follows the supplied `FQCNN_journal.pdf`: IEEEtran's
+conference-style letter-paper layout, 10pt two-column text, black headings,
+and centered author blocks. This is the requested visual reference; the
+article's research scope and target journal remain unchanged. The previous
+TQE branded shell remains in the repository as a historical asset.
 
 Run from the `paper/` directory and build into an isolated output directory:
 
@@ -21,8 +30,7 @@ pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-ch
 ```
 
 The review artifact is `.qhd-build-check/qhd.pdf`. Do not compile directly over
-the protected local `paper/qhd.pdf`. These commands use the official TQE LaTeX
-shell distributed by the IEEE Template Selector in `TQE_Template.zip`.
+the protected local `paper/qhd.pdf`. The source archive includes IEEEtran.cls.
 
 ## Status / division of labor
 
@@ -60,6 +68,11 @@ shell distributed by the IEEE Template Selector in `TQE_Template.zip`.
 - `figs/hardware_scaling.pdf` — from
   `results/hardware-scaling/2026-07-17T014458Z/plots/` (two-execution aggregate;
   refreshed 2026-07-19).
+- `figs/hardware_scaling_advantage.pdf`, `hardware_scaling_zne.pdf`, and
+  `hardware_scaling_population.pdf` — approved single-column replacement,
+  generated with `python scripts/plot_hardware_scaling.py --split`. A/C average
+  the same two chain-matched calibration epochs; B uses the registration-source
+  execution. The historical combined image remains available.
 - `figs/hardware_topology.pdf` — from
   `results/hardware-topology/2026-07-25T114621Z/plots/`.
 - `figs/advantage_vs_N.png` and `figs/topology_heatmap.png` — from the V=4/C=3
@@ -67,4 +80,6 @@ shell distributed by the IEEE Template Selector in `TQE_Template.zip`.
   `results/n-scaling-advantage/2026-07-19T0901Z/`.
 - `figs/advantage_vs_gamma_N4.png` — from `results/gamma-sweep/N4/`.
 - `figs/per_player_advantage_star.png` — from
-  `results/n-scaling-advantage/2026-07-19T0901Z/`.
+  `results/n-scaling-advantage/2026-07-19T0901Z/results.json`, re-rendered
+  September 8 with two-decimal labels on every bar, including the numerically
+  zero N=4 hub. Original run artifacts and numerical data are unchanged.

@@ -1,0 +1,109 @@
+\subsubsection{Alternative Phase and Compact Evaluation}\label{sec:phase-results}
+% results/journal-strengthening/2026-09-07-offline/results.json
+The incentive boundary of Sec.~\ref{sec:incentive-boundary} separates a
+phase-choice limitation from a player-count limitation. At $N=4,5,6,7$,
+the alternative profile's minimum ideal Hawk/Dove gaps are respectively
+$0.7500$, $0.4180$, $0.5000$, and $0.3734$, whereas the original profile
+has a profitable Hawk deviation at each size. These are ideal results;
+the historical device experiments used the original phase. New tests of
+the alternative strategy are reported in Sec.~\ref{sec:phase-hardware}.
+The unrestricted witness remains
+profitable for both branches.
+
+The ideal GHZ circuit also permits compact classical evaluation. Write
+$c=\cos(\gamma/2)$, $s=\sin(\gamma/2)$,
+$A=\bigotimes_j U_j\ket0$, and $B=\bigotimes_j U_j\ket1$.
+Expanding the preparation and inverse in Eq.~\eqref{eq:ewl-state} gives
+\begin{equation}
+\ket{\psi_{\mathrm{out}}}
+=c^2 A+isc B-isc X^{\otimes N}A+s^2 X^{\otimes N}B.
+\label{eq:four-branches}
+\end{equation}
+Thus the output is a sum of at most four product states, even for
+nonidentical local strategies, and its Schmidt rank across every
+bipartition is at most four. This is a classical representation bound
+for the ideal GHZ circuit, not a bound for every family or noisy implementation.
+
+Per-player payoffs can be evaluated without enumerating outcomes using
+\begin{equation}
+\pi_j=\frac VN p(0^N)
++V\,\mathbb E\!\left[\frac{x_j}{k}\mathbf1_{\{k>0\}}\right]
+-\frac CN p(1^N).
+\label{eq:compact-payoff}
+\end{equation}
+For each pair of product branches, $1/k=\int_0^1z^{k-1}\,dz$ turns
+the middle term into a polynomial integral of degree $N-1$.
+Gauss--Legendre quadrature with $\lceil N/2\rceil$ nodes integrates it
+exactly up to floating point. Prefix and suffix products evaluate all
+players at each node in linear work, giving quadratic contraction work once
+the quadrature nodes are available. Nodes are cached; the timing experiment
+warms that cache before measurement and does not time node generation.
+The implementation uses no $2^N$ probability array or dense entangler.
+Tests compare arbitrary-profile payoffs with the dense oracle through
+$N=7$; the resource experiment extends evaluation to $N=128$.
+Timings in Fig.~\ref{fig:journal-extensions} include memory instrumentation
+overhead and are single-machine measurements, not asymptotic speedup evidence.
+Checking a fixed three-strategy candidate needs $1+2N$ profile evaluations;
+enumerating all equilibria still requires a separate search.
+
+For a fixed profile, we also replace heuristic unilateral optimization
+with a global local-unitary response calculation. Quaternion quadratic-form
+methods already occur in two-player quantum-game analysis~\cite{landsburg2011};
+here we use the single-gate structure with fixed multiplayer opponents. Write
+$U(q)=q_0I+i(q_1X+q_2Y+q_3Z)$ with real $\|q\|=1$.
+Linearity of circuit amplitudes in this single gate makes the payoff
+$q^TM_jq$ for a real symmetric $4\times4$ matrix. Four coordinate
+evaluations and six normalized pair sums determine $M_j$; its largest
+eigenvalue is the best-response payoff and its eigenvector supplies a
+witness. Independent evaluations check the reconstruction and witness.
+This certifies a response to fixed opponents in the specified circuit,
+not convergence of a search for an equilibrium. Strategy-dependent noisy
+compilation requires separate validation of the quadratic assumption.
+
+\subsubsection{Sensitivity to Partial Conflict Costs}\label{sec:payoff-sensitivity}
+The mean-welfare identity implies that analytic-baseline retention equals
+$1-p(1^N)$. Uniform independent classical bits therefore retain
+$1-2^{-N}$, or $99.21875\%$ at $N=7$. This randomization is not an
+equilibrium of the underlying dominance game; it demonstrates why high
+retention alone does not establish coherent cooperation or useful
+incentive compatibility. All output patterns with between one and
+$N-1$ Hawks preserve the original total welfare.
+
+We test the dependence on that payoff rule with a separate sensitivity
+game. Let $\ell\in[0,1]$ and define total conflict loss
+\begin{equation}
+L_\ell(k)=C\left[(1-\ell)\mathbf1_{\{k=N\}}
++\ell\frac{k(k-1)}{N(N-1)}\right].
+\label{eq:partial-conflict-loss}
+\end{equation}
+All-Dove still pays $V/N$; at $k>0$ each Hawk receives
+$(V-L_\ell(k))/k$ and each Dove zero. The original game is $\ell=0$,
+while $\ell=1$ charges according to the fraction of Hawk pairs. Both
+endpoint payoffs and the $N=2$ game are preserved. At $V>C$, Hawk remains
+strictly dominant since its payoff is positive against every nonempty
+Hawk set and is $V>V/N$ against all-Dove.
+
+We retrospectively reweight saved raw fold-1 counts at
+$\ell=0,0.25,0.5,1$, without claiming new hardware execution or new
+equilibrium tests. For the $N=3,\ldots,7$ extension run, retention at
+$\ell=1$ is respectively $98.17\%$, $96.00\%$, $94.91\%$, $92.46\%$,
+and $93.23\%$, compared with $75\%$ for uniform independent outcomes
+at every size. At $N=7$ the corresponding raw player floor is $0.4993$.
+Sampling intervals come from the same count distributions; they exclude
+calibration drift. This sensitivity model is not an empirically fitted
+economic model, and reweighting cooperative counts does not establish
+its noisy equilibria.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{journal_extensions.pdf}
+\caption{Journal-extension analyses. Left: minimum ideal Hawk/Dove deviation
+gap for the original and alternative cooperative phase branches, each in its
+stated restricted menu. Middle: retrospective raw fold-1 retention under the
+original and partial-conflict payoff rules for the recorded $N=3$--$7$ run;
+error bars are $1.96$ multinomial standard errors and exclude calibration drift.
+Uniform independent-outcome comparators are diagnostic, not equilibria.
+Right: exact compact GHZ payoff evaluation through $N=128$; instrumented CPU
+time is a classical resource measurement, not hardware player-count scaling.}
+\label{fig:journal-extensions}
+\end{figure*}

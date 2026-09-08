@@ -23,6 +23,18 @@ import pytest  # noqa: E402
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "experiments" / "config.yaml"
 
 
+@pytest.fixture(scope="session", autouse=True)
+def isolated_result_writes(tmp_path_factory):
+    """Test-generated sweeps must never overwrite the historical research record."""
+    import results_io
+    original = results_io.RESULTS_ROOT
+    results_io.RESULTS_ROOT = tmp_path_factory.mktemp("generated-results")
+    try:
+        yield results_io.RESULTS_ROOT
+    finally:
+        results_io.RESULTS_ROOT = original
+
+
 @pytest.fixture(scope="session")
 def topology_folder() -> Path:
     """Build the shared results/topology/ folder from config.yaml, once per session.

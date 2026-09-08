@@ -57,9 +57,22 @@ def new_run_dir(experiment: str, timestamp: str | None = None) -> Path:
     group several artifacts from one logical run under the same folder.
     """
     ts = timestamp or run_timestamp()
-    run_dir = RESULTS_ROOT / experiment / ts
-    run_dir.mkdir(parents=True, exist_ok=True)
-    return run_dir
+    parent = RESULTS_ROOT / experiment
+    parent.mkdir(parents=True, exist_ok=True)
+    if timestamp is not None:
+        run_dir = parent / ts
+        run_dir.mkdir(exist_ok=True)
+        return run_dir
+    # Separate invocations in the same minute must not overwrite one another.
+    # mkdir is atomic, so concurrent writers also receive distinct directories.
+    suffix = 0
+    while True:
+        run_dir = parent / (ts if suffix == 0 else f"{ts}-{suffix:03d}")
+        try:
+            run_dir.mkdir()
+            return run_dir
+        except FileExistsError:
+            suffix += 1
 
 
 def write_metadata(run_dir: Path, experiment: str, params: dict) -> Path:

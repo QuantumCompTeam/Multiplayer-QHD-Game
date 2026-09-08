@@ -1,0 +1,84 @@
+\subsubsection{Registered Alternative-Phase Deviation Tests}
+\label{sec:phase-hardware}
+The new experiment evaluates $Q_N^\star$ separately from the historical
+phase. On 7 September 2026, a committed registration fixed a seven-qubit
+chain, $[141,142,143,144,145,146,147]$, on \texttt{ibm\_fez} and used its
+prefixes for $N=3,\ldots,7$. An 18-circuit pilot preceded the complete
+70-circuit batch. The complete batch contains a cooperative profile at
+each size, both Hawk and Dove deviations for every player, original-phase
+controls, an unrestricted counterstrategy, and two readout calibrations.
+Every circuit uses 4096 shots. Dense operator identity and compiled ideal
+output checks precede device-noise rehearsals and submission. The manifest
+and serialized circuits are committed before each experiment, and the
+execution code checks the manifest against the committed bytes.
+
+The primary analysis uses raw implemented payoffs: calibration circuits
+are diagnostic and no readout correction or ZNE is applied to these tests.
+With $M=50$ primary deviations and $\alpha=0.05$, the simultaneous lower
+bound on each cooperative-minus-deviation gap is
+\begin{equation}
+g_j^{\rm L}(a)=\widehat g_j(a)
+-\sum_{s\in\{\mathrm{coop},\mathrm{dev}\}}
+V\sqrt{\frac{\log(2M/\alpha)}{2n_s}},
+\end{equation}
+where $n_s=4096$. Hoeffding's inequality and a union bound cover the two
+one-sided mean errors for every gap. These bounds assume independent
+shots from stationary circuit distributions; they do not cover temporal
+drift. The registered approximate-equilibrium tolerance is
+$-g_j^{\rm L}(a)/(V/N)\le0.05$ for every deviation of every player.
+The overall registration requires all five sizes to pass.
+
+In the first complete batch, every measured gap is positive, but the
+simultaneous criterion passes only at $N=3,4,5,6$. The minimum observed
+gaps are $0.2360$, $0.5677$, $0.2157$, $0.2627$, and $0.0109$,
+respectively. The corresponding maximum upper bounds on normalized
+deviation gain are $0.0058$, $-0.3240$, $0.0349$, $-0.0285$, and
+$0.4074$. Thus the overall registered test fails: a positive point gap
+at $N=7$ does not establish the requested tolerance. At $N=4,6$ the
+simultaneous lower gaps are strictly positive; at $N=3,5$ the supported
+statement is approximate equilibrium at the declared tolerance.
+
+This all-player test locates an implementation boundary absent from mean
+welfare alone. At $N=7$, target population is $0.7495$ and analytic-baseline
+retention is $0.9600$, despite unresolved incentive compatibility. The
+experiment certifies neither arbitrary SU(2) deviations nor an enlarged
+menu containing both phase families. Original-phase controls and the
+unrestricted witness are separately reported diagnostics. The witness's
+observed gain over cooperation for player zero ranges from $2.4604$ to
+$2.7052$ across the five sizes, consistent in direction with the analytic
+counterexample. These diagnostic point estimates do not enlarge the
+registered finite-menu certification scope.
+
+A second complete batch reused the frozen circuits, shots and decision rule
+after a replication plan was committed. Each batch is judged separately;
+their counts are not pooled to rescue a failed criterion. The repeat
+supports the criterion at $N=4,6$, but not at $N=3,5,7$
+(Table~\ref{tab:phase-repeat}). All 50 point gaps are positive in the first
+batch; one is slightly negative in the repeat, at $N=7$. This is not a
+statistically established profitable deviation. Both batches fail the
+overall five-size test, while the positive lower gaps at $N=4,6$ reproduce.
+The executions occurred minutes apart on the same chain; this is a
+within-session repetition, not evidence across independent calibration
+epochs. The pilot and two complete batches consumed $21+77+77=175$ seconds
+of provider-reported charged QPU time.
+
+\begin{table}[t]
+\centering
+\caption{Alternative-phase all-player tests, judged separately in each
+batch. $g_{\min}$ is the smallest observed payoff gap; $u_{\max}$ is the
+largest simultaneous upper bound on deviation gain normalized by $V/N$.
+The registered tolerance requires $u_{\max}\le0.05$.}
+\label{tab:phase-repeat}
+\begin{tabular}{crrrr}
+\toprule
+& \multicolumn{2}{c}{First batch} & \multicolumn{2}{c}{Repeat}\\
+$N$ & $g_{\min}$ & $u_{\max}$ & $g_{\min}$ & $u_{\max}$\\
+\midrule
+3 & 0.2360 & 0.0058 & 0.1362 & 0.0806\\
+4 & 0.5677 & -0.3240 & 0.5716 & -0.3279\\
+5 & 0.2157 & 0.0349 & 0.1861 & 0.0719\\
+6 & 0.2627 & -0.0285 & 0.2483 & -0.0069\\
+7 & 0.0109 & 0.4074 & -0.0033 & 0.4322\\
+\bottomrule
+\end{tabular}
+\end{table}
