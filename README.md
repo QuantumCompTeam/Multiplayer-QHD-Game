@@ -4,9 +4,7 @@
 
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Qiskit](https://img.shields.io/badge/Qiskit-purple)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
 ![Status: Active Research](https://img.shields.io/badge/Status-Active%20Research-orange)
-![arXiv: Coming Soon](https://img.shields.io/badge/arXiv-Coming%20Soon-red)
 
 This project studies an N-player shared-resource allocation game using the
 Eisert-Wilkens-Lewenstein (EWL) protocol, five entangler families, exact

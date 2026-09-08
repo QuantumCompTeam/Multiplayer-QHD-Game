@@ -34,7 +34,7 @@ the protected local `paper/qhd.pdf`. The source archive includes IEEEtran.cls.
 
 ## Status / division of labor
 
-- The evidence-backed prose draft and all seven figures are present, but this is
+- The evidence-backed prose draft and its figures are present, but this is
   a review draft, not a submission-ready manuscript.
 - Every numerical claim remains sourced from a named `results/` artifact in an
   adjacent LaTeX comment.
@@ -50,24 +50,25 @@ the protected local `paper/qhd.pdf`. The source archive includes IEEEtran.cls.
 - The 27-source Section III literature audit is recorded in
   `LITERATURE-AUDIT.md`; every accepted entry includes a verified DOI or
   publisher record, evidence-access classification, and claim-use boundary.
-- Table I reports the registration-source hardware execution;
-  `figs/hardware_scaling.pdf` is a two-execution aggregate whose result
-  artifacts carry the same recorded result-write-time calibration snapshot.
-  This does not prove that the provider calibration was unchanged at execution
-  time.
-- Figure 6 error bars are the two-point sample standard deviation across those
-  executions; they exclude within-run uncertainty and are not cross-day error
-  bars. Cross-day hardware repeats and the resulting uncertainty update remain
-  in progress.
+- The hardware scaling figures are split into advantage, zero-noise
+  extrapolation, and ground-state population. Advantage and population average
+  runs within each calibration stamp before computing the cross-epoch sample
+  standard deviation. These error bars are a lower bound on total uncertainty;
+  the other-chain execution is excluded. The extrapolation panel uses the
+  registration-source execution. See the Hardware Validation body text for
+  the complete sample definition and the N=4,5 non-equilibrium caveat.
+- Q1 eligibility, Google Scholar presence, and current retraction status remain
+  under review; see `Q1-REFERENCE-AUDIT.md`. The existing bibliography is not
+  certified against that new policy.
 - See `REVIEW-NOTES.md` for the complete pre-submission checklist.
 
 ## Figures
 
 - `figs/hardware_n3_validation.pdf` — from
   `results/hardware-n3/2026-07-16T013912Z/plots/`
-- `figs/hardware_scaling.pdf` — from
-  `results/hardware-scaling/2026-07-17T014458Z/plots/` (two-execution aggregate;
-  refreshed 2026-07-19).
+- `figs/hardware_scaling.pdf` — historical combined image, matching
+  `results/hardware-scaling/2026-07-26T090122Z/plots/`; superseded in the
+  manuscript by the three single-column figures below.
 - `figs/hardware_scaling_advantage.pdf`, `hardware_scaling_zne.pdf`, and
   `hardware_scaling_population.pdf` — approved single-column replacement,
   generated with `python scripts/plot_hardware_scaling.py --split`. A/C average

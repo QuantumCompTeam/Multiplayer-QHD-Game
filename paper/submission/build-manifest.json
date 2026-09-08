@@ -17,16 +17,16 @@
     "journal-limitations.tex": "b94ba1b3ae76ab470783d22768d3e55ae20ec4572e7d89fd5e81d0f91576a3c0",
     "journal-results.tex": "39e8913603b4583cfba61f9be4e20ce576ec8b020cdf7265fe1d0f89bd13109e",
     "phase-hardware-results.tex": "bba7ee8721755043fbf3a694f1b61b149adec651b616c5df5e9838d035c4c7f6",
-    "qhd.tex": "b9660a6af4ef9698b2b04ee88b26d2de8caaf18063a36e2e237e433d656e7f4b",
+    "qhd.tex": "a234d52de2ed0657f7903a9031687b392f3d9f15e6624272b32684dccb9641f5",
     "references.bib": "73ee593c50cf406e495634b0b721bc7e76c11af22f6932e6be39595df905b261",
     "validation-methods.tex": "7f2e3cf45639c94f74791ec8330d16cf396b227d6968bc78e34f6f5c3601ca96"
   },
   "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
   "ieeetran_bst_sha256": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
   "bbl_sha256": "8589b372f59c1098cfe0a6947ea10b7436d21d30b8f11229cc3844edfc4e03ce",
-  "pdf_sha256": "5b880d7b7b44ae227678a0e7b28c8f11d72eea430a84fdfd2cc166c526e7ea30",
-  "code_and_data_sha256": "829185edea24ea4e3699cba51d5d5e5e62b3445cfee5788fe1225ffa16b64804",
-  "git_head": "7ad5829f6064b9c2edb0aef914a2ee295da589bd",
-  "git_status": " M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "pdf_sha256": "973da08903a8f4787cdc521c4c25d1e1c73e5c376d6445d79cfcdbe9cf8d26d3",
+  "code_and_data_sha256": "1feddfdd6998934e8cb87f5b1849cfad14d08e7fb2b1ea121344a82f60003558",
+  "git_head": "226d6b92220bcb0d7e944ec4d796a299c5835ee2",
+  "git_status": "M  .gitignore\nM  PROJECT-STATUS.md\nM  README.md\nA  docs/reviews/2026-09-08-repository-cleanup.md\nA  paper/Q1-REFERENCE-AUDIT.md\nM  paper/README.md\nD  paper/main.aux\nD  paper/main.bbl\nD  paper/main.blg\nD  paper/main.fdb_latexmk\nD  paper/main.fls\nD  paper/main.log\nD  paper/main.out\nM  paper/qhd.tex\n M paper/submission/build-manifest.json\n M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
   "note": "Source hashes identify exact content; git status records uncommitted work at build."
 }
