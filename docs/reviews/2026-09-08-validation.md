@@ -45,7 +45,16 @@ requires this repository's Git history. Package compilation requires a LaTeX
 installation. No command above submits a QPU job. The three recorded jobs retain
 their original total charge of 175 seconds and their original acceptance results.
 
-GitHub CI status is reported on the associated PR; it is separate from these
-completed local checks. This record does not constitute external peer review or
+PR creation is currently blocked by the installed `gstack-redact-prepush` hook:
+it reports `HIGH engine.input_too_large` when the added-line input exceeds its
+1 MiB cap. The rejected push did not identify a specific credential. The new
+branch's diff against the default branch includes older history; even historical
+commit `03d642d` adds approximately 1.28 MB of scan input by itself. Ordinary
+smaller pushes therefore cannot fully resolve the limit. The hook was not
+disabled or bypassed. The branch and reviewed artifacts are committed locally,
+but no PR was created and GitHub CI has not run for this branch. The scanner
+needs a supported larger-input path before the normal push can complete.
+
+This record does not constitute external peer review or
 prove absence of every defect. See the accompanying full-project audit for the
 remaining scientific and methodological limitations.
