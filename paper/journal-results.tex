@@ -1,4 +1,4 @@
-\subsection{Alternative Phase and Compact Evaluation}\label{sec:phase-results}
+\subsubsection{Alternative Phase and Compact Evaluation}\label{sec:phase-results}
 % results/journal-strengthening/2026-09-07-offline/results.json
 The incentive boundary of Sec.~\ref{sec:incentive-boundary} separates a
 phase-choice limitation from a player-count limitation. At $N=4,5,6,7$,
@@ -35,7 +35,9 @@ For each pair of product branches, $1/k=\int_0^1z^{k-1}\,dz$ turns
 the middle term into a polynomial integral of degree $N-1$.
 Gauss--Legendre quadrature with $\lceil N/2\rceil$ nodes integrates it
 exactly up to floating point. Prefix and suffix products evaluate all
-players at each node in linear work, giving quadratic work overall.
+players at each node in linear work, giving quadratic contraction work once
+the quadrature nodes are available. Nodes are cached; the timing experiment
+warms that cache before measurement and does not time node generation.
 The implementation uses no $2^N$ probability array or dense entangler.
 Tests compare arbitrary-profile payoffs with the dense oracle through
 $N=7$; the resource experiment extends evaluation to $N=128$.
@@ -58,7 +60,7 @@ This certifies a response to fixed opponents in the specified circuit,
 not convergence of a search for an equilibrium. Strategy-dependent noisy
 compilation requires separate validation of the quadratic assumption.
 
-\subsection{Sensitivity to Partial Conflict Costs}\label{sec:payoff-sensitivity}
+\subsubsection{Sensitivity to Partial Conflict Costs}\label{sec:payoff-sensitivity}
 The mean-welfare identity implies that analytic-baseline retention equals
 $1-p(1^N)$. Uniform independent classical bits therefore retain
 $1-2^{-N}$, or $99.21875\%$ at $N=7$. This randomization is not an

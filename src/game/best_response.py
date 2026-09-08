@@ -42,7 +42,7 @@ Ten fit evaluations, four independent deterministic reconstruction checks and
 one witness evaluation. Failure rejects the fixed-quadratic assumption. Finite
 checks are diagnostics, not a proof that an arbitrary supplied oracle is quadratic.
     """
-    if not np.isfinite(baseline) or tolerance <= 0:
+    if not np.isfinite(baseline) or not np.isfinite(tolerance) or tolerance <= 0:
         raise ValueError("finite baseline and positive tolerance required")
     basis = np.eye(4)
     matrix = np.zeros((4, 4))
@@ -61,7 +61,10 @@ checks are diagnostics, not a proof that an arbitrary supplied oracle is quadrat
     residual = abs(actual-float(eigenvalues[-1]))
     for q in np.array([[1,2,3,4], [-2,1,4,-3], [3,-4,1,2], [4,3,-2,1]], float):
         q /= np.linalg.norm(q)
-        residual = max(residual, abs(payoff(quaternion_params(q))-float(q@matrix@q)))
+        checked = float(payoff(quaternion_params(q)))
+        if not np.isfinite(checked):
+            raise ValueError("nonfinite payoff oracle at independent reconstruction check")
+        residual = max(residual, abs(checked-float(q@matrix@q)))
     if not np.isfinite(actual) or not np.isfinite(residual) or residual > tolerance:
         raise ValueError(f"payoff oracle failed quadratic reconstruction: {residual:.3g}")
     return BestResponse(params, actual, max(0.0, actual-baseline), residual, matrix)

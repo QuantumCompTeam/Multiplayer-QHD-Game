@@ -448,3 +448,17 @@ deployment, computational quantum advantage, or unlimited physical scaling.
 | `3225edd` | Package reviewed PDF and portable LaTeX source |
 
 The work was performed on branch `docs/qhd-task12-handoff`.
+
+## 12. September 8 audit and reference-format revision
+
+The follow-up branch `review/full-audit-fqcnn-format` hardens numerical and
+configuration validation, fixes premature asymmetric Nash-search stopping and
+automatic result-directory collisions, and adds 37 regression/structure tests.
+It also adds an independent raw-count evidence audit and portable-archive check.
+The paper now follows the supplied FQCNN PDF's IEEEtran layout and nine-section
+structure. A hashed code-and-data supplement preserves current and frozen
+pre-execution sources. No further QPU time was spent.
+
+See [the complete findings](docs/reviews/2026-09-08-full-project-audit.md) and
+[the validation record](docs/reviews/2026-09-08-validation.md) for defects,
+checks, and remaining scientific limitations.

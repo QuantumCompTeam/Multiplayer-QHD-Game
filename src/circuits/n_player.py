@@ -67,6 +67,8 @@ def build_ewl_qc(
     at a given N -- the topology STRUCTURE lives in the entanglement graph, not
     this diagram. See build_ewl_circuit for the parameter contract.
     """
+    if len(strategies) != N:
+        raise ValueError(f"expected exactly {N} player strategies, got {len(strategies)}")
     j_gate, j_dag_gate = _entangler_gates(entangler, N, gamma)
 
     qc = QuantumCircuit(N)
@@ -92,8 +94,8 @@ def build_ewl_circuit(
     entangler: callable (N, gamma) -> 2^N x 2^N unitary matrix.
                Defaults to ghz_entangler (the X^(x)N formula).
                Pass make_pairwise_entangler(G) for graph topologies (Month 3).
-    gamma: entanglement parameter. Must equal pi/2 for Nash equilibrium
-           property to hold -- see GAMMA guard in config.py.
+    gamma: entanglement parameter. Restricted equilibrium depends on the chosen
+           branch and angle; see game.phase_branches for the GHZ boundary.
 
     Returns shape (2**N,). probs[i] = P(measuring basis state |i>).
     Bit ordering: player j is Hawk iff (i >> j) & 1 == 1 (Qiskit little-endian).

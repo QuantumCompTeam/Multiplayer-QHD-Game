@@ -5,60 +5,46 @@
 %   bibtex .qhd-build-check/qhd
 %   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
 %   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
-% For Overleaf, upload qhd.tex, references.bib, ieeeaccess.cls, the TQE shell
-% image assets, and the figs/ directory, then set qhd.tex as the main document.
-% Official shell: IEEE Template Selector, TQE_Template.zip (March 2020 sample).
+% For Overleaf, upload the submission source ZIP and select qhd.tex.
+% Layout follows the supplied FQCNN_journal.pdf: IEEEtran conference-style
+% letter paper, 10pt two-column body, author blocks and black headings.
 % Evidence policy: all numbers are real and trace to results/ artifacts named
 % in comments beside the corresponding claims and figures.
 %
-% STRUCTURE NOTE (2026-07-26): section skeleton and formatting conventions
-% aligned to the FQCNN IEEE draft:
-%   I Introduction (+contributions +roadmap) / II Related Work (literature only)
-%   III Proposed Framework / IV Simulation Results / V Hardware Validation
-%   VI Novelty and Technical Differentiation / VII Conclusion
-% All prose is the original text, re-homed; \paragraph replaced by \subsubsection.
-\documentclass{ieeeaccess}
+% STRUCTURE NOTE (2026-09-08): I Introduction / II Related Work /
+% III Evaluation / IV Framework / V Methods / VI Results / VII Discussion /
+% VIII Technical Differentiation / availability / IX Conclusion.
+\documentclass[conference,letterpaper,10pt]{IEEEtran}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{amsthm}
 \newtheorem{proposition}{Proposition}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{etoolbox}
 \usepackage[colorlinks=true,allcolors=black]{hyperref}
-\newdimen\xfigwd  % ieeeaccess caption compatibility for standard figure floats
 \raggedbottom  % stop column-bottom stretching from opening gaps mid-column
 \graphicspath{{figs/}}
 \newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
 \newcommand{\bra}[1]{\ensuremath{\langle#1|}}
-% Keep the publisher shell intact; suppress its sample volume/year in review.
-\makeatletter
-\newcommand{\qhdreviewfooter}{%
-  \def\@oddfoot{{\footervolfont Manuscript for peer review}\hfil
-    {\footerpagefont\thepage}}%
-  \let\@evenfoot\@oddfoot}
-\apptocmd{\ps@titlepage}{\qhdreviewfooter}{}{}
-\apptocmd{\ps@headings}{\qhdreviewfooter}{}{}
-\makeatother
-\pagestyle{headings}
 
 \begin{document}
-\history{Manuscript prepared for peer review, September 2026.}
-\doi{Not yet assigned}
 
 \title{Incentive Compatibility and Payoff Robustness in
 Multiplayer Quantum Games: Theory and Hardware Evidence}
 
-\author{\uppercase{Prithvi Raghu}\authorrefmark{1},
-\uppercase{Aasa Singh Bhui}\authorrefmark{2}}
-\address[1]{School of Computer Science and Engineering, Vellore Institute of
-Technology, Vellore, India (email: prithviraghu080706@gmail.com)}
-\address[2]{School of Computer Science and Engineering, Vellore Institute of
-Technology, Vellore, India (email: aasasingh2005@gmail.com)}
+\author{\IEEEauthorblockN{Prithvi Raghu}
+\IEEEauthorblockA{School of Computer Science and Engineering\\
+Vellore Institute of Technology\\
+Vellore, India\\
+prithviraghu080706@gmail.com}
+\and
+\IEEEauthorblockN{Aasa Singh Bhui}
+\IEEEauthorblockA{School of Computer Science and Engineering\\
+Vellore Institute of Technology\\
+Vellore, India\\
+aasasingh2005@gmail.com}}
 
-\markboth
-{Raghu and Bhui: Incentive Compatibility and Payoff Robustness in Multiplayer Quantum Games}
-{Raghu and Bhui: Incentive Compatibility and Payoff Robustness in Multiplayer Quantum Games}
+\maketitle
 
 \begin{abstract}
 We study how entangler family, player count, and implementation noise affect
@@ -85,13 +71,10 @@ runs, but fail the overall five-size test; $N=7$ remains unresolved.
 The trading interpretation is illustrative rather than an economic validation.
 \end{abstract}
 
-\begin{keywords}
+\begin{IEEEkeywords}
 quantum games, Nash equilibrium, EWL protocol, entanglement topology, NISQ,
 error mitigation, quantum finance
-\end{keywords}
-
-\titlepgskip=-15pt
-\maketitle
+\end{IEEEkeywords}
 
 % =============================================================================
 \section{Introduction}\label{sec:intro}
@@ -168,23 +151,20 @@ The main contributions of this work are as follows:
   deficit repeats, observationally rather than as a registered sign test. The
   CZ-exponential baseline scores lowest among the registered candidates but
   still misses $N{=}5$ outside the shared ranking yardstick. We identify the mechanism that makes the advantage more noise-robust than the state: first-order insensitivity of the mean payoff to single bit-flips.
-  \item \textbf{Reproducible pipeline.} An open-source harness with
+  \item \textbf{Reproducible pipeline.} A versioned research harness with
   circuit-identity gates, a mandatory device-model dress rehearsal before any
   hardware submission, and crash-safe job recovery.
 \end{enumerate}
 
 The rest of the paper is organised as follows. Section~\ref{sec:related}
-reviews related work on quantum games, multiplayer entanglement structures,
-quantum advantage in trading, and NISQ error mitigation.
-Section~\ref{sec:model} describes the proposed $N$-player framework: the
-payoff tensor, the EWL quantization, the five entanglement topologies, the
-metric conventions, and the noise model. Section~\ref{sec:sim} reports the
-simulation landscape across topology, player count, and noise.
-Section~\ref{sec:hardware} reports the hardware validation on IBM Heron r2,
-including the registered scaling, topology, equilibrium and fairness
-experiments, and closes with scalability, limitations, and future work.
-Section~\ref{sec:novelty} details the novelty and technical differentiation,
-and Section~\ref{sec:conclusion} concludes.
+reviews related work, and Section~\ref{sec:evaluation} defines the evaluation
+questions and evidence boundaries. Section~\ref{sec:model} develops the
+mathematical framework, followed by computation and validation methods in
+Section~\ref{sec:methods}. Section~\ref{sec:results} reports simulation and
+hardware results. Section~\ref{sec:discussion} discusses their interpretation,
+scalability, and limitations. Section~\ref{sec:novelty} states the technical
+differentiation, followed by data and code availability and the conclusion
+in Section~\ref{sec:conclusion}.
 
 % =============================================================================
 \section{Related Work}\label{sec:related}
@@ -204,9 +184,11 @@ Analytic multiplayer cooperation equilibria also occur in the quantum
 volunteer's dilemma~\cite{koh2025volunteer}. Its payoff and classical
 comparator differ from the allocation game studied here; an extension to
 multiple players alone is therefore not our novelty claim.
-Benjamin and Hayden~\cite{benjamin2001} give the multiplayer generalisation of
-quantum games and the payoff tensor over the $2^N$ pure outcomes that we adopt
-in Sec.~\ref{sec:model}. Chappell, Iqbal, and Abbott~\cite{chappell2012}
+Benjamin and Hayden~\cite{benjamin2001} give a multiplayer quantum-game
+construction, including minority-game and Prisoner's-Dilemma examples.
+We adopt its circuit framework; the shared-resource allocation payoff in
+Sec.~\ref{sec:model} is the separately specified model studied here.
+Chappell, Iqbal, and Abbott~\cite{chappell2012}
 compared GHZ and W entanglement in $N$-player quantum games in an EPR setting,
 but in simulation and without a financial payoff structure or a hardware
 validation; our contribution is to carry that GHZ-versus-W question through a
@@ -232,6 +214,8 @@ extrapolation by local gate folding~\cite{temme2017,kandala2019}; their use in
 this pipeline is specified in Sec.~\ref{sec:hardware}.
 
 % =============================================================================
+\input{evaluation-boundaries.tex}
+
 \section{Proposed $N$-Player Quantum Hawk--Dove Framework}\label{sec:model}
 
 \subsection{Notation and the Classical $N$-Player Payoff Tensor}
@@ -856,16 +840,20 @@ Thus every player receives $4/N$, exactly $3/N$ above the analytic all-Hawk
 baseline.
 
 For the cooperative benchmark, $\gamma$ is therefore a pure incentive dial: it
-can move the deviation incentives registered for the planned Section III-G
-analysis while leaving the cooperative payoff exactly unchanged.
+can move the deviation incentives characterized in Sec.~\ref{sec:incentive-boundary}
+while leaving the cooperative payoff exactly unchanged.
 
 \input{incentive-boundary.tex}
 % market interpretation: README §10
 
 % =============================================================================
-\section{Simulation Results: the Advantage Landscape}\label{sec:sim}
+\input{validation-methods.tex}
 
-\subsection{Scaling and Topology at Zero Noise}
+\section{Experimental Results and Analysis}\label{sec:results}
+
+\subsection{Simulation Landscape}\label{sec:sim}
+
+\subsubsection{Scaling and Topology at Zero Noise}
 % data: results/n-scaling-advantage/2026-07-19T0901Z/ (fixed mode, V=4/C=3;
 % 25 cells N=2..6 x five topologies; per-cell tables in report.md)
 For GHZ, the fixed profile $(Q_N,\dots,Q_N)$ pays exactly $V/N=4/N$ per
@@ -918,7 +906,7 @@ everywhere; the single dark cell is the ring at $N{=}4$ (gap exactly $0$).}
 % source: results/n-scaling-advantage/2026-07-19T0901Z/plots/topology_heatmap.png
 \end{figure}
 
-\subsection{Entanglement-Angle Dependence}
+\subsubsection{Entanglement-Angle Dependence}
 % gamma-sweep data: results/gamma-sweep/N2..N6 (V=4/C=3, fixed mode, noiseless)
 Sweeping $\gamma$ separates a cooperative payoff gap from an
 entanglement-enabled restricted-menu equilibrium. At $\gamma=0$, $J=I$ and
@@ -950,7 +938,7 @@ $\gamma=\pi/2$. Data:
 \label{fig:gamma}
 \end{figure}
 
-\subsection{Player Symmetry Breaking in the Star Topology}
+\subsubsection{Player Symmetry Breaking in the Star Topology}
 % star per-player data: results/n-scaling-advantage/2026-07-19T0901Z/plots/per_player_advantage_star.png
 The star is the only topology that breaks player symmetry at zero noise. For
 $N\ge4$ its per-player circuit-relative payoff gaps are uneven
@@ -970,13 +958,13 @@ large $N$; the mean (dashed) tracks $3/N$ until $N{=}6$. Data:
 \label{fig:star}
 \end{figure}
 
-\subsection{Noise Robustness: Two Criteria Disagree}\label{sec:noise}
+\subsubsection{Noise Robustness: Two Criteria Disagree}\label{sec:noise}
 % ported from README §9 (Month-4, corrected 2026-07-17); data results/noise-robustness/2026-07-03T0213Z
 Sweeping the depolarizing strength $p$ from $0$ to $0.05$ on the gate-level
 noisy path, two natural ``robustness'' criteria give different orderings, so
 we state which we mean.
 
-\subsubsection{Restricted-menu equilibrium criterion}
+\paragraph{Restricted-menu equilibrium criterion}
 Under this criterion, the GHZ cooperative profile passes at $p=0$ only for
 $N{=}2,3$, and at $N{=}3$ it loses that status between $p=0.04$ and $0.045$.
 For $N{=}4,5$ the GHZ thresholds $p^*\approx0.0197$ and $0.0098$ are
@@ -986,7 +974,7 @@ $p=0$. The fixed-mode zero-noise artifact records ring as passing at
 $N{=}2,3$, fully connected at $N{=}2,3$, star at $N{=}2$, and W at neither
 $N{=}2$ nor $N{=}3$.
 
-\subsubsection{Circuit-relative payoff-gap magnitude criterion}
+\paragraph{Circuit-relative payoff-gap magnitude criterion}
 Under this criterion the picture flips: at $N{=}3$ GHZ retains the largest
 mean gap at $p=0.05$ ($0.333$, $33\%$ of its noiseless value) versus ring
 $0.200$ and W $0.047$. These are not crossings relative to the analytic $1/N$
@@ -1005,7 +993,7 @@ $p=0.01$ (worst $-0.077$ at $p=0.015$). All entanglers here are exact
 gate-level circuits; W uses the T8 construction (44 and 68 $cx$ per $J$ at
 $N{=}4,5$, versus $100$/$444$ for the retired transpiled-unitary fallback).
 
-\subsection{Position-Locked Unfairness}
+\subsubsection{Position-Locked Unfairness}
 % wiring-permutation: README §9 Month-4 findings
 The noise-induced per-player asymmetry is not a property of the player labels
 or the ideal state. A wiring-permutation test on the ring at $N{=}5$
@@ -1027,7 +1015,7 @@ registered threshold, while the hub--leaf split itself
 hardware control supports persistence of its hub--leaf asymmetry under the
 tested physical assignments; it does not identify the cause of the ring effect.
 
-\subsection{The Finite-Round Adaptation Pilot}
+\subsubsection{The Finite-Round Adaptation Pilot}
 % T9 pilot: docs/findings/2026-07-05-t9-adaptation-fairness.md
 An exploratory W-state pilot at $N{=}4$ tested one provisional independent
 round-robin best-response rule. No tested setting produced a beneficial
@@ -1050,43 +1038,9 @@ remains exploratory pending game-theory sign-off.
 % =============================================================================
 \input{journal-results.tex}
 
-\section{Hardware Validation on IBM Heron r2}\label{sec:hardware}
+\subsection{Hardware Validation on IBM Heron r2}\label{sec:hardware}
 
-\subsection{Experimental Setup and Safeguards}
-Every submission passes three gates: (i) an $\mathrm{Operator.equiv}$
-circuit-identity assertion against the dense
-$J^\dagger (U^{\otimes N}) J$ reference, (ii) a noiseless simulator dry-run
-that must reproduce the exact analytic advantage, and (iii) a full dress rehearsal of the batch, including mitigation analysis, on the device
-noise model reduced to the executed qubits. Job identifiers are persisted
-before result polling, making runs crash-safe and recoverable. The execution
-configuration common to all runs is summarised in Table~\ref{tab:hwconfig}.
-% experiments/hardware_scaling.py; spec docs/superpowers/specs/2026-07-16-*.md
-
-\begin{table}[t]
-\centering
-\caption{Hardware Execution Configuration}
-\label{tab:hwconfig}
-\footnotesize
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{Parameter} & \textbf{Value}\\
-\midrule
-Device & ibm\_fez (IBM Heron r2)\\
-Shots per circuit & 4096\\
-$N{=}3$ validation chain & $[136,143,142]$\\
-Scaling chain ($N{=}3,4,5$) & $[59,75,74,73,79]$\\
-Extension chain ($N{=}3\ldots7$) & $[97,107,108,109,110,111,98]$\\
-Readout mitigation & tensored confusion-matrix inversion\\
-Zero-noise extrapolation & local cz folding, $\lambda\in\{1,3,5\}$\\
-Batch sizes & 11-pub scaling, 17-pub extension,\\
- & 49-pub multi-topology\\
-Software & qiskit 1.3.2 / qiskit-aer 0.14.2 /\\
- & qiskit-ibm-runtime 0.36.1\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Single-Point Validation at $N=3$}
+\subsubsection{Single-Point Validation at $N=3$}
 % results/hardware-n3/2026-07-16T013912Z/ (job d9br6l66hjac73fg3g7g)
 We ran the validated $Q_3$ circuit (entangler decomposed to 6 native cz gates)
 with 4096 shots on ibm\_fez; $3911/4096$ shots landed in $\ket{000}$
@@ -1142,7 +1096,7 @@ $P(\ket{000})$ has already lost $4.5\%$.
   \label{fig:n3}
 \end{figure}
 
-\subsection{Scaling at $N=3,4,5$ with Error Mitigation}
+\subsubsection{Scaling at $N=3,4,5$ with Error Mitigation}
 % results/hardware-scaling/2026-07-16T074134Z/ (job d9c8fpn550hc73dl1tcg)
 All three $N$ ran on prefixes of one pinned 5-qubit chain
 $[59,75,74,73,79]$ (chosen by calibration error) in a single 11-pub batch:
@@ -1246,7 +1200,7 @@ cross-calibration sample that is chain-matched is two epochs rather than three.
 % results/hardware-scaling/repeat-judgments.json
 % (run 1: cz 10.0 vs p_eff 31.3; run 2: cz 7.4 vs p_eff 23.4)
 
-\subsection{Extension to $N=6,7$}\label{sec:n67}
+\subsubsection{Extension to $N=6,7$}\label{sec:n67}
 % results/hardware-scaling/2026-07-25T180549Z/ (job d9if010gk0ls73f4avkg)
 % registered: results/hardware-scaling/preregistration-n67.json (commit 8d1e5d1)
 % judged: results/hardware-scaling/2026-07-25T180549Z/judgments-n67.json
@@ -1285,7 +1239,7 @@ specifically}: the cross-calibration repeats aggregated in
 Fig.~\ref{fig:scaling} re-execute the registered $N=3,4,5$ batch and so cannot
 address it, and no such $N=6,7$ repeat has been run.
 
-\subsection{Topology, Equilibrium and Fairness on Device}\label{sec:hwtopology}
+\subsubsection{Topology, Equilibrium and Fairness on Device}\label{sec:hwtopology}
 % results/hardware-topology/2026-07-25T114621Z/ (job d9ia1pd0k0jc738jaqgg)
 % registered: results/hardware-topology/preregistration.json (commit 46f43d4)
 % judged: .../judgments.json; finding: docs/findings/2026-07-25-topology-hardware-run1.md
@@ -1356,7 +1310,7 @@ do not measure preparation error or fidelity to their own ideal states. The
 topology axis does not separate these systems by how much advantage they retain;
 it separates them by \emph{structure}, as the next two results show.
 
-\subsubsection{Registered Hawk-deviation tests on hardware}
+\paragraph{Registered Hawk-deviation tests on hardware}
 At GHZ $N{=}3$ the three unilateral Hawk deviation gaps measure $+0.2895$,
 $+0.2726$ and $+0.3512$ (Fig.~\ref{fig:hwtopology}B), all positive and many
 standard errors clear of zero. This was a registered test and it passed at every
@@ -1372,7 +1326,7 @@ excluded from the pass criterion; it returned $+0.0067$, statistically
 indistinguishable from zero. The measured Hawk-deviation incentive therefore changes sign with entanglement strength, with the
 transition bracketed near $\gamma=0.4\pi$ at $N{=}3$.
 
-\subsubsection{Position-locked unfairness is a property of the topology}
+\paragraph{Position-locked unfairness is a property of the topology}
 star $N{=}4$ is maximally unequal even noiselessly: the analytic per-player
 vector is $(0.25,1.25,1.25,1.25)$, the hub being the loser. On device the
 measured vector is $(0.353,1.202,1.212,1.202)$, and under two wiring
@@ -1382,7 +1336,7 @@ The registered null therefore holds: \textbf{the disadvantaged position is
 determined by the entanglement topology, not by which physical qubit a player
 was allocated}. This supports the star graph-role effect under the tested assignments, separately from noise-induced ring circuit-order asymmetry.
 
-\subsubsection{A cell whose advantage is made of noise}
+\paragraph{A cell whose advantage is made of noise}
 ring $N{=}4$ is the one cell whose noiseless circuit is deterministic on $\ket{1\ldots1}$, the all-Hawk outcome, so its ideal advantage is exactly
 zero. It measured $+0.089$, the smallest of the twelve cells but clearly
 positive, and zero-noise extrapolation pulled it back to $+0.037$. All three
@@ -1390,7 +1344,7 @@ parts of that were registered in advance. A pipeline that merely inflated
 whatever it touched could not produce a cell where decoherence \emph{creates}
 apparent advantage and the extrapolation correctly removes it.
 
-\subsubsection{What did not work}
+\paragraph{What did not work}
 The registered per-cell predictions of \emph{absolute} advantage failed, in
 both the raw device-noise-model form and a CZ-linear bias-corrected form, and
 that comparison is additionally confounded: the provider recalibrated between
@@ -1400,6 +1354,10 @@ above are unaffected because each is a within-job differential: a payoff differe
 permutation against its own twin, or one cell ranked against the other eleven.
 Absolute-magnitude prediction of NISQ payoffs from a device noise model remains
 out of reach here; the structural claims do not depend on it.
+
+\input{phase-hardware-results.tex}
+
+\section{Discussion}\label{sec:discussion}
 
 \subsection{Why the Advantage Outlives the State}\label{sec:outlives}
 Target-state population decays several times faster than the advantage
@@ -1443,11 +1401,10 @@ tested. The advantage we
 report can therefore coexist with unequal per-player outcomes; the per-player
 floor is a relevant diagnostic for mechanism design.
 
-\input{phase-hardware-results.tex}
 
 \input{journal-limitations.tex}
 
-\section{Technical Differentiation}\label{sec:novelty}
+\section{Novelty and Technical Differentiation}\label{sec:novelty}
 Prior multiplayer EWL studies and trading experiments establish the setting
 in which this work belongs~\cite{benjamin2001,chappell2012,khan2025,varsamis2025}.
 Our contribution is the joint accounting of restricted incentives, payoff
@@ -1463,6 +1420,20 @@ cooperation. The registered hardware record contains both positive differential
 tests and unsuccessful quantitative predictions. These components support
 a study of incentive and observable robustness; they do not establish
 computational quantum speedup or an operational quantum market.
+
+\section*{Data and Code Availability}
+Source code and recorded evidence are maintained in the public
+\href{https://github.com/QuantumCompTeam/Multiplayer-QHD-Game}{Multiplayer-QHD-Game}
+repository. A supplementary code-and-data archive accompanies the submission
+materials as a fixed, hashed snapshot for review.
+The \texttt{results/phase-validation} directories contain the
+committed manifests, serialized circuits, raw counts, calibration snapshots,
+and provider metrics for the new runs. The \texttt{results/journal-strengthening}
+directory records compact-evaluation and retrospective-sensitivity outputs.
+The claim ledger and revision log map manuscript statements to their evidence.
+Historical simulation dependencies and the current hardware environment are
+recorded separately; replay of a frozen execution uses its recorded code
+revision as well as its dependency versions.
 
 \section{Conclusion}\label{sec:conclusion}
 We studied how entangler family, implementation noise, and player count
@@ -1503,5 +1474,4 @@ assistance is disclosed separately from the experimental provenance.
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
-\EOD
 \end{document}

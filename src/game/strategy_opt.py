@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import math
 import time
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 import numpy as np
 import numpy.typing as npt
@@ -286,8 +286,8 @@ def nash_strategy(
     `time_budget` (seconds) is a soft per-call ceiling so no single cell pegs the
     CPU unbounded — once exceeded, remaining seeds are skipped and the best
     candidate so far is returned (still with an honest, fully-checked gap). The
-    star (asymmetric) pays for an all-player gap check only ONCE, on the winning
-    candidate, not per seed.
+    Each candidate is checked at every player position before it can stop the
+    search. A hub-only best response cannot certify asymmetric graph roles.
     """
     seeds = [q_strategy(N), DOVE]  # two anchored starts; random seeds rarely beat these
     t_start = time.perf_counter()
@@ -326,10 +326,10 @@ def nash_strategy(
             if over_budget():
                 break
         payoff = _symmetric_payoff(current, N, entangler, gamma, V, C)
-        # Cheap ranking gap (player 0 only); the authoritative all-player gap for
-        # asymmetric topologies is computed once below on the winner.
+        # Rank and early-stop only after checking every player. Player zero can
+        # be stable while a leaf still has a profitable deviation.
         rank_gap = nash_gap(
-            current, N, entangler, gamma, V, C, seed=seed, check_all_players=False
+            current, N, entangler, gamma, V, C, seed=seed, check_all_players=True
         )
         cand = StrategyOptResult(
             params=current,
@@ -350,13 +350,7 @@ def nash_strategy(
         if best.is_nash:
             break
     assert best is not None
-    # Authoritative certificate on the winning candidate: the star needs every
-    # player position checked, but only this once (not per seed).
-    final_gap = nash_gap(
-        best.params, N, entangler, gamma, V, C, seed=seed,
-        check_all_players=True,
-    )
-    return replace(best, nash_gap=final_gap, is_nash=final_gap <= NASH_TOL)
+    return best
 
 
 def optimal_strategy(

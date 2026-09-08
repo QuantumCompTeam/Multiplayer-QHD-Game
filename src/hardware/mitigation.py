@@ -24,7 +24,15 @@ from scipy.optimize import minimize
 
 def counts_to_probs(counts: dict[str, int], n: int) -> npt.NDArray[np.float64]:
     """MSB-left bitstring counts -> probability vector, little-endian index."""
+    if not isinstance(n, int) or n < 1 or not counts:
+        raise ValueError("nonempty counts and a positive integer width are required")
+    if any(len(key) != n or set(key)-{'0', '1'} for key in counts):
+        raise ValueError("count bitstring width must match the register")
+    if any(not isinstance(value, (int, np.integer)) or value < 0 for value in counts.values()):
+        raise ValueError("counts must be nonnegative integers")
     shots = sum(counts.values())
+    if shots <= 0:
+        raise ValueError("counts must contain at least one shot")
     probs = np.zeros(2**n, dtype=np.float64)
     for bitstr, c in counts.items():
         probs[int(bitstr, 2)] += c / shots
@@ -82,7 +90,11 @@ def mitigate_probs(
         constraints=[{"type": "eq", "fun": lambda x: float(x.sum()) - 1.0}],
         options={"maxiter": 1000, "ftol": 1e-14},
     )
-    return np.asarray(res.x, dtype=np.float64)
+    result = np.asarray(res.x, dtype=np.float64)
+    if (not res.success or not np.isfinite(result).all()
+            or result.min() < -1e-9 or abs(result.sum()-1.) > 1e-9):
+        raise RuntimeError(f"readout mitigation failed: {res.message}")
+    return result
 
 
 def zne_extrapolate(

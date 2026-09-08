@@ -140,6 +140,11 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
     for N, topo, V, C, gamma_raw, noise_p in itertools.product(
         n_values, topologies, v_values, c_values, gamma_values, noise_p_values
     ):
+        if isinstance(N, bool) or not float(N).is_integer() or int(N) < 2:
+            raise ValueError("sweep.N must contain integers >= 2")
+        gamma = parse_gamma(gamma_raw)
+        if not all(math.isfinite(x) for x in [float(V), float(C), gamma]):
+            raise ValueError("game.V, game.C and game.gamma must be finite")
         cells.append(
             Cell(
                 N=int(N),
@@ -147,7 +152,7 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
                 strategy_names=strategy_names,
                 V=float(V),
                 C=float(C),
-                gamma=parse_gamma(gamma_raw),
+                gamma=gamma,
                 gamma_label=_gamma_label(gamma_raw),
                 strategy_mode=strategy_mode,
                 noise_p=noise_p,

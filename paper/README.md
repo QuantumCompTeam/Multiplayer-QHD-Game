@@ -11,8 +11,12 @@ from the repository root. It creates a separate draft PDF and portable source
 archive in `paper/submission/`. See `JOURNAL-REVISION-LOG.md` for updated evidence
 and `submission/README.md` for the author-facing upload checklist.
 
-Overleaf: upload this complete `paper/` folder, including `ieeeaccess.cls` and
-the TQE shell image assets, then set `qhd.tex` as the main document.
+Overleaf: upload `submission/qhd-latex-source.zip` and select `qhd.tex`.
+The current layout follows the supplied `FQCNN_journal.pdf`: IEEEtran's
+conference-style letter-paper layout, 10pt two-column text, black headings,
+and centered author blocks. This is the requested visual reference; the
+article's research scope and target journal remain unchanged. The previous
+TQE branded shell remains in the repository as a historical asset.
 
 Run from the `paper/` directory and build into an isolated output directory:
 
@@ -26,8 +30,7 @@ pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-ch
 ```
 
 The review artifact is `.qhd-build-check/qhd.pdf`. Do not compile directly over
-the protected local `paper/qhd.pdf`. These commands use the official TQE LaTeX
-shell distributed by the IEEE Template Selector in `TQE_Template.zip`.
+the protected local `paper/qhd.pdf`. The source archive includes IEEEtran.cls.
 
 ## Status / division of labor
 

@@ -76,8 +76,14 @@ Calibration/SPAM are part of the measured implemented game, not corrected away.
 Shots must be independent within each stationary circuit distribution; drift
 is evaluated by separate epochs. Pilot output never certifies all players.
     """
-    if len(rows) != len(counts) or not 0 < alpha < 1 or epsilon < 0:
+    if (len(rows) != len(counts) or not 0 < alpha < 1
+            or not math.isfinite(epsilon) or epsilon < 0):
         raise ValueError('invalid counts or confidence configuration')
+    if len({r['id'] for r in rows}) != len(rows):
+        raise ValueError('hardware row identifiers must be unique')
+    if any(any(len(key) != row['N'] for key in sample)
+           for row, sample in zip(rows, counts)):
+        raise ValueError('count bitstring width must match the registered player count')
     summaries = {r['id']:counts_summary(c) for r,c in zip(rows,counts)}
     primary = [r for r in rows if r['kind'] in ['H','D','old_Q']]
     m = len(primary)

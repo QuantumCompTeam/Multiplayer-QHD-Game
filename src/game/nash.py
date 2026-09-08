@@ -116,6 +116,11 @@ def find_pure_nash(
 
     Pure-strategy enumeration only.  See module docstring for scope caveat.
     """
+    for profile, values in tensor.items():
+        if len(profile) != N or np.asarray(values).shape != (N,):
+            raise ValueError("Nash tensor profiles and payoff vectors must have length N")
+        if not np.isfinite(values).all():
+            raise ValueError("Nash tensor payoff vectors must be finite")
     nash_profiles: list[tuple[str, ...]] = []
     for profile in tensor:
         own_payoffs = tensor[profile]  # hoisted out of the player/alt loops

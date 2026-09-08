@@ -827,7 +827,7 @@ The live convention is **V=4, C=3**, consistent across all four sources.
 | source | value |
 | --- | --- |
 | src/config.py:35 (`V: float = 4.0  # resource value`) | V = 4.0 |
-| src/config.py:36 (`C: float = 3.0  # conflict cost (C > V/2 ensures Hawk-Dove dynamics are non-trivial)`) | C = 3.0 |
+| src/config.py:36 (`C: float = 3.0  # conflict cost; V > C gives strict classical Hawk dominance here`) | C = 3.0 |
 | experiments/config.yaml:70 (`V: 4`) | V = 4 |
 | experiments/config.yaml:73 (`C: 3`) | C = 3 |
 | experiments/noise-sweep.yaml:37 (`V: 4.0`) | V = 4.0 |
@@ -1221,9 +1221,12 @@ G11 is retired and should not be cited.)
 
 **G5. The pinned qiskit version is violated by `.venv-win`.**
 pyproject.toml:6 (`"qiskit==1.3.2",`) against `.venv-win` qiskit 2.2.3 (A1).
-README.md:185 (`# Unpinned installs pull qiskit 2.x, which is incompatible with this code`)
-states 2.x is incompatible. *Consequence:* an environment the repo declares
-incompatible is present and undocumented; its purpose is NOT IN REPO (A6).
+The historical README declared 2.x incompatible. The September 8 audit replaces
+that blanket statement with the documented separation between historical
+simulation and current IBM execution. Current anchor:
+README.md:185 (`# Keep the historical simulator pins; current IBM execution uses a separate environment`)
+The previously observed `.venv-win` remains a historical observation; the new
+`.venv-hardware` purpose and exact dependency freeze are documented.
 
 **G6. Two docstrings attribute N=3 gate counts to `ibm_marrakesh` while every
 artifact records `ibm_fez`.** Raw locations in E5. Every hardware artifact

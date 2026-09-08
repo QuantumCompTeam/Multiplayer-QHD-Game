@@ -1,0 +1,40 @@
+\section{Computation and Validation Protocol}\label{sec:methods}
+\subsection{Exact simulation and strategy evaluation}
+Noiseless experiments use the dense EWL operator and exact statevector
+probabilities, with player $j$ mapped to bit $j-1$ of the integer outcome.
+The restricted equilibrium search enumerates all $3^N$ profiles in the
+named menu and checks every unilateral change. Symmetric continuous
+profile searches are candidate-generation procedures. A fixed-opponent
+SU(2) best response is evaluated using the largest eigenvalue of a
+four-dimensional quadratic form, following the methodological precedent
+in~\cite{landsburg2011}. Every player position must pass before a candidate
+is certified; a hub-only check is insufficient for a star.
+
+\subsection{Gate-level noise and compilation controls}
+The noisy path reconstructs each dense entangler from elementary gates,
+transpiles to the pinned $\{u,cx\}$ basis, and applies depolarizing channels
+after those gates. For a $d$-dimensional gate subsystem the channel is
+$\mathcal D_p(\rho)=(1-p)\rho+pI_d/d$ when acting on that subsystem's
+density operator; on a larger correlated register it replaces the
+subsystem with $I_d/d$ and retains the complementary reduced state.
+The main sweep uses equal nominal strengths on one- and two-qubit gates.
+The gate-level and dense operators agree up to global phase, and the
+$p=0$ density-matrix output is checked against the noiseless path.
+
+Entangler synthesis is cached by family, player count and angle. It is
+independent of the selected strategy profile. The reported noise ranking
+therefore refers to the specified decomposition and compilation settings.
+Matched-count and varied-compilation controls test that dependency rather
+than treating a circuit's gate count as an intrinsic topology invariant.
+
+\subsection{Uncertainty and registered decisions}
+Raw payoff estimates are linear functions of outcome frequencies; their
+multinomial covariance captures shot noise within the sampled circuit
+distribution. The new all-player hardware tests use simultaneous one-sided
+Hoeffding bounds over the registered deviation family. The exact rule and
+its observed outcomes appear in Sec.~\ref{sec:phase-hardware}. Historical
+readout correction and zero-noise extrapolation use their separately
+recorded protocols. Neither shot-noise intervals nor within-session
+replication establish stability across independent calibration epochs.
+
+\input{hardware-setup.tex}
