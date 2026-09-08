@@ -1,6 +1,6 @@
 {
   "files": {
-    "bullet.png": "754772e36aab389556f98c14f5deeb4031e792b68a766dc5f9766e76e114fffc",
+    "evaluation-boundaries.tex": "6dbb65bc9eeab61a1e0c4cb829b643038c76d6b815431ba0b79201a13600d4c6",
     "figs/advantage_vs_gamma_N4.png": "4156f036bfc7fdb2876b5e80065370f48771f67a0a3a854a824ca450ff2fe3e3",
     "figs/advantage_vs_N.png": "6498d56d62f14435dcc769a3917da1b590e5ebc1dd377973dfca856a26ce7098",
     "figs/hardware_n3_validation.pdf": "f6a9e44c0d7a863e3f45de42b9bc9e24f4b1dc6f30fa3338849444f7e1f9a847",
@@ -9,18 +9,19 @@
     "figs/journal_extensions.pdf": "1e86fceebf1ae58bb36a747c292bc28e3f0258883b09e3a6483507046dffbc94",
     "figs/per_player_advantage_star.png": "bcea4b6143dbc3c73246f68fd453325142b945bb714e6fac2e0de7ed957e709d",
     "figs/topology_heatmap.png": "7d380936b157716ed88fa3060cca02f3016f7f4c036657cbf7f02c20d5a55d95",
-    "ieeeaccess.cls": "d5be67c19d2ce2f7bc22002c7b11db5e2e5aeaa1b94c23856963ccfe52ab97e4",
+    "hardware-setup.tex": "90ffcd911de7e02105679bd961cad3f047f5d2288d51f85fc63af7e9dc8878e0",
     "incentive-boundary.tex": "55ffef63eefe27ff030ad2ca2dd87c652931a40f622cb18d3b38ada580973952",
     "journal-limitations.tex": "b94ba1b3ae76ab470783d22768d3e55ae20ec4572e7d89fd5e81d0f91576a3c0",
-    "journal-results.tex": "458e30d57328eebb65d530cfdefda9fb7920049a48f02e36dccaa51f9ce542fd",
-    "Logo.png": "c209232e8437f4b468de2950c326b0edf2db3a1dd999e1828a00945f2e0007e2",
-    "notaglineLogo.png": "34f986e081343d4e91c07ce8914094d2ede2cf041ea4e8f5bf80abe673a8625c",
-    "phase-hardware-results.tex": "af221b71d97914c1640c1607fcfe0cb10d11bc8055770be92393fa0db62ffd04",
-    "qhd.tex": "6eb65fab14556d3b121de9aa0397e78636ebcaaeb472b38aba315245ad79530d",
-    "references.bib": "73ee593c50cf406e495634b0b721bc7e76c11af22f6932e6be39595df905b261"
+    "journal-results.tex": "39e8913603b4583cfba61f9be4e20ce576ec8b020cdf7265fe1d0f89bd13109e",
+    "phase-hardware-results.tex": "bba7ee8721755043fbf3a694f1b61b149adec651b616c5df5e9838d035c4c7f6",
+    "qhd.tex": "c7c0a5646320d8a36dc994741acee94adb1c55e7b6222e175e737871a61e3a06",
+    "references.bib": "73ee593c50cf406e495634b0b721bc7e76c11af22f6932e6be39595df905b261",
+    "validation-methods.tex": "7f2e3cf45639c94f74791ec8330d16cf396b227d6968bc78e34f6f5c3601ca96"
   },
-  "pdf_sha256": "ac244bee6acc279cf3eec27a8b944a678d6803ecb225b69ba0964f9828205213",
-  "git_head": "eefbba6fd02f2459bd4f4f96a579f3b385eabfee",
-  "git_status": "?? .superpowers/\n?? paper/qhd.pdf\n?? paper/submission/build-manifest.json\n?? paper/submission/qhd-latex-source.zip\n?? paper/submission/qhd-submission-draft.pdf\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
+  "pdf_sha256": "7af6bcc61efd118e789824c3b83d94f4d45482425f04b58efb9472670f79db54",
+  "code_and_data_sha256": "026f288e1a280a0533aa2010238041a54cc4d2b3b2940f4e9d97042271c2f8ee",
+  "git_head": "a1ade4b9b805b936a385998b6db6905c25816160",
+  "git_status": " M paper/submission/build-manifest.json\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/submission/qhd-code-and-data.zip\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
   "note": "Source hashes identify exact content; git status records uncommitted work at build."
 }
