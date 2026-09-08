@@ -22,9 +22,11 @@
     "validation-methods.tex": "7f2e3cf45639c94f74791ec8330d16cf396b227d6968bc78e34f6f5c3601ca96"
   },
   "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
-  "pdf_sha256": "bbb2767743e72252f97f5e51a7a2c8aa72df1625c430d1163c4b772735059fd7",
-  "code_and_data_sha256": "cf1b254318cc481f401ec7a7ec8f72700075d87ceaf6e319b356a375ea45ac36",
-  "git_head": "9347d4766e358e4d74b21b005beb7b77d0d9850f",
-  "git_status": " M paper/submission/build-manifest.json\n M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "ieeetran_bst_sha256": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
+  "bbl_sha256": "8589b372f59c1098cfe0a6947ea10b7436d21d30b8f11229cc3844edfc4e03ce",
+  "pdf_sha256": "8552e169f1309f1b70600645da4254009d743f733bc71cfe94bda0741bb26af4",
+  "code_and_data_sha256": "4de0bf447e0f831c085afb159ce53e665bcb42cfba0b2a0cd6ee91f08bcd582d",
+  "git_head": "1b59d0ce1ebd1363277707fa7b887a9bc02bf933",
+  "git_status": " M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
   "note": "Source hashes identify exact content; git status records uncommitted work at build."
 }
