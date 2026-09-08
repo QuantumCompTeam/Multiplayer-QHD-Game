@@ -80,10 +80,16 @@ def main():
             archive.write(path, path.relative_to(paper).as_posix())
         ieee_class = Path(subprocess.check_output(['kpsewhich', 'IEEEtran.cls'], text=True).strip())
         archive.write(ieee_class, 'IEEEtran.cls')
+        ieee_bst = Path(subprocess.check_output(['kpsewhich', 'IEEEtran.bst'], text=True).strip())
+        if 'IEEEtran.bst' not in archive.namelist():
+            archive.write(ieee_bst, 'IEEEtran.bst')
+        archive.write(build/'qhd.bbl', 'qhd.bbl')
     evidence = write_evidence_archive(ROOT, output)
     manifest = {'files': {p.relative_to(paper).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
                           for p in sorted(set(files))},
                 'ieeetran_cls_sha256': hashlib.sha256(ieee_class.read_bytes()).hexdigest(),
+                'ieeetran_bst_sha256': hashlib.sha256(ieee_bst.read_bytes()).hexdigest(),
+                'bbl_sha256': hashlib.sha256((build/'qhd.bbl').read_bytes()).hexdigest(),
                 'pdf_sha256': hashlib.sha256((output/'qhd-submission-draft.pdf').read_bytes()).hexdigest(),
                 'code_and_data_sha256': hashlib.sha256(evidence.read_bytes()).hexdigest(),
                 'git_head': subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),

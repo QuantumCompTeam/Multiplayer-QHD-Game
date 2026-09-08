@@ -13,10 +13,15 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def require(condition, message='evidence validation failed'):
+    if not condition:
+        raise ValueError(message)
+
+
 def reward_mean(counts, n, player):
     total = 0.
     for label, count in counts.items():
-        assert len(label) == n and set(label) <= {'0', '1'}
+        require(len(label) == n and set(label) <= {'0', '1'}, 'invalid bitstring')
         k = label.count('1')
         reward = 4/n if k == 0 else (
             (1/n if k == n else 4/k) if label[-1-player] == '1' else 0.)
@@ -35,13 +40,13 @@ def audit():
         manifest_bytes = (directory/'manifest.json').read_bytes()
         manifest = json.loads(manifest_bytes)
         result = json.loads((ROOT/'results/phase-validation'/execution/'result.json').read_text())
-        assert hashlib.sha256(manifest_bytes).hexdigest() == result['pending']['registration_sha256']
-        assert hashlib.sha256((directory/'circuits.qpy').read_bytes()).hexdigest() == manifest['qpy_sha256']
+        require(hashlib.sha256(manifest_bytes).hexdigest() == result['pending']['registration_sha256'], 'manifest hash mismatch')
+        require(hashlib.sha256((directory/'circuits.qpy').read_bytes()).hexdigest() == manifest['qpy_sha256'], 'QPY hash mismatch')
         for path, expected in manifest['code_hashes'].items():
             frozen = subprocess.check_output(['git', 'show', f'{revision}:{path}'], cwd=ROOT)
-            assert hashlib.sha256(frozen).hexdigest() == expected, path
-        assert len(result['counts']) == manifest['pub_count']
-        assert all(sum(c.values()) == manifest['shots'] for c in result['counts'])
+            require(hashlib.sha256(frozen).hexdigest() == expected, path)
+        require(len(result['counts']) == manifest['pub_count'], 'pub count mismatch')
+        require(all(sum(c.values()) == manifest['shots'] for c in result['counts']), 'shot count mismatch')
         rows = manifest['rows']
         counts = {row['id']: sample for row, sample in zip(rows, result['counts'])}
         primary = [r for r in rows if r['kind'] in {'H', 'D', 'old_Q'}]
@@ -54,21 +59,21 @@ def audit():
             radius = sum(4*math.sqrt(math.log(2*len(primary)/manifest['alpha'])/(2*sum(c.values())))
                          for c in [coop, deviation])
             upper = (radius-gap)/(4/n)
-            assert math.isclose(gap, saved[row['id']]['gap'], abs_tol=1e-12)
-            assert math.isclose(upper, saved[row['id']]['simultaneous_upper_normalized_gain'], abs_tol=1e-12)
+            require(math.isclose(gap, saved[row['id']]['gap'], rel_tol=1e-12, abs_tol=1e-12), 'gap mismatch')
+            require(math.isclose(upper, saved[row['id']]['simultaneous_upper_normalized_gain'], rel_tol=1e-12, abs_tol=1e-12), 'bound mismatch')
             by_n.setdefault(n, []).append((gap, upper))
         complete = all({r['player'] for r in primary if r['N']==n and r['kind']==kind} == set(range(n))
                        for n in by_n for kind in ['H', 'D'])
         passed = not manifest['pilot'] and complete and all(
             upper <= manifest['epsilon'] for values in by_n.values() for _, upper in values)
-        assert passed == result['judgment']['epsilon_equilibrium_supported']
+        require(passed == result['judgment']['epsilon_equilibrium_supported'], 'decision mismatch')
         audited.append({'job_id': result['pending']['job_id'], 'frozen_revision': revision,
                         'registered_pass': passed, 'complete_D_H_coverage': complete,
                         'charged_seconds': result['metrics']['usage']['qpu_charge_time_seconds'],
                         'per_N': {n: {'minimum_gap': min(g for g, u in values),
                                       'maximum_upper_normalized_gain': max(u for g, u in values)}
                                   for n, values in by_n.items()}})
-    return {'audit': 'independent raw-bitstring arithmetic; all assertions passed',
+    return {'audit': 'independent raw-bitstring arithmetic; all validations passed',
             'total_charged_seconds': sum(r['charged_seconds'] for r in audited),
             'runs': audited}
 

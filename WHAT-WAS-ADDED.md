@@ -295,7 +295,7 @@ cooperative symmetric optimizer remains a constrained numerical search.
   **425 passed, 3 skipped**.
 - New extension tests in the modern hardware environment: **40 passed**.
 - Revised manuscript: successful four-pass LaTeX/BibTeX build.
-- Final PDF: 17 pages.
+- September 7 PDF: 17 pages; current validated submission PDF: 18 pages.
 - Source ZIP integrity: all entries passed CRC validation.
 - No unresolved citations or references.
 - Historical `paper/qhd.pdf` and root `qhd.pdf` were preserved byte-for-byte.

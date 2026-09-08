@@ -22,11 +22,13 @@ def serializable(value):
 
 
 def main():
-    assert Path(sys.prefix).name == 'entangled-equilibria', sys.prefix
+    if Path(sys.prefix).name != 'entangled-equilibria':
+        raise ValueError(f'required conda environment: {sys.prefix}')
     versions = {name: importlib.metadata.version(name) for name in
                 ['qiskit', 'qiskit-aer', 'numpy', 'scipy']}
-    assert versions == {'qiskit': '1.3.2', 'qiskit-aer': '0.14.2',
-                        'numpy': '1.26.4', 'scipy': '1.13.1'}, versions
+    if versions != {'qiskit': '1.3.2', 'qiskit-aer': '0.14.2',
+                    'numpy': '1.26.4', 'scipy': '1.13.1'}:
+        raise ValueError(f'unsupported versions: {versions}')
     source = ROOT / 'results/n-scaling-advantage/2026-07-19T0901Z/results.json'
     stored = {r['N']: r for r in json.loads(source.read_text())['cells']
               if r['topology'] == 'ring'}
@@ -34,11 +36,14 @@ def main():
               'V': V, 'C': C, 'gamma': GAMMA, 'source': str(source.relative_to(ROOT)),
               'cells': []}
     for n in range(2, 7):
-        assert stored[n]['V'] == V and stored[n]['C'] == C
+        if stored[n]['V'] != V or stored[n]['C'] != C:
+            raise ValueError(f'source convention mismatch at N={n}')
         result = serializable(compute_advantage(N=n, V=V, C=C, gamma=GAMMA, entangler=ring_entangler))
         row = {'N': n, 'result': result,
                'stored_advantage': stored[n]['advantage'],
                'advantage_difference': result['advantage'] - stored[n]['advantage']}
+        if row['advantage_difference'] != 0:
+            raise ValueError(f'ring advantage mismatch at N={n}: {row["advantage_difference"]}')
         output['cells'].append(row)
         print(json.dumps(row, indent=2), flush=True)
     destination = ROOT / 'docs/reviews/2026-09-08-ring-phase2.json'

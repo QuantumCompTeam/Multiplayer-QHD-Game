@@ -10,15 +10,63 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
+import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
 sys.path.insert(0,str(ROOT/'experiments'))
 
 from hardware.phase_validation import judge
+
+
+def durable_json(path, payload):
+    """Flush to disk before atomically publishing a complete journal record."""
+    temporary = path.with_name(path.name + '.' + uuid.uuid4().hex + '.tmp')
+    with temporary.open('x', encoding='utf-8') as handle:
+        json.dump(payload, handle, indent=2)
+        handle.write('\n')
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, path)
+
+
+def submit_journaled(output, manifest, manifest_hash, sampler_factory, circuits):
+    intent = {'registration_sha256': manifest_hash, 'backend': manifest['backend'],
+              'cap_seconds': manifest['max_execution_time_seconds'],
+              'submitted_utc': datetime.now(timezone.utc).isoformat(),
+              'submission_tag': 'qhd-' + uuid.uuid4().hex}
+    intent_path = output / 'submission-intent.json'
+    if intent_path.exists() or (output / 'pending.json').exists():
+        raise ValueError('submission already attempted; recover, never resubmit this directory')
+    durable_json(intent_path, intent)
+    sampler = sampler_factory(intent['submission_tag'])
+    job = sampler.run(circuits, shots=manifest['shots'])
+    pending = dict(intent, job_id=job.job_id())
+    durable_json(output / 'pending.json', pending)
+    return job, pending
+
+
+def recover_journaled(service, output, manifest_hash):
+    pending_path = output / 'pending.json'
+    path = pending_path if pending_path.exists() else output / 'submission-intent.json'
+    pending = json.loads(path.read_text(encoding='utf-8'))
+    if pending['registration_sha256'] != manifest_hash:
+        raise ValueError('pending job registration mismatch')
+    if 'job_id' in pending:
+        return service.job(pending['job_id']), pending
+    # A timeout/crash after provider acceptance is resolved through its pre-saved
+    # unique tag. Zero matches can mean indexing lag: never retry submission.
+    jobs = service.jobs(job_tags=[pending['submission_tag']], limit=2)
+    if len(jobs) != 1:
+        raise RuntimeError('submission unresolved: expected one tagged job; retry recovery later, do not resubmit')
+    job = jobs[0]
+    pending['job_id'] = job.job_id()
+    durable_json(pending_path, pending)
+    return job, pending
 
 
 def validate_registration(directory):
@@ -59,7 +107,6 @@ def main():
     from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
     from hardware_scaling import chain_calibration
     service = QiskitRuntimeService()
-    pending_path = args.output/'pending.json'
     if args.submit:
         if args.output.exists():
             parser.error('output already exists; recover a pending job or choose a fresh epoch directory')
@@ -71,19 +118,15 @@ def main():
         calibration = chain_calibration(backend,manifest['chain'])
         args.output.mkdir(parents=True)
         (args.output/'calibration_at_submit.json').write_text(json.dumps(calibration,indent=2)+'\n',encoding='utf-8')
-        sampler = SamplerV2(mode=backend, options={
-            'max_execution_time':manifest['max_execution_time_seconds']})
-        job = sampler.run(circuits,shots=manifest['shots'])
-        pending = {'job_id':job.job_id(),'registration_sha256':manifest_hash,
-                   'submitted_utc':datetime.now(timezone.utc).isoformat(),
-                   'backend':manifest['backend'],'cap_seconds':manifest['max_execution_time_seconds']}
-        pending_path.write_text(json.dumps(pending,indent=2)+'\n',encoding='utf-8')
+        def sampler_factory(tag):
+            return SamplerV2(mode=backend, options={
+                'max_execution_time': manifest['max_execution_time_seconds'],
+                'environment': {'job_tags': [tag]}})
+        job, pending = submit_journaled(args.output, manifest, manifest_hash,
+                                        sampler_factory, circuits)
         print(f"Submitted {job.job_id()}; cap {manifest['max_execution_time_seconds']} s",flush=True)
     else:
-        pending = json.loads(pending_path.read_text(encoding='utf-8'))
-        if pending['registration_sha256'] != manifest_hash:
-            raise ValueError('pending job registration mismatch')
-        job = service.job(pending['job_id'])
+        job, pending = recover_journaled(service, args.output, manifest_hash)
     result = job.result()
     counts = [pub.data.meas.get_counts() for pub in result]
     if len(counts) != manifest['pub_count']:

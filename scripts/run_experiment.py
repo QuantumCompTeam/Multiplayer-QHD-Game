@@ -77,8 +77,8 @@ def main() -> int:
 
     results = run_sweep(config.cells, on_event=_progress)
 
-    timestamp = results_io.run_timestamp()
-    run_dir = results_io.new_run_dir(_slug(config.name), timestamp)
+    run_dir = results_io.new_run_dir(_slug(config.name))
+    timestamp = run_dir.name
 
     write_outputs(config, results, run_dir, timestamp)
     results_io.write_metadata(

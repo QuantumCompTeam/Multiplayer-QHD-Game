@@ -129,6 +129,8 @@ not issues hidden by the fixes or converted into passing acceptance tests.
 
 ## Validation record
 
-Final full-suite, archive-integrity, PDF-build and PR-CI results are recorded
-in the accompanying `2026-09-08-validation.md` once execution finishes.
-The review is ready for a PR only after those required checks pass.
+Completed full-suite, archive-integrity and PDF-build results are recorded
+in `2026-09-08-validation.md`. PR #22's Linux CI passed with 899 tests and
+3 skips after the figure follow-up. Subsequent Macroscope corrections and
+their validation are recorded in `2026-09-08-macroscope-resolution.md`;
+the latest PR checks govern readiness of that revision.
