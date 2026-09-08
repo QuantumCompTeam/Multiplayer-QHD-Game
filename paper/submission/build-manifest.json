@@ -24,9 +24,9 @@
   "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
   "ieeetran_bst_sha256": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
   "bbl_sha256": "8589b372f59c1098cfe0a6947ea10b7436d21d30b8f11229cc3844edfc4e03ce",
-  "pdf_sha256": "973da08903a8f4787cdc521c4c25d1e1c73e5c376d6445d79cfcdbe9cf8d26d3",
-  "code_and_data_sha256": "1feddfdd6998934e8cb87f5b1849cfad14d08e7fb2b1ea121344a82f60003558",
-  "git_head": "226d6b92220bcb0d7e944ec4d796a299c5835ee2",
-  "git_status": "M  .gitignore\nM  PROJECT-STATUS.md\nM  README.md\nA  docs/reviews/2026-09-08-repository-cleanup.md\nA  paper/Q1-REFERENCE-AUDIT.md\nM  paper/README.md\nD  paper/main.aux\nD  paper/main.bbl\nD  paper/main.blg\nD  paper/main.fdb_latexmk\nD  paper/main.fls\nD  paper/main.log\nD  paper/main.out\nM  paper/qhd.tex\n M paper/submission/build-manifest.json\n M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "pdf_sha256": "ea1b9dff70e12e9a0f0d4ee9b40a06eb65a5412dbcee6ae5465c595ab028e191",
+  "code_and_data_sha256": "4598374c2d7b565ccade96ed0eb47f7cccbec13627d88f23ffd484aeef86b9ff",
+  "git_head": "97474d9a659e2b98aa559c4531d60085b8b1b2d1",
+  "git_status": "M  docs/reviews/2026-09-08-repository-cleanup.md\n M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
   "note": "Source hashes identify exact content; git status records uncommitted work at build."
 }

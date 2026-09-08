@@ -4,8 +4,9 @@
 
 The sweep covered tracked-file inventory, byte-identical duplicates, large
 artifacts, generated files, branch ancestry, build instructions, and CI.
-The reviewed development branch is a descendant of main, so publication can
-use a normal fast-forward push without rewriting history.
+Main contains three merge-history commits absent from the development branch,
+with no additional file changes. Merge that history into the cleanup branch
+before the normal push; do not rewrite history.
 
 ## Changes
 
@@ -33,10 +34,11 @@ caches. Local untracked PDFs and experimental runs are left untouched.
 
 ## Validation
 
-Run the complete pytest suite in the pinned `entangled-equilibria` environment,
-rebuild the submission artifacts, validate their hashes and isolated LaTeX
-compilation, and check Git integrity and whitespace before publication.
-The final test results are reported with the publication outcome.
+The complete pytest suite in the pinned `entangled-equilibria` environment
+passed: 919 passed, 4 skipped. Git integrity, whitespace checks, and Python
+compilation passed. The rebuilt submission archive passed 498 evidence-file
+hash checks and isolated LaTeX compilation without unresolved citations,
+references, or overfull boxes. All 41 PDF citation links resolve to page 18.
 
 ## Open scientific work
 
