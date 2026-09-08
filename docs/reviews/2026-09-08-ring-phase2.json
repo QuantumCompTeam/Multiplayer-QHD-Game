@@ -1,0 +1,479 @@
+{
+  "interpreter": "C:\\Users\\prith\\anaconda3\\envs\\entangled-equilibria\\python.exe",
+  "versions": {
+    "qiskit": "1.3.2",
+    "qiskit-aer": "0.14.2",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1"
+  },
+  "V": 4.0,
+  "C": 3.0,
+  "gamma": 1.5707963267948966,
+  "source": "results\\n-scaling-advantage\\2026-07-19T0901Z\\results.json",
+  "cells": [
+    {
+      "N": 2,
+      "result": {
+        "q_payoff_per_player": 2.0,
+        "q_payoff_vector": [
+          2.0,
+          2.0
+        ],
+        "classical_ne_payoff": 0.5,
+        "classical_ne_payoff_vector": [
+          0.5,
+          0.5
+        ],
+        "advantage": 1.5,
+        "advantage_vector": [
+          1.5,
+          1.5
+        ],
+        "symmetric": true,
+        "q_is_nash": true,
+        "all_pure_nash": [
+          [
+            "Q",
+            "Q"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": {
+          "(0, 'D')": {
+            "deviation_payoff": 0.5,
+            "q_payoff": 2.0,
+            "q_dominates": true
+          },
+          "(0, 'H')": {
+            "deviation_payoff": 1.6872297554945904e-32,
+            "q_payoff": 2.0,
+            "q_dominates": true
+          },
+          "(1, 'D')": {
+            "deviation_payoff": 0.5,
+            "q_payoff": 2.0,
+            "q_dominates": true
+          },
+          "(1, 'H')": {
+            "deviation_payoff": 1.6872297554945904e-32,
+            "q_payoff": 2.0,
+            "q_dominates": true
+          }
+        }
+      },
+      "stored_advantage": 1.5,
+      "advantage_difference": 0.0
+    },
+    {
+      "N": 3,
+      "result": {
+        "q_payoff_per_player": 1.333333333333334,
+        "q_payoff_vector": [
+          1.333333333333334,
+          1.333333333333334,
+          1.333333333333334
+        ],
+        "classical_ne_payoff": 0.3333333333333333,
+        "classical_ne_payoff_vector": [
+          0.3333333333333333,
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "advantage": 1.0000000000000007,
+        "advantage_vector": [
+          1.0000000000000007,
+          1.0000000000000007,
+          1.0000000000000007
+        ],
+        "symmetric": true,
+        "q_is_nash": true,
+        "all_pure_nash": [
+          [
+            "Q",
+            "Q",
+            "Q"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": {
+          "(0, 'D')": {
+            "deviation_payoff": 0.8333333333333343,
+            "q_payoff": 1.333333333333334,
+            "q_dominates": true
+          },
+          "(0, 'H')": {
+            "deviation_payoff": 0.43750000000000056,
+            "q_payoff": 1.333333333333334,
+            "q_dominates": true
+          },
+          "(1, 'D')": {
+            "deviation_payoff": 0.8333333333333344,
+            "q_payoff": 1.333333333333334,
+            "q_dominates": true
+          },
+          "(1, 'H')": {
+            "deviation_payoff": 0.4375000000000004,
+            "q_payoff": 1.333333333333334,
+            "q_dominates": true
+          },
+          "(2, 'D')": {
+            "deviation_payoff": 0.8333333333333341,
+            "q_payoff": 1.333333333333334,
+            "q_dominates": true
+          },
+          "(2, 'H')": {
+            "deviation_payoff": 0.43750000000000056,
+            "q_payoff": 1.333333333333334,
+            "q_dominates": true
+          }
+        }
+      },
+      "stored_advantage": 1.0000000000000007,
+      "advantage_difference": 0.0
+    },
+    {
+      "N": 4,
+      "result": {
+        "q_payoff_per_player": 0.25,
+        "q_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "classical_ne_payoff": 0.25,
+        "classical_ne_payoff_vector": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "advantage": 0.0,
+        "advantage_vector": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          [
+            "H",
+            "H",
+            "Q",
+            "Q"
+          ],
+          [
+            "H",
+            "Q",
+            "Q",
+            "H"
+          ],
+          [
+            "Q",
+            "H",
+            "H",
+            "Q"
+          ],
+          [
+            "Q",
+            "Q",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": {
+          "(0, 'D')": {
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          "(0, 'H')": {
+            "deviation_payoff": 6.358965684381954e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          },
+          "(1, 'D')": {
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          "(1, 'H')": {
+            "deviation_payoff": 6.358965684381953e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          },
+          "(2, 'D')": {
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          "(2, 'H')": {
+            "deviation_payoff": 5.502609166123764e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          },
+          "(3, 'D')": {
+            "deviation_payoff": 1.1250000000000007,
+            "q_payoff": 0.25,
+            "q_dominates": false
+          },
+          "(3, 'H')": {
+            "deviation_payoff": 5.502609166123762e-33,
+            "q_payoff": 0.25,
+            "q_dominates": true
+          }
+        }
+      },
+      "stored_advantage": 0.0,
+      "advantage_difference": 0.0
+    },
+    {
+      "N": 5,
+      "result": {
+        "q_payoff_per_player": 0.8000000000000009,
+        "q_payoff_vector": [
+          0.800000000000001,
+          0.8000000000000008,
+          0.8000000000000009,
+          0.8000000000000009,
+          0.8000000000000009
+        ],
+        "classical_ne_payoff": 0.2,
+        "classical_ne_payoff_vector": [
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2
+        ],
+        "advantage": 0.600000000000001,
+        "advantage_vector": [
+          0.600000000000001,
+          0.6000000000000008,
+          0.600000000000001,
+          0.600000000000001,
+          0.600000000000001
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": {
+          "(0, 'D')": {
+            "deviation_payoff": 0.8950669776991869,
+            "q_payoff": 0.800000000000001,
+            "q_dominates": false
+          },
+          "(0, 'H')": {
+            "deviation_payoff": 1.1617379970589181,
+            "q_payoff": 0.800000000000001,
+            "q_dominates": false
+          },
+          "(1, 'D')": {
+            "deviation_payoff": 0.8950669776991869,
+            "q_payoff": 0.8000000000000008,
+            "q_dominates": false
+          },
+          "(1, 'H')": {
+            "deviation_payoff": 1.1617379970589181,
+            "q_payoff": 0.8000000000000008,
+            "q_dominates": false
+          },
+          "(2, 'D')": {
+            "deviation_payoff": 0.8950669776991867,
+            "q_payoff": 0.8000000000000009,
+            "q_dominates": false
+          },
+          "(2, 'H')": {
+            "deviation_payoff": 1.1617379970589177,
+            "q_payoff": 0.8000000000000009,
+            "q_dominates": false
+          },
+          "(3, 'D')": {
+            "deviation_payoff": 0.8950669776991867,
+            "q_payoff": 0.8000000000000009,
+            "q_dominates": false
+          },
+          "(3, 'H')": {
+            "deviation_payoff": 1.161737997058918,
+            "q_payoff": 0.8000000000000009,
+            "q_dominates": false
+          },
+          "(4, 'D')": {
+            "deviation_payoff": 0.8950669776991866,
+            "q_payoff": 0.8000000000000009,
+            "q_dominates": false
+          },
+          "(4, 'H')": {
+            "deviation_payoff": 1.161737997058918,
+            "q_payoff": 0.8000000000000009,
+            "q_dominates": false
+          }
+        }
+      },
+      "stored_advantage": 0.600000000000001,
+      "advantage_difference": 0.0
+    },
+    {
+      "N": 6,
+      "result": {
+        "q_payoff_per_player": 0.6666666666666674,
+        "q_payoff_vector": [
+          0.6666666666666674,
+          0.6666666666666675,
+          0.6666666666666674,
+          0.6666666666666674,
+          0.6666666666666674,
+          0.6666666666666674
+        ],
+        "classical_ne_payoff": 0.16666666666666666,
+        "classical_ne_payoff_vector": [
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666
+        ],
+        "advantage": 0.5000000000000008,
+        "advantage_vector": [
+          0.5000000000000008,
+          0.5000000000000009,
+          0.5000000000000008,
+          0.5000000000000008,
+          0.5000000000000008,
+          0.5000000000000008
+        ],
+        "symmetric": true,
+        "q_is_nash": false,
+        "all_pure_nash": [
+          [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "classical_nash_profiles": [
+          [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ]
+        ],
+        "deviation_check": {
+          "(0, 'D')": {
+            "deviation_payoff": 0.7500000000000007,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(0, 'H')": {
+            "deviation_payoff": 1.4458333333333353,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(1, 'D')": {
+            "deviation_payoff": 0.750000000000001,
+            "q_payoff": 0.6666666666666675,
+            "q_dominates": false
+          },
+          "(1, 'H')": {
+            "deviation_payoff": 1.445833333333335,
+            "q_payoff": 0.6666666666666675,
+            "q_dominates": false
+          },
+          "(2, 'D')": {
+            "deviation_payoff": 0.7500000000000009,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(2, 'H')": {
+            "deviation_payoff": 1.4458333333333353,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(3, 'D')": {
+            "deviation_payoff": 0.750000000000001,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(3, 'H')": {
+            "deviation_payoff": 1.445833333333336,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(4, 'D')": {
+            "deviation_payoff": 0.7500000000000007,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(4, 'H')": {
+            "deviation_payoff": 1.4458333333333355,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(5, 'D')": {
+            "deviation_payoff": 0.7500000000000009,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          },
+          "(5, 'H')": {
+            "deviation_payoff": 1.4458333333333355,
+            "q_payoff": 0.6666666666666674,
+            "q_dominates": false
+          }
+        }
+      },
+      "stored_advantage": 0.5000000000000008,
+      "advantage_difference": 0.0
+    }
+  ]
+}

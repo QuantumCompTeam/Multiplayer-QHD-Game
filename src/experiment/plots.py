@@ -88,10 +88,10 @@ def _varying(results: list[CellResult]) -> dict[str, bool]:
 
 
 def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> str:
-    series: dict[str, list[tuple[int, float]]] = {}
+    series: dict[str, list[tuple[int, float, bool]]] = {}
     for r in ok:
         key = r.cell.topology + _secondary_label(r, vary)
-        series.setdefault(key, []).append((r.cell.N, float(r.advantage)))  # type: ignore[arg-type]
+        series.setdefault(key, []).append((r.cell.N, float(r.advantage), bool(r.q_is_nash)))  # type: ignore[arg-type]
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
     for i, (label, pts) in enumerate(sorted(series.items())):
@@ -103,8 +103,11 @@ def _advantage_vs_n(ok: list[CellResult], vary: dict[str, bool], out: Path) -> s
         xq, yq = _smooth_curve(xs, ys)
         (line,) = ax.plot(xq, yq, label=label, **style)  # smooth curve, no markers
         # Real computed points marked on the curve.
-        ax.plot(xs, ys, linestyle="none", marker=marker, color=line.get_color(),
-                alpha=0.8, markersize=6, zorder=style["zorder"])
+        for n, advantage, is_nash in pts:
+            ax.plot([n], [advantage], linestyle="none", marker=marker,
+                    color=line.get_color(),
+                    markerfacecolor=line.get_color() if is_nash else "white",
+                    alpha=0.8, markersize=6, zorder=style["zorder"])
     ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
     ax.set_xlabel("N (players)")
     ax.set_ylabel("quantum advantage (Q-profile − classical NE)")

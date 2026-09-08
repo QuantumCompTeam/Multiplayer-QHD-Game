@@ -23,6 +23,7 @@ within-run sigma and the caption says so explicitly.
       is first-order insensitive to single bit-flips from |0..0>).
 
 Usage:
+  conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py --split    # paper single-column PDFs
   conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py            # all runs
   conda run -n entangled-equilibria python scripts/plot_hardware_scaling.py <run_dir> [<run_dir>..]
 """
@@ -172,6 +173,10 @@ def style_axis(ax):
 
 
 def main() -> None:
+    # Split output goes directly to the paper; historical aggregate files stay intact.
+    split = "--split" in sys.argv
+    if split:
+        sys.argv.remove("--split")
     epochs, runs, latest_dir = load_runs(sys.argv)
     n_runs = len(runs)
     n_epochs = len(epochs)
@@ -210,8 +215,13 @@ def main() -> None:
     plt.rcParams.update({"font.size": 9.5, "font.family": "DejaVu Sans",
                          "text.color": INK, "axes.labelcolor": INK,
                          "xtick.color": INK, "ytick.color": INK})
-    fig, (axA, axB, axC) = plt.subplots(
-        1, 3, figsize=(12.8, 4.3), gridspec_kw={"width_ratios": [1.5, 1.05, 1.0]})
+    if split:
+        figA, axA = plt.subplots(figsize=(3.5, 3.5))
+        figB, axB = plt.subplots(figsize=(3.5, 2.8))
+        figC, axC = plt.subplots(figsize=(3.5, 2.8))
+    else:
+        fig, (axA, axB, axC) = plt.subplots(
+            1, 3, figsize=(12.8, 4.3), gridspec_kw={"width_ratios": [1.5, 1.05, 1.0]})
 
     # ---- (A) advantage vs N ----------------------------------------------------
     xs = np.array(NS, dtype=float)
@@ -220,7 +230,7 @@ def main() -> None:
              label="noiseless ideal")
     axA.plot(xs, [ep_adv[N] for N in NS], color=MUTED, ls=(0, (1, 2)), lw=1.6,
              marker="s", mfc="white", mec=MUTED, ms=6, zorder=2,
-             label=f"depolarizing p_eff={ep['p_eff']:.4f} (fit at N=3 only)")
+             label=f"depolarizing p={ep['p_eff']:.4f} (N=3 fit)")
     axA.plot(xs, [dm_adv[N] for N in NS], color=INK, ls="none",
              marker="D", mfc="white", mec=INK, ms=6, zorder=3,
              label="device noise model")
@@ -231,7 +241,7 @@ def main() -> None:
     axA.errorbar(xs + 0.04, [zne_adv[N] for N in NS],
                  yerr=[zne_err[N] for N in NS], color=DATA, ls="none",
                  marker="o", ms=7, capsize=3, lw=1.2, zorder=5,
-                 label="measured (readout-mitigated + ZNE)")
+                 label="readout-mitigated + ZNE")
     # retention labels: the ideal itself falls as 3/N (game theory, not noise);
     # annotate measured/ideal so the staircase is never misread as decay
     for N in NS:
@@ -289,6 +299,27 @@ def main() -> None:
                   pad=8)
     axC.set_ylim(0.8, 1.03)
     axC.legend(frameon=False, fontsize=7.8, loc="lower left")
+
+    if split:
+        # The captions/body carry the experimental details at readable type size.
+        for text in list(axA.texts):
+            text.remove()
+        axA.set_title("Cooperative-profile advantage", fontsize=10, loc="left")
+        axA.set_ylabel("mean payoff advantage")
+        axA.legend(frameon=False, fontsize=8, loc="upper center",
+                   bbox_to_anchor=(0.5, -0.23))
+        axB.set_title("Zero-noise extrapolation", fontsize=10, loc="left")
+        axB.set_xlabel("CZ fold factor")
+        axC.set_title("All-zero output probability", fontsize=10, loc="left")
+        out_dir = os.path.join("paper", "figs")
+        for figure, name in [(figA, "hardware_scaling_advantage"),
+                             (figB, "hardware_scaling_zne"),
+                             (figC, "hardware_scaling_population")]:
+            figure.tight_layout()
+            figure.savefig(os.path.join(out_dir, name + ".pdf"))
+            plt.close(figure)
+            print("wrote:", os.path.join(out_dir, name + ".pdf"))
+        return
 
     run_note = (f"{n_runs} run" + ("s" if n_runs > 1 else "")
                 + f" in {n_epochs} calibration epoch"

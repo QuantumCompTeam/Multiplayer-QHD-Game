@@ -68,6 +68,11 @@ the protected local `paper/qhd.pdf`. The source archive includes IEEEtran.cls.
 - `figs/hardware_scaling.pdf` — from
   `results/hardware-scaling/2026-07-17T014458Z/plots/` (two-execution aggregate;
   refreshed 2026-07-19).
+- `figs/hardware_scaling_advantage.pdf`, `hardware_scaling_zne.pdf`, and
+  `hardware_scaling_population.pdf` — approved single-column replacement,
+  generated with `python scripts/plot_hardware_scaling.py --split`. A/C average
+  the same two chain-matched calibration epochs; B uses the registration-source
+  execution. The historical combined image remains available.
 - `figs/hardware_topology.pdf` — from
   `results/hardware-topology/2026-07-25T114621Z/plots/`.
 - `figs/advantage_vs_N.png` and `figs/topology_heatmap.png` — from the V=4/C=3

@@ -62,8 +62,14 @@ The Phase 1 star chart was re-rendered from the retained results JSON with
 two-decimal labels on all bars. The N=4 hub remains
 `2.220446049250313e-16` in the source and displays `0.00`. The source JSON SHA256
 remains `534ec53aaa486b798a82838027405c2cad53745aa72196390cdb9ca79939b963`.
-The caption now describes N=4..6 and green mean bars. Phases 2 and 3 remain
-pending the requested between-phase review.
+The caption now describes N=4..6 and green mean bars. The user subsequently
+approved Phases 2 and 3: ring values were recomputed on the pinned conda stack,
+N-scaling markers now reflect Nash status, and the hardware figure is split
+into three single-column PDFs with its caveats retained. The focused combined
+checks passed (384 passed, 3 skipped). The initial Linux CI failures exposed
+overly strict exact floating-point equality in three hardware replay tests;
+the corrected test retains exact decisions and tolerates only numerical
+roundoff in statistics. See the figure-phases review for the full record.
 
 This record does not constitute external peer review or
 prove absence of every defect. See the accompanying full-project audit for the
