@@ -75,4 +75,6 @@ the protected local `paper/qhd.pdf`. The source archive includes IEEEtran.cls.
   `results/n-scaling-advantage/2026-07-19T0901Z/`.
 - `figs/advantage_vs_gamma_N4.png` — from `results/gamma-sweep/N4/`.
 - `figs/per_player_advantage_star.png` — from
-  `results/n-scaling-advantage/2026-07-19T0901Z/`.
+  `results/n-scaling-advantage/2026-07-19T0901Z/results.json`, re-rendered
+  September 8 with two-decimal labels on every bar, including the numerically
+  zero N=4 hub. Original run artifacts and numerical data are unchanged.

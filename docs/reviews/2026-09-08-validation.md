@@ -45,15 +45,25 @@ requires this repository's Git history. Package compilation requires a LaTeX
 installation. No command above submits a QPU job. The three recorded jobs retain
 their original total charge of 175 seconds and their original acceptance results.
 
-PR creation is currently blocked by the installed `gstack-redact-prepush` hook:
+The initial push was blocked by the installed `gstack-redact-prepush` hook:
 it reports `HIGH engine.input_too_large` when the added-line input exceeds its
 1 MiB cap. The rejected push did not identify a specific credential. The new
 branch's diff against the default branch includes older history; even historical
 commit `03d642d` adds approximately 1.28 MB of scan input by itself. Ordinary
 smaller pushes therefore cannot fully resolve the limit. The hook was not
-disabled or bypassed. The branch and reviewed artifacts are committed locally,
-but no PR was created and GitHub CI has not run for this branch. The scanner
-needs a supported larger-input path before the normal push can complete.
+disabled or bypassed. Following the user's explicit request to resolve the
+blocker and create the PR, the local hook now passes the engine's supported
+`maxBytes` option with a bounded 8 MiB limit. All input is still scanned and HIGH
+findings still block. Checks verified that a clean input larger than 1 MiB is
+scanned, a synthetic credential in that input is detected, and input exceeding
+8 MiB is rejected. PR checks report the subsequent GitHub CI status.
+
+The Phase 1 star chart was re-rendered from the retained results JSON with
+two-decimal labels on all bars. The N=4 hub remains
+`2.220446049250313e-16` in the source and displays `0.00`. The source JSON SHA256
+remains `534ec53aaa486b798a82838027405c2cad53745aa72196390cdb9ca79939b963`.
+The caption now describes N=4..6 and green mean bars. Phases 2 and 3 remain
+pending the requested between-phase review.
 
 This record does not constitute external peer review or
 prove absence of every defect. See the accompanying full-project audit for the

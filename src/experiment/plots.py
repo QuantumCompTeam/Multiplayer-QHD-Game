@@ -376,9 +376,12 @@ def _per_player_advantage(ok: list[CellResult], plots_dir: Path) -> list[str]:
         x = np.arange(len(ns), dtype=float)
         w = 0.28
         fig, ax = plt.subplots(figsize=(1.3 * len(ns) + 3, 4.5))
-        ax.bar(x - w, hub, width=w, label="hub (player 0)", color="#c44e52", alpha=0.9)
-        ax.bar(x, leaf, width=w, label="leaf (players 1..N-1)", color="#4c72b0", alpha=0.9)
-        ax.bar(x + w, mean, width=w, label="mean (per-player)", color="#55a868", alpha=0.6)
+        hub_bars = ax.bar(x - w, hub, width=w, label="hub (player 0)", color="#c44e52", alpha=0.9)
+        leaf_bars = ax.bar(x, leaf, width=w, label="leaf (players 1..N-1)", color="#4c72b0", alpha=0.9)
+        mean_bars = ax.bar(x + w, mean, width=w, label="mean (per-player)", color="#55a868", alpha=0.6)
+        for bars in (hub_bars, leaf_bars, mean_bars):
+            ax.bar_label(bars, fmt="%.2f", padding=3, fontsize=9)
+        ax.margins(y=0.12)
         ax.axhline(0.0, color="grey", linewidth=0.8, linestyle="--", zorder=1)
         ax.set_xticks(x, [str(n) for n in ns])
         ax.set_xlabel("N (players)")
