@@ -19,9 +19,9 @@
     "validation-methods.tex": "7f2e3cf45639c94f74791ec8330d16cf396b227d6968bc78e34f6f5c3601ca96"
   },
   "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
-  "pdf_sha256": "7af6bcc61efd118e789824c3b83d94f4d45482425f04b58efb9472670f79db54",
-  "code_and_data_sha256": "026f288e1a280a0533aa2010238041a54cc4d2b3b2940f4e9d97042271c2f8ee",
-  "git_head": "a1ade4b9b805b936a385998b6db6905c25816160",
-  "git_status": " M paper/submission/build-manifest.json\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/submission/qhd-code-and-data.zip\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "pdf_sha256": "0ac081693803670182d07dfabcb87cc7b59c5d3f34061eca3978c84d34203746",
+  "code_and_data_sha256": "33754abd53bbb0d6dfc0d5caab7040f4cbb4b1e61351046e49ed5f7c9c1f2dec",
+  "git_head": "1f08a25f96b0067c9ffd76277d945221d979b6af",
+  "git_status": " M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-submission-draft.pdf\n?? .superpowers/\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? paper/texput.log\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
   "note": "Source hashes identify exact content; git status records uncommitted work at build."
 }
