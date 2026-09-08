@@ -18,6 +18,19 @@ def require(condition, message='evidence validation failed'):
         raise ValueError(message)
 
 
+def validate_counts(counts, shots):
+    require(type(shots) is int and shots > 0, 'invalid shot count')
+    require(bool(counts) and all(type(c) is int and c >= 0 for c in counts.values()),
+            'invalid frequencies')
+    require(sum(counts.values()) == shots, 'shot count mismatch')
+
+
+def primary_rows(rows):
+    primary = [r for r in rows if r['kind'] in {'H', 'D', 'old_Q'}]
+    require(bool(primary), 'no deviation evidence')
+    return primary
+
+
 def reward_mean(counts, n, player):
     total = 0.
     for label, count in counts.items():
@@ -41,15 +54,19 @@ def audit():
         manifest = json.loads(manifest_bytes)
         result = json.loads((ROOT/'results/phase-validation'/execution/'result.json').read_text())
         require(hashlib.sha256(manifest_bytes).hexdigest() == result['pending']['registration_sha256'], 'manifest hash mismatch')
+        relative = (directory/'manifest.json').relative_to(ROOT).as_posix()
+        frozen_manifest = subprocess.check_output(['git', 'show', f'{revision}:{relative}'], cwd=ROOT)
+        require(manifest_bytes == frozen_manifest, 'manifest differs from pre-execution revision')
         require(hashlib.sha256((directory/'circuits.qpy').read_bytes()).hexdigest() == manifest['qpy_sha256'], 'QPY hash mismatch')
         for path, expected in manifest['code_hashes'].items():
             frozen = subprocess.check_output(['git', 'show', f'{revision}:{path}'], cwd=ROOT)
             require(hashlib.sha256(frozen).hexdigest() == expected, path)
         require(len(result['counts']) == manifest['pub_count'], 'pub count mismatch')
-        require(all(sum(c.values()) == manifest['shots'] for c in result['counts']), 'shot count mismatch')
+        for sample in result['counts']:
+            validate_counts(sample, manifest['shots'])
         rows = manifest['rows']
         counts = {row['id']: sample for row, sample in zip(rows, result['counts'])}
-        primary = [r for r in rows if r['kind'] in {'H', 'D', 'old_Q'}]
+        primary = primary_rows(rows)
         saved = {g['id']: g for g in result['judgment']['gaps']}
         by_n = {}
         for row in primary:

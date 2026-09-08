@@ -11,6 +11,7 @@ import zipfile
 import pytest
 
 import check_submission_archive as archive_check
+import audit_phase_evidence as evidence_audit
 import run_phase_hardware as hardware
 import run_experiment
 import verify_ring_phase2 as ring
@@ -100,6 +101,7 @@ def test_audit_rejects_altered_manifest_with_optimization(tmp_path):
 
 
 def test_ring_mismatch_does_not_overwrite_evidence(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys, 'argv', ['verify_ring_phase2.py'])
     source = tmp_path/'results/n-scaling-advantage/2026-07-19T0901Z/results.json'
     source.parent.mkdir(parents=True)
     source.write_text(json.dumps({'cells': [{'N': 2, 'topology': 'ring', 'V': 4., 'C': 3., 'advantage': 1.5}]}))
@@ -114,6 +116,42 @@ def test_ring_mismatch_does_not_overwrite_evidence(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match='ring advantage mismatch'):
         ring.main()
     assert output.read_text() == 'original evidence'
+
+
+def test_ring_explicit_output_cannot_overwrite(tmp_path, monkeypatch):
+    output = tmp_path/'existing.json'
+    output.write_text('original')
+    monkeypatch.setattr(sys, 'argv', ['verify_ring_phase2.py', '--output', str(output)])
+    with pytest.raises(FileExistsError):
+        ring.main()
+    assert output.read_text() == 'original'
+
+
+@pytest.mark.parametrize('counts', [{'0': -1, '1': 9}, {'0': 0.5, '1': 7.5},
+                                   {'0': True, '1': 7}, {}])
+def test_audit_rejects_invalid_frequencies(counts):
+    with pytest.raises(ValueError, match='invalid frequencies'):
+        evidence_audit.validate_counts(counts, 8)
+
+
+@pytest.mark.parametrize('rows', [[], [{'kind': 'candidate'}]])
+def test_audit_rejects_empty_deviation_evidence(rows):
+    with pytest.raises(ValueError, match='no deviation evidence'):
+        evidence_audit.primary_rows(rows)
+
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='POSIX directory durability path')
+def test_journal_flushes_directory_entries(tmp_path, monkeypatch):
+    import stat
+    flushed = []
+    original = hardware.os.fsync
+    def fsync(fd):
+        flushed.append(stat.S_ISDIR(hardware.os.fstat(fd).st_mode))
+        original(fd)
+    monkeypatch.setattr(hardware.os, 'fsync', fsync)
+    hardware.durable_json(tmp_path/'intent.json', {'tag': 'test'})
+    assert flushed[0] is False
+    assert all(flushed[1:]) and len(flushed) >= 2
 
 
 def test_experiment_cli_allocates_distinct_same_minute_runs(tmp_path, monkeypatch):

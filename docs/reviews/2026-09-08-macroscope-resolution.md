@@ -18,7 +18,7 @@ submitted to test these changes, and no historical registrations were modified.
 
 ## Validation and limits
 
-All 13 new failure-path tests pass. The original three saved hardware results
+The initial 13 failure-path tests pass. The original three saved hardware results
 still pass the independent audit, including under `python -O`, and the ring
 recomputation still exactly matches the five source gaps. The complete Linux
 suite runs on the updated PR before merge; its check result is authoritative.
@@ -33,3 +33,24 @@ they do not establish provider availability or protection against disk loss.
 Macroscope's separate automatic-approval check is disabled for this workspace.
 Its settings are not changed or bypassed. The user explicitly authorized merge
 after review and successful checks; merging is a manual repository action.
+
+## Follow-up on 5c46eff
+
+The fresh Macroscope review identified five additional edge cases, all addressed:
+
+- The journal now persists directory entries with POSIX fsync after rename
+  (including newly created ancestor entries); Windows uses the native
+  MoveFileExW write-through option, since os.open cannot open directories for
+  fsync there. This follows the [Microsoft API documentation](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefileexw).
+- The independent audit rejects negative, fractional and boolean frequencies,
+  invalid shot totals, and empty deviation evidence instead of accepting a
+  vacuous equilibrium certificate.
+- Ring verification prints by default. Optional `--output` creates a new file
+  exclusively and refuses to overwrite existing evidence, including on a
+  successful rerun. Its strict zero-difference requirement remains intentional
+  for this explicitly pinned reproduction; the unrounded differences are shown.
+- The change inventory labels older validation counts as historical and locates
+  the incentive boundary in the current Section IV.
+
+Additional tests cover these cases; the directory-fsync test runs on Linux CI,
+while Windows exercises the native write-through path in recovery tests.

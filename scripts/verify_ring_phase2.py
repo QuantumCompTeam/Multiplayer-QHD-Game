@@ -1,5 +1,6 @@
 """Recompute the figure's ring cells in the pinned conda environment."""
 import importlib.metadata
+import argparse
 import json
 from pathlib import Path
 import sys
@@ -22,6 +23,11 @@ def serializable(value):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, help='optional NEW report path; default prints only')
+    args = parser.parse_args()
+    if args.output is not None and args.output.exists():
+        raise FileExistsError(args.output)
     if Path(sys.prefix).name != 'entangled-equilibria':
         raise ValueError(f'required conda environment: {sys.prefix}')
     versions = {name: importlib.metadata.version(name) for name in
@@ -46,9 +52,10 @@ def main():
             raise ValueError(f'ring advantage mismatch at N={n}: {row["advantage_difference"]}')
         output['cells'].append(row)
         print(json.dumps(row, indent=2), flush=True)
-    destination = ROOT / 'docs/reviews/2026-09-08-ring-phase2.json'
-    destination.write_text(json.dumps(output, indent=2)+'\n', encoding='utf-8')
-    print(destination)
+    if args.output is not None:
+        with args.output.open('x', encoding='utf-8') as handle:
+            handle.write(json.dumps(output, indent=2)+'\n')
+        print(args.output)
 
 
 if __name__ == '__main__':

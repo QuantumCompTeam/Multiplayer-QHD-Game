@@ -31,7 +31,25 @@ def durable_json(path, payload):
         handle.write('\n')
         handle.flush()
         os.fsync(handle.fileno())
-    os.replace(temporary, path)
+    if os.name == 'nt':
+        # Windows cannot fsync an open directory through os.open. Request the
+        # platform's write-through rename instead of an ordinary replacement.
+        import ctypes
+        from ctypes import wintypes
+        move = ctypes.WinDLL('kernel32', use_last_error=True).MoveFileExW
+        move.argtypes = [wintypes.LPCWSTR, wintypes.LPCWSTR, wintypes.DWORD]
+        move.restype = wintypes.BOOL
+        if not move(str(temporary.resolve()), str(path.resolve()), 0x1 | 0x8):
+            raise ctypes.WinError(ctypes.get_last_error())
+    else:
+        os.replace(temporary, path)
+        # Persist the rename and any newly-created output directory entries.
+        for directory in path.resolve().parents:
+            descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
 
 
 def submit_journaled(output, manifest, manifest_hash, sampler_factory, circuits):

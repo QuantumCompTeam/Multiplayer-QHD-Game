@@ -288,7 +288,7 @@ cooperative symmetric optimizer remains a constrained numerical search.
   physically accurate fidelity relationship.
 - `tests/conftest.py` isolates test result writes.
 
-### Validation completed
+### September 7 validation (historical)
 
 - Full historical-environment suite: **858 passed, 3 skipped**.
 - Final focused science/manuscript/hardware replay suite:
@@ -313,7 +313,7 @@ The abstract now distinguishes ideal restricted equilibrium, unrestricted
 failure, mathematical scalability, hardware player count, high payoff
 retention, and failed hardware criteria.
 
-### Section III-G
+### Incentive-compatibility boundary (currently Section IV)
 
 `paper/incentive-boundary.tex` contains the formal phase-family proposition,
 proof, alternative branch, unrestricted counterstrategy, and entanglement-angle
