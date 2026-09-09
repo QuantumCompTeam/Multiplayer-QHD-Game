@@ -23,6 +23,7 @@
 \usepackage{booktabs}
 \usepackage[colorlinks=true,allcolors=black]{hyperref}
 \raggedbottom  % stop column-bottom stretching from opening gaps mid-column
+\setlength{\parskip}{0.35\baselineskip} % visible separation between paragraphs
 \graphicspath{{figs/}}
 \newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
 \newcommand{\bra}[1]{\ensuremath{\langle#1|}}
@@ -47,6 +48,7 @@ aasasingh2005@gmail.com}}
 \maketitle
 
 \begin{abstract}
+\boldmath
 We study how entangler family, player count, and implementation noise affect
 payoff and incentives in an $N$-player Eisert--Wilkens--Lewenstein allocation
 game. Five families define an exact simulation landscape, with graph-role
@@ -69,6 +71,7 @@ compatibility and physical implementation. Two new all-player hardware
 batches support the registered incentive criterion at $N=4,6$ in both
 runs, but fail the overall five-size test; $N=7$ remains unresolved.
 The trading interpretation is illustrative rather than an economic validation.
+\unboldmath
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -1217,7 +1220,7 @@ The CZ-exponential baseline carries the smallest mean $|z|$ (the best score) of 
 cross-calibration repeats. It nevertheless
 misses $N=5$ outside the shared 95\% comparison yardstick in every run; that
 yardstick is for ranking, not a model-specific calibrated interval.
-\textbf{That ranking is specific to $N\le 5$}: in the registered $N=6,7$
+That ranking is specific to $N\le 5$: in the registered $N=6,7$
 extension (Sec.~\ref{sec:n67}) the CZ-exponential law loses to the depolarizing
 model at $N{=}7$ and both fail their registered tests, so the ranking is not a
 physical scaling law and does not extrapolate.
@@ -1243,8 +1246,8 @@ written into the registration and held at submission, so the executed qubits
 provably match the ones the predictions describe. Measured mitigated fold-1
 advantage retains $99.2\%$, $97.5\%$, $97.3\%$, $96.3\%$ and $98.1\%$ of the
 ideal $3/N$ at $N=3,\ldots,7$ while $P(\ket{0\ldots0})$ falls from $0.943$ to
-$0.784$: \textbf{the advantage survives to seven players at $98\%$ of ideal
-with the all-zero target-state population already down to $0.78$}, which is the
+$0.784$: the advantage survives to seven players at $98\%$ of ideal
+with the all-zero target-state population already down to $0.78$, which is the
 first-order-insensitivity mechanism operating across the full curve.
 
 Two competing one-parameter models were registered before submission, both
@@ -1257,9 +1260,9 @@ over-predicts at $N=4,5,6$ and then under-predicts at $N=7$. A one-parameter
 retention law fitted at $N{=}3$ cannot reproduce that curvature.
 
 The registered model race also split: the CZ-exponential law is closer at
-$N=4,5,6$ but the depolarizing model is closer at $N=7$. \textbf{The
+$N=4,5,6$ but the depolarizing model is closer at $N=7$. The
 CZ-exponential ranking reported below therefore does not extrapolate past
-$N{=}5$}, and we scope it accordingly. Finally, measured advantage is strictly
+$N{=}5$, and we scope it accordingly. Finally, measured advantage is strictly
 decreasing in $N$ (the registered monotonicity check), but \emph{retention} is
 not: $N{=}7$ keeps more of its ideal advantage than $N=4,5,6$ despite carrying
 the most gates and the lowest target-state population, and its ZNE estimate overshoots the
@@ -1364,9 +1367,9 @@ vector is $(0.25,1.25,1.25,1.25)$, the hub being the loser. On device the
 measured vector is $(0.353,1.202,1.212,1.202)$, and under two wiring
 permutations that reassign players to different physical qubits it moves by at
 most $0.035$ (Fig.~\ref{fig:hwtopology}C), inside the registered threshold.
-The registered null therefore holds: \textbf{the disadvantaged position is
+The registered null therefore holds: the disadvantaged position is
 determined by the entanglement topology, not by which physical qubit a player
-was allocated}. This supports the star graph-role effect under the tested assignments, separately from noise-induced ring circuit-order asymmetry.
+was allocated. This supports the star graph-role effect under the tested assignments, separately from noise-induced ring circuit-order asymmetry.
 
 \paragraph{A cell whose advantage is made of noise}
 ring $N{=}4$ is the one cell whose noiseless circuit is deterministic on $\ket{1\ldots1}$, the all-Hawk outcome, so its ideal advantage is exactly
