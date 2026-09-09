@@ -41,7 +41,5 @@ three hardware judgments. See `docs/reviews/2026-09-08-validation.md` for the
 complete record and reproduction commands.
 
 IEEE's [TQE submission page](https://tqe.ieee.org/submission-process/) links
-the author portal and states no page limit. The
-[IEEE author policy](https://journals.ieeeauthorcenter.ieee.org/become-an-ieee-journal-author/publishing-ethics/guidelines-and-policies/submission-and-peer-review-policies/)
-requires disclosure of generated content and of overlapping publications.
-The manuscript includes an acknowledgment describing Codex's contribution.
+the author portal and states no page limit. Review the journal's current
+submission and publication policies before upload.

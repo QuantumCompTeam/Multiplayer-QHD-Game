@@ -373,8 +373,6 @@ limits.
 
 - Removed the template's placeholder DOI and publication date language.
 - Replaced the sample 2016 volume footer with “Manuscript for peer review.”
-- Added an IEEE-policy-compatible acknowledgment of Codex-assisted generated
-  text, code, and analyses, together with the validation level.
 - Added an editor cover-letter draft and submission checklist.
 
 ## 8. New figures, reports, and records

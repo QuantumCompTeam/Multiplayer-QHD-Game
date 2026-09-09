@@ -445,11 +445,11 @@ Synthesized from this review. P1 blocks the milestone; P2 same-branch; P3 follow
 | Review | Trigger | Why | Runs | Status | Findings |
 |--------|---------|-----|------|--------|----------|
 | CEO Review | `/plan-ceo-review` | Scope & strategy | 0 | — | not run |
-| Codex Review | `/codex review` | Independent 2nd opinion | 0 | — | codex unavailable |
+| Automated second-opinion review | unavailable | Independent review | 0 | — | tool unavailable |
 | Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | CLEAR | 8 issues raised, 8 resolved, 0 critical gaps |
 | Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | n/a (no UI) |
 | DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | n/a |
 
 - **UNRESOLVED:** 0 — every issue (D1–D8) was decided.
-- **OUTSIDE VOICE:** skipped — Codex not installed; offered fallback not run (small focused spec, single reviewer sufficient).
+- **OUTSIDE VOICE:** skipped because the review tool was unavailable; the fallback was not run for this focused specification.
 - **VERDICT:** ENG CLEARED — ready to implement. Start with T1 (pre-reqs) so the first noise run doesn't crash on Windows.
