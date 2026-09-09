@@ -17,16 +17,16 @@
     "journal-limitations.tex": "b94ba1b3ae76ab470783d22768d3e55ae20ec4572e7d89fd5e81d0f91576a3c0",
     "journal-results.tex": "ced123e9092ac312f75440bc2af598a96e804f87e50e9b5523d977098f2eae4b",
     "phase-hardware-results.tex": "277f54a374b2bf3ff3866b3a128ff74b32b75d2602bf3d74f11a1fdcd0df1df1",
-    "qhd.tex": "e6e636537acca397a603f9e1760d7780094f76edce6a76e7092d765619d80499",
+    "qhd.tex": "4bd029f0ceb65a5792742832ee5d7bdea5167ec362d318c7a3b7b6999625461b",
     "references.bib": "73ee593c50cf406e495634b0b721bc7e76c11af22f6932e6be39595df905b261",
     "validation-methods.tex": "7f2e3cf45639c94f74791ec8330d16cf396b227d6968bc78e34f6f5c3601ca96"
   },
   "ieeetran_cls_sha256": "da751920a317ed318b7b5cd7fa585a6cc7d28502d457856382e9be24b10a3bd7",
   "ieeetran_bst_sha256": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f",
   "bbl_sha256": "8589b372f59c1098cfe0a6947ea10b7436d21d30b8f11229cc3844edfc4e03ce",
-  "pdf_sha256": "4a54f241a0a5efd1013d3757257df85c62ee6a316ef93b503876a5fb48a5cc0c",
-  "code_and_data_sha256": "9b47ec6550230c09d5b1af87a56fbfb8841d736aea7d4a996277bc8af8a50d74",
-  "git_head": "10644ba7ef23989bb3abd42cba27fc6fb98e0ccd",
-  "git_status": " M paper/submission/build-manifest.json\n M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
+  "pdf_sha256": "a2b8f2f2d2abff9a0c713926c697c06c5aeb1ac6c2c5aa9dcc1639a059292b04",
+  "code_and_data_sha256": "3006d7098ae45fb822f21b8f987bc8e54517cc1095d78fca88de2ba0a9fe462e",
+  "git_head": "e0f9cbbc365489ca2433a52ac72049fd1e65ff49",
+  "git_status": " M paper/submission/qhd-code-and-data.zip\n M paper/submission/qhd-latex-source.zip\n M paper/submission/qhd-submission-draft.pdf\n?? FQCNN_journal.pdf\n?? paper/qhd.pdf\n?? qhd.pdf\n?? results/n-scaling-advantage/2026-09-07T1209Z/\n?? results/phase-validation/2026-09-07-device-pilot/\n?? results/phase-validation/2026-09-07-offline/\n",
   "note": "Source hashes identify exact content; git status records uncommitted work at build."
 }
