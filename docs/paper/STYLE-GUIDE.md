@@ -6,7 +6,7 @@ Checked at every approval gate; violations are review blockers.
 
 ## 7. Prose Style Guide
 
-This guide is binding for every drafted subsection. It will be saved as `paper/STYLE-GUIDE.md` during Phase 1 and checked at every review gate.
+This guide is binding for every drafted subsection. It will be saved as `docs/paper/STYLE-GUIDE.md` during Phase 1 and checked at every review gate.
 
 ### 7.1 Voice and tense
 
@@ -30,7 +30,7 @@ This guide is binding for every drafted subsection. It will be saved as `paper/S
 
 ### 7.4 Terminology and notation
 
-- One name per concept, from `paper/CLAIM-SOURCE-MAP.md`; synonyms are defects.
+- One name per concept, from `docs/paper/CLAIM-SOURCE-MAP.md`; synonyms are defects.
 - Every symbol defined before first use; no symbol redefined with a different meaning. Canonical assignments: $\eta$ depolarizing probability, $s$ ZNE fold scale, $\gamma$ entanglement angle.
 - "Entangler family" for the five-way comparison; "graph topology" only for ring, star, complete (Section 3.2).
 - $P(0^N)$ is the "all-zero target-state population" (shorthand "target-state population"); "ground-state population" and unsupported "state fidelity" are banned (Section 3.3).

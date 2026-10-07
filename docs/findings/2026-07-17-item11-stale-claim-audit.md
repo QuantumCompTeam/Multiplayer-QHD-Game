@@ -80,7 +80,7 @@ Observations logged, NOT edited:
 
 ---
 
-## paper/README.md — EDITED (confirmed by owner)
+## docs/paper/README.md — EDITED (confirmed by owner)
 
 | # | Class | Line (pre-edit) | Stale claim | Action |
 |---|---|---|---|---|
@@ -657,8 +657,8 @@ the payoff scale.
 |---|---|---|---|
 | (a) incl. (a)-adjacent | 8 — README.md, paper/main.tex, docs/formulae.md, src/experiment/plots.py, src/circuits/ewl.py, src/experiment/report.py, src/game/nash.py, scripts/n3_advantage.py | ~17 (incl. the 4-site QNE relabel + n3 sites) | controls-doc L2 quote (resolved: dated editorial note, executed) |
 | (b) | 3 — README.md, paper/main.tex, src/experiment/report.py | 6 | scaffold-plan `w_entangler` stub (flag-only, historical); paper title (→ Aasa list) |
-| (c) | 2 — paper/README.md, experiments/config.yaml (**root cause**) | 3 | 12 old-convention run dirs (truthful records; → item 13) |
-| (d) | 5 — README.md, paper/main.tex, paper/README.md, hardware-scaling spec, experiments/hardware_scaling.py | 10 | registration files inspected-compliant, SKIPPED |
+| (c) | 2 — docs/paper/README.md, experiments/config.yaml (**root cause**) | 3 | 12 old-convention run dirs (truthful records; → item 13) |
+| (d) | 5 — README.md, paper/main.tex, docs/paper/README.md, hardware-scaling spec, experiments/hardware_scaling.py | 10 | registration files inspected-compliant, SKIPPED |
 
 Cross-cutting actions: run-order discrepancy repair (README, main.tex, this
 doc — explicit run labels); Chennai → VIT Vellore (3 sites); **QNE

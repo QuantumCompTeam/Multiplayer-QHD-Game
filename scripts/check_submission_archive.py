@@ -27,7 +27,7 @@ def verify_source(archive, manifest):
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    output = root / 'paper' / 'submission'
+    output = root / 'docs' / 'paper' / 'submission'
     manifest = json.loads((output / 'build-manifest.json').read_text())
     for filename, key in [('qhd-submission-draft.pdf', 'pdf_sha256'),
                           ('qhd-code-and-data.zip', 'code_and_data_sha256')]:

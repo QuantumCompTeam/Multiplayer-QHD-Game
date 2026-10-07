@@ -11,9 +11,7 @@ def write_evidence_archive(root, output):
     """Package tracked research files, excluding accounts and local environments."""
     prefixes = ('src/', 'scripts/', 'tests/', 'experiments/', 'results/', 'docs/')
     named = {'pyproject.toml', 'environment.yml', 'environment.yaml', 'README.md',
-             'LICENSE', 'WHAT-WAS-ADDED.md', 'paper/JOURNAL-REVISION-LOG.md',
-             'paper/CLAIM-SOURCE-MAP.md', 'paper/LITERATURE-AUDIT.md',
-             'paper/submission/README.md'}
+             'LICENSE', 'WHAT-WAS-ADDED.md'}
     tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
     hashes = {}
     destination = output/'qhd-code-and-data.zip'
@@ -22,6 +20,9 @@ def write_evidence_archive(root, output):
             paper_source = name.startswith('paper/') and (
                 name.endswith(('.tex', '.bib', '.cls', '.md')) or name.startswith('paper/figs/'))
             root_document = '/' not in name and name.endswith('.md')
+            # Earlier build outputs live under docs/; never nest them in a new archive.
+            if name.startswith('docs/paper/submission/') and not name.endswith('.md'):
+                continue
             if not name or not (name.startswith(prefixes) or name in named or paper_source or root_document):
                 continue
             path = root/name
@@ -68,12 +69,13 @@ def main():
     log = (build/'qhd.log').read_text(encoding='utf-8', errors='replace')
     if 'There were undefined references' in log or 'Citation `' in log:
         raise RuntimeError('Unresolved references or citations in manuscript build')
-    output = paper / 'submission'
-    output.mkdir(exist_ok=True)
+    output = ROOT / 'docs' / 'paper' / 'submission'
+    output.mkdir(parents=True, exist_ok=True)
     shutil.copy2(build/'qhd.pdf', output/'qhd-submission-draft.pdf')
+    shutil.copy2(build/'qhd.pdf', paper/'qhd.pdf')
     files = []
     for pattern in ['*.tex', '*.bib', '*.sty', '*.bst']:
-        files.extend(p for p in paper.glob(pattern) if p.name != 'main.tex')
+        files.extend(paper.glob(pattern))
     files.extend(p for p in (paper/'figs').rglob('*') if p.is_file())
     with zipfile.ZipFile(output/'qhd-latex-source.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(set(files)):

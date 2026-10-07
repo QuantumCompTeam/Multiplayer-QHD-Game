@@ -21,7 +21,7 @@ The journal revision includes the phase-boundary proof, compact ideal GHZ
 evaluation through N=128, payoff sensitivity, and two complete registered
 hardware batches. Both batches support the incentive criterion at N=4,6;
 both fail the overall five-size criterion. See [WHAT-WAS-ADDED.md](WHAT-WAS-ADDED.md)
-and [the revision log](paper/JOURNAL-REVISION-LOG.md). The Task 12 handoff remains
+and [the revision log](docs/paper/JOURNAL-REVISION-LOG.md). The Task 12 handoff remains
 a historical record. The September 8 audit additionally hardens invalid-input
 handling and aligns the manuscript with the supplied FQCNN reference layout.
 

@@ -64,6 +64,10 @@ Thumbs.db
 
 # Results are research record and are tracked in git (see results/README.md).
 # (results/ is intentionally NOT ignored.)
+# Superseded Sep 7 rehearsal/test outputs, kept locally but not part of the record.
+results/n-scaling-advantage/2026-09-07T1209Z/
+results/phase-validation/2026-09-07-device-pilot/
+results/phase-validation/2026-09-07-offline/
 
 # graphify removal
 graphify-out/

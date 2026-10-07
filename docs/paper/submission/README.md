@@ -1,8 +1,8 @@
 # Submission files
 
 Run `python scripts/build_submission.py` from the repository root with
-MiKTeX/TeX Live available. The script preserves `paper/qhd.pdf` and the root
-`qhd.pdf`, builds a separate draft, and creates a portable LaTeX source ZIP.
+MiKTeX/TeX Live available. The script builds the draft here, copies the final
+PDF to `paper/qhd.pdf`, and creates a portable LaTeX source ZIP.
 Use `qhd.tex` as the main document after extracting the source archive.
 
 The September 8 layout follows `FQCNN_journal.pdf`, using black-and-white
@@ -25,7 +25,7 @@ upload; no journal submission has been made by this workflow. Complete the
 author declarations listed at the end of the cover-letter draft before
 sending it. That private completion note is not part of the letter to editors.
 
-Evidence: `paper/JOURNAL-REVISION-LOG.md` maps new claims to code and results.
+Evidence: `docs/paper/JOURNAL-REVISION-LOG.md` maps new claims to code and results.
 New offline analyses live in `results/journal-strengthening/2026-09-07-offline`.
 Committed hardware registrations, serialized circuits, device rehearsals,
 raw counts and charged-usage metrics live in `results/phase-validation`.

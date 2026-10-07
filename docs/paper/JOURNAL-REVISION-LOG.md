@@ -76,4 +76,4 @@ result's provider metrics; execution caps are not usage measurements.
 - Full historical-environment regression: 858 passed, 3 skipped. Additional
   raw-count replay tests check the saved judgments rather than trusting summaries.
 - The revised PDF builds in an isolated directory with resolved citations and
-  references. The source archive and separate PDF are in `paper/submission`.
+  references. The source archive and separate PDF are in `docs/paper/submission`.

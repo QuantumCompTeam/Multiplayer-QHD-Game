@@ -26,10 +26,10 @@ The authoritative sources are:
 
 - Architecture: [`docs/superpowers/specs/2026-07-31-qhd-content-restructure-design.md`](superpowers/specs/2026-07-31-qhd-content-restructure-design.md)
 - Execution plan: [`docs/superpowers/plans/2026-07-31-qhd-mathematical-framework-rewrite.md`](superpowers/plans/2026-07-31-qhd-mathematical-framework-rewrite.md)
-- Repository execution log: [`paper/SECTION-III-EXECUTION-LOG.md`](../paper/SECTION-III-EXECUTION-LOG.md)
-- Claim-to-evidence ledger: [`paper/CLAIM-SOURCE-MAP.md`](../paper/CLAIM-SOURCE-MAP.md)
-- Literature audit: [`paper/LITERATURE-AUDIT.md`](../paper/LITERATURE-AUDIT.md)
-- Style contract: [`paper/STYLE-GUIDE.md`](../paper/STYLE-GUIDE.md)
+- Repository execution log: [`docs/paper/SECTION-III-EXECUTION-LOG.md`](paper/SECTION-III-EXECUTION-LOG.md)
+- Claim-to-evidence ledger: [`docs/paper/CLAIM-SOURCE-MAP.md`](paper/CLAIM-SOURCE-MAP.md)
+- Literature audit: [`docs/paper/LITERATURE-AUDIT.md`](paper/LITERATURE-AUDIT.md)
+- Style contract: [`docs/paper/STYLE-GUIDE.md`](paper/STYLE-GUIDE.md)
 - Local SDD recovery ledger: `.superpowers/sdd/2026-07-31-qhd-mathematical-framework-rewrite/progress.md`
 
 The `.superpowers/` ledger is useful for local recovery, but it is intentionally untracked. The repository execution log and this handoff carry the durable repository record.
@@ -94,7 +94,7 @@ Unsupported corresponding-author and funding metadata were deliberately omitted.
 
 ### Gate G2: approved 2026-08-01
 
-All 27 audited literature sources were accepted. Six abstract-only sources are restricted to contextual claims. Source strength and locator limits in `paper/LITERATURE-AUDIT.md` remain binding.
+All 27 audited literature sources were accepted. Six abstract-only sources are restricted to contextual claims. Source strength and locator limits in `docs/paper/LITERATURE-AUDIT.md` remain binding.
 
 A real citation error was found and corrected: `nation2021` does not perform tensored confusion-matrix inversion. `maciejewski2020` is the direct source; `bravyi2021pra` is contextual.
 
@@ -124,7 +124,7 @@ Completed and independently reviewed.
 - Installed the official IEEE TQE shell and `ieeeaccess` class.
 - Migrated the preamble and front matter without silently replacing body content.
 - Omitted unsupported `corresp` and `tfootnote` metadata.
-- Updated `paper/README.md` to describe the TQE build workflow.
+- Updated `docs/paper/README.md` to describe the TQE build workflow.
 - Audited body hashes and build-warning changes.
 
 ### Task 2: non-destructive build baseline
@@ -132,7 +132,7 @@ Completed and independently reviewed.
 Completed and review-clean.
 
 - Established an isolated build workflow so LaTeX does not overwrite `paper/qhd.pdf`.
-- Recorded page count, warnings, undefined references, undefined citations, and fatal diagnostics in `paper/SECTION-III-EXECUTION-LOG.md`.
+- Recorded page count, warnings, undefined references, undefined citations, and fatal diagnostics in `docs/paper/SECTION-III-EXECUTION-LOG.md`.
 - Established the four-pass build as the gate-level verification requirement.
 
 ### Task 3: terminology, style, and structure contracts
@@ -141,8 +141,8 @@ Completed and review-clean.
 
 Created:
 
-- `paper/STYLE-GUIDE.md`
-- the initial `paper/CLAIM-SOURCE-MAP.md`
+- `docs/paper/STYLE-GUIDE.md`
+- the initial `docs/paper/CLAIM-SOURCE-MAP.md`
 - `tests/test_paper_structure.py`
 
 The terminology, evidence labels, symbol discipline, prose requirements, and prohibited overclaims became executable contracts.
@@ -151,7 +151,7 @@ The terminology, evidence labels, symbol discipline, prose requirements, and pro
 
 Completed and review-clean.
 
-- Created `paper/LITERATURE-AUDIT.md`.
+- Created `docs/paper/LITERATURE-AUDIT.md`.
 - Added 19 bibliography entries.
 - Audited 27 unique citation keys.
 - Recorded claim support, peer-review status, DOI or publisher URL, evidence access, locator, and source-use limits.
@@ -163,7 +163,7 @@ Completed and review-clean.
 
 - Created `tests/test_paper_claims.py`.
 - Added executable checks for III-A and III-B claims not already covered elsewhere.
-- Added evidence tables to `paper/CLAIM-SOURCE-MAP.md`.
+- Added evidence tables to `docs/paper/CLAIM-SOURCE-MAP.md`.
 - Confirmed that tests importing `src/` must run in the `entangled-equilibria` conda environment.
 
 ### Task 6: mathematical and implementation prechecks
@@ -410,11 +410,11 @@ SHA-256 2846b3145f082ea73ff5955c96abbc895d4c270dc418bd6d5808ca92fa59f210
 Commit `86495d7` contains the audited 14-file manuscript, template, bibliography, and test scope:
 
 ```text
-paper/CLAIM-SOURCE-MAP.md
-paper/LITERATURE-AUDIT.md
-paper/README.md
-paper/SECTION-III-EXECUTION-LOG.md
-paper/STYLE-GUIDE.md
+docs/paper/CLAIM-SOURCE-MAP.md
+docs/paper/LITERATURE-AUDIT.md
+docs/paper/README.md
+docs/paper/SECTION-III-EXECUTION-LOG.md
+docs/paper/STYLE-GUIDE.md
 paper/bullet.png
 paper/ieeeaccess.cls
 paper/logo.png
@@ -523,7 +523,7 @@ Then:
 7. Run focused and practical-complete verification.
 8. Dispatch an independent Opus-level mathematical reviewer.
 9. Resolve every Critical or Important finding through fix and re-review rounds.
-10. Append Task 13 closure to the local SDD ledger and `paper/SECTION-III-EXECUTION-LOG.md`.
+10. Append Task 13 closure to the local SDD ledger and `docs/paper/SECTION-III-EXECUTION-LOG.md`.
 11. Stop at Gate G4 and wait for direct user approval.
 
 Do not re-dispatch completed Tasks 10–12.

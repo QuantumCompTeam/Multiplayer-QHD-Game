@@ -43,5 +43,5 @@ references, or overfull boxes. All 41 PDF citation links resolve to page 18.
 ## Open scientific work
 
 Q1 eligibility and current retraction status are still pending verification in
-`paper/Q1-REFERENCE-AUDIT.md`. Repository cleanup does not resolve that audit
+`docs/paper/Q1-REFERENCE-AUDIT.md`. Repository cleanup does not resolve that audit
 or declare the manuscript ready for submission.

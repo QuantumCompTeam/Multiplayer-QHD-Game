@@ -383,9 +383,9 @@ limits.
 - `results/journal-strengthening/2026-09-07-offline/journal_extensions.pdf`
 - `results/journal-strengthening/2026-09-07-offline/journal_extensions.png`
 - `docs/reviews/2026-09-07-journal-strengthening-plan.md`
-- `paper/JOURNAL-REVISION-LOG.md`
-- Addenda in `paper/CLAIM-SOURCE-MAP.md`, `paper/LITERATURE-AUDIT.md`, and
-  `paper/SECTION-III-EXECUTION-LOG.md`.
+- `docs/paper/JOURNAL-REVISION-LOG.md`
+- Addenda in `docs/paper/CLAIM-SOURCE-MAP.md`, `docs/paper/LITERATURE-AUDIT.md`, and
+  `docs/paper/SECTION-III-EXECUTION-LOG.md`.
 - Immutable registrations, QPY files, rehearsals, calibration snapshots, raw
   counts, judgments, and provider metrics under `results/phase-validation/`.
 
@@ -393,11 +393,11 @@ limits.
 
 The ready-to-review deliverables are:
 
-- `paper/submission/qhd-submission-draft.pdf`
-- `paper/submission/qhd-latex-source.zip`
-- `paper/submission/build-manifest.json`
-- `paper/submission/cover-letter-draft.md`
-- `paper/submission/README.md`
+- `docs/paper/submission/qhd-submission-draft.pdf`
+- `docs/paper/submission/qhd-latex-source.zip`
+- `docs/paper/submission/build-manifest.json`
+- `docs/paper/submission/cover-letter-draft.md`
+- `docs/paper/submission/README.md`
 
 No journal submission was made automatically.
 

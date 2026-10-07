@@ -117,7 +117,7 @@ override it.
 
 ## BibTeX-key uniqueness check
 
-See `paper/SECTION-III-EXECUTION-LOG.md`, Task 4 entry, for the exact command and output.
+See `docs/paper/SECTION-III-EXECUTION-LOG.md`, Task 4 entry, for the exact command and output.
 
 ## Gate G2
 

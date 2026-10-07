@@ -69,7 +69,7 @@ and **four of five pre-registered tests passed**. Plan:
   - **T3 fairness PASS** — star N=4's hub loses (~0.34) while leaves earn
     (~1.21), and this does **not** move when players are permuted across
     physical qubits. The unfairness is locked to the graph position, not the
-    qubit. This is the control `paper/REVIEW-NOTES.md:38` demanded.
+    qubit. This is the control `docs/paper/REVIEW-NOTES.md:38` demanded.
   - **T5 ring N=4 PASS** — zero noiseless advantage (deterministic `|1111>`),
     yet measured +0.0894; smallest of the 12 cells, positive, and ZNE pulls it
     back toward zero. Advantage manufactured purely by decoherence.
@@ -198,7 +198,7 @@ were written in `c993ff8`/`d7ee2f5`, and the advantage-map figure is embedded
 (`fig:advmap`, `fig:heat`). Builds to 7 pages; all 8 references carry verified
 DOIs. The paper is no longer the bottleneck — the hardware evidence is.
 
-Remaining paper-side work is in `paper/REVIEW-NOTES.md`: Aasa's publication
+Remaining paper-side work is in `docs/paper/REVIEW-NOTES.md`: Aasa's publication
 email, item-10 T9 sign-off (keeps the fairness paragraph hedged as
 "exploratory"), and the claim updates that depend on the hardware runs above
 (plan Task 11).
@@ -236,7 +236,7 @@ email, item-10 T9 sign-off (keeps the fairness paragraph hedged as
   anything comparing the scaling runs to each other, or run 1 of the topology
   batch to its own registration, still carries this caveat.
 - **Item 9** (topology + wiring-permutation hardware): run 1 landed
-  (`5e682cc`). T3 answered `paper/REVIEW-NOTES.md:38` in the affirmative — the
+  (`5e682cc`). T3 answered `docs/paper/REVIEW-NOTES.md:38` in the affirmative — the
   player-position claim does **not** need narrowing.
 
 ## Recently closed (2026-07-19, commits cd5c094 + 03d642d)
@@ -274,7 +274,7 @@ email, item-10 T9 sign-off (keeps the fairness paragraph hedged as
 
 ## Key files
 
-- Paper: `paper/main.tex` · status/owners: `paper/README.md`
+- Paper: `paper/main.tex` · status/owners: `docs/paper/README.md`
 - Work queue: `ITEMS.md` (index) · `TODOS.md` (deferred detail)
 - Provenance: `docs/VERIFIED-FACTS.md` · findings: `docs/findings/`
 - Preregistrations: `results/hardware-scaling/preregistration*.json`

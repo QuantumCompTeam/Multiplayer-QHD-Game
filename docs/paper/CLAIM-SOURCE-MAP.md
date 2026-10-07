@@ -74,7 +74,7 @@ III-B that Task 8 will write. The section column above now uses the target
 names, so the payoff-tensor row sits under III-A and the three
 dominance/welfare rows under III-B.
 
-**Source-scope constraint carried into III-A (from `paper/LITERATURE-AUDIT.md`).**
+**Source-scope constraint carried into III-A (from `docs/paper/LITERATURE-AUDIT.md`).**
 `benjamin2001` is verified only for the multiplayer quantum-game construction
 with worked $N=3$ and $N=4$ cases; the audit records that no fully general
 closed-form $2^N$ payoff-tensor formula appears in that paper. III-A therefore
@@ -98,7 +98,7 @@ exists". III-A cites both within exactly those limits.
 
 **Attribution correction applied at Task 9.** The pre-rewrite III-C read "with
 maximal entanglement at $\gamma=\pi/2$~\cite{benjamin2001,chappell2012}".
-`paper/LITERATURE-AUDIT.md` records that no $\gamma$ symbol and no $\pi/2$ value
+`docs/paper/LITERATURE-AUDIT.md` records that no $\gamma$ symbol and no $\pi/2$ value
 appears anywhere in `benjamin2001` (it uses a fixed maximal entangler, not a
 continuously parameterized one). The angle parameterization is therefore
 attributed to `chappell2012` alone, with the symbol translation stated in the
