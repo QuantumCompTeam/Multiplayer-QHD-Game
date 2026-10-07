@@ -38,8 +38,7 @@ Reference anchor printed by the report: the committed N=3 GHZ validation ran at
 
 ## What the measurement corrected
 
-`docs/STATUS.md` (2026-07-25 head-of-line) and this plan's Task 3 preamble both
-warned that ring and fully-connected would be expensive because heavy-hex has
+The plan warned that ring and fully-connected would be expensive because heavy-hex has
 no native triangle and no cycle below N=12. **The measurement does not support
 that for N<=5.** Ring routes to 10/20/28 cz and fully-connected to 10/31 cz at
 N=3/4. At these sizes the transpiler closes the cycle with a small number of
@@ -116,7 +115,7 @@ Fold-multiplied cz for the selected cells:
 would put ring N=5 fold-5 near 34% ground-state probability, but that is
 `P(|0..0>)`, and this project's central mechanism finding is that mean payoff is
 first-order insensitive to single bit-flips, so advantage decays roughly 7x
-slower than fidelity (`docs/STATUS.md`, "Through-line"). Cells that look dead by
+slower than fidelity. Cells that look dead by
 fidelity may retain measurable advantage. No cell is excluded on this table; the
 rehearsal decides.
 

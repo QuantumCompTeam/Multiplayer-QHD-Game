@@ -133,7 +133,7 @@ def expand_cells(raw: dict[str, Any]) -> list[Cell]:
             raise ValueError(
                 f"noise.p > 0 requires strategy_mode: \"fixed\" (got "
                 f"{strategy_mode!r}). Noise-aware strategy optimization is not "
-                f"implemented; see the Month-4 spec (D4/3A) and TODOS.md."
+                f"implemented."
             )
 
     cells: list[Cell] = []

@@ -1,21 +1,12 @@
-# Item 15 phase 2. Phase-1 survey (TODOS.md, 2026-07-19): core.autocrlf=true set
-# at SYSTEM level on the author's machine, no .gitattributes in the repo, and of
-# the 50 tracked files under results/ 34 are all-CRLF text and 16 binary, with
-# zero mixed-ending files on disk.
-#
-# Without this file, what lands in a commit depends on each contributor's
-# personal core.autocrlf. That is the reproducibility hazard behind G20
-# (committed artifacts have come from interpreters on different operating
-# systems). Declaring it here makes normalisation a property of the REPO rather
-# than of whoever happens to be committing.
+# Line-ending policy is a property of the repository, not of each
+# contributor's core.autocrlf setting.
 
 # Default: git decides text vs binary, and stores text as LF in the index.
 # Working-copy endings still follow the platform on checkout.
 * text=auto
 
-# Evidence artifacts are byte-compared across machines and quoted line-by-line
-# in docs/VERIFIED-FACTS.md, so pin them to LF in the working copy too. A
-# result.json must hash the same on Windows and Linux.
+# Result files are byte-compared across machines, so pin them to LF in the
+# working copy too. A result.json must hash the same on Windows and Linux.
 results/**/*.json  text eol=lf
 results/**/*.md    text eol=lf
 results/**/*.csv   text eol=lf

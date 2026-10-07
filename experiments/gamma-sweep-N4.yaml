@@ -1,0 +1,19 @@
+# Entanglement-angle sweep of the paper (Fig. 3): fixed (Q_4,...,Q_4) profile,
+# N = 4, five entangler families, V=4, C=3, gamma = 0 .. pi/2 in steps of pi/10.
+# Reproduces results/gamma-sweep/N4.
+experiment:
+  name: "gamma-sweep-N4"
+  description: "Circuit-relative payoff gap versus entanglement angle at N=4"
+sweep:
+  N: [4]
+  topologies: ["ghz", "ring", "star", "fully-connected", "w"]
+  strategy_names: ["D", "H", "Q"]
+  strategy_mode: "fixed"
+game:
+  V: 4
+  C: 3
+  gamma: ["0", "pi/10", "pi/5", "3*pi/10", "2*pi/5", "pi/2"]
+noise:
+  p: 0.0
+output:
+  formats: ["md", "json", "csv", "plots"]

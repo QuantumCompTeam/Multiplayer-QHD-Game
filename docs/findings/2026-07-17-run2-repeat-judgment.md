@@ -88,10 +88,8 @@ and sets `distinct_calibration_vs_previous_runs` to false. The stamp is
 unchanged despite the ibm_fez maintenance window that fell between the two
 submissions. The first submission of this batch, job d9chh0qneu4c739lvgb0,
 failed backend-side during that maintenance (error 9603, RF hardware, 0 quantum
-seconds billed) and was resubmitted as the job judged here; that history is
-recorded in `TODOS.md`, under the heading "## Hardware scaling repeat runs
-(cross-day error bars)" in the Run 2 progress bullet containing
-"d9chh0qneu4c739lvgb0 failed backend-side" — not in the JSON.
+seconds billed) and was resubmitted as the job judged here. The failed
+submission produced no data and is not recorded in the JSON.
 
 So against the 3-5 cross-day target, the count stands at **1 of 3-5 calibration
 days**. What run 2 establishes is execution-level repeatability of the deficit

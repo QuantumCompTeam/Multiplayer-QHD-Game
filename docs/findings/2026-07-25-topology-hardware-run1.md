@@ -79,8 +79,8 @@ gamma = pi/2. A gap >= 0 means the unilateral Hawk deviation does not pay.
 All three gaps are positive and many sigma clear of zero. **The restricted-menu
 `{D,H,Q}` equilibrium at N=3 GHZ is now hardware-verified**, not simulation-only.
 
-This does **not** establish a full-SU(2) equilibrium; the menu restriction in
-`docs/paper/REVIEW-NOTES.md` "Scope and metric checks" stands unchanged.
+This does **not** establish a full-SU(2) equilibrium; the menu restriction
+stands unchanged.
 
 Note that all three measured gaps are *closer to zero* than predicted (two of
 three negative z), consistent with the device being noisier than the model —
@@ -129,10 +129,8 @@ star N=4 per-player payoffs, mitigated, fold 1. Player 0 is the hub.
 **The hub loses ~0.34 while every leaf earns ~1.21, and this does not move when
 the players are permuted across physical qubits.** The unfairness is a property
 of the entanglement topology — of *which graph position you occupy* — and not
-of which qubit you were handed. This is the hardware control that
-`docs/paper/REVIEW-NOTES.md:38` asked for ("Run the W-topology/wiring-permutation
-hardware control, or explicitly defer it and narrow the player-position
-claim"); it ran, and the claim holds.
+of which qubit you were handed. This is the hardware wiring-permutation control for the player-position
+claim; it ran, and the claim holds.
 
 Honest note on test strength: I judged this test "weak" at registration time
 because the predicted deviations (0.0034, 0.0045) sat ~13x below threshold. The

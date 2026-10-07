@@ -5,7 +5,7 @@ d9c8fpn550hc73dl1tcg), the one-parameter depolarizing fit p_eff (fitted on the
 N=3 mitigated fold-1 payoff ONLY -- fit-one-predict-two) and its predicted
 advantages at N=3,4,5, with uncertainty intervals propagated through every
 statistical stage of the pipeline. Committing this output before the repeat
-batch runs (TODOS.md) turns them into a falsifiable test of the model instead
+batch runs turns them into a falsifiable test of the model instead
 of post-hoc curve confirmation.
 
 Uncertainty budget (ONE joint parametric bootstrap, seeded):

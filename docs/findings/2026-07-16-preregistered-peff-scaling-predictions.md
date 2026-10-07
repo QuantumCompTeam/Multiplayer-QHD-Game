@@ -13,7 +13,7 @@ is the human-readable protocol. Neither may be edited after repeat runs exist
 The scaling claim rests on a one-parameter effective depolarizing model:
 `p_eff` is fitted on the **N=3 mitigated fold-1 payoff only** and then
 *predicts* N=4 and N=5 (fit-one-predict-two). Without a frozen prediction, the
-planned repeat runs (TODOS.md) would just be "more data" that the curve is
+planned repeat runs would just be "more data" that the curve is
 re-drawn through. This registration converts them into a falsifiable test:
 the predictions below were fixed, with propagated uncertainty intervals,
 before any repeat data existed.

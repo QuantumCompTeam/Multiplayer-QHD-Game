@@ -214,8 +214,7 @@ def test_star_entangler_invariant_under_leaf_swap():
     hub-relocation half of the operator-level check (conjugating by a
     hub-leaf SWAP should yield "the star with the relocated hub") cannot be
     built from this constructor alone. Per the task-6 brief, only the
-    leaf-exchange invariance is verified here; the limitation is recorded in
-    docs/paper/CLAIM-SOURCE-MAP.md.
+    leaf-exchange invariance is verified here.
     """
     N = 4
     gamma = math.pi / 2

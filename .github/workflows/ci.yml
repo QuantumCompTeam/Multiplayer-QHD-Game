@@ -25,8 +25,8 @@ jobs:
           pip install tomli
           python -c "import tomli; d = tomli.load(open('pyproject.toml', 'rb')); open('ci-reqs.txt', 'w').write('\n'.join(d['project']['dependencies']))"
           pip install -r ci-reqs.txt pytest
-      # The suite includes the N=4/N=5 NE regression guard (tests/test_ne_guard.py,
-      # G9) and the doc-anchor checker (tests/test_doc_anchors.py, G13).
+      # The suite includes the paper's equation and claim checks
+      # (tests/test_paper_claims.py) and the N=4/N=5 equilibrium guard.
       - name: Run test suite
         env:
           MPLBACKEND: Agg

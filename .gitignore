@@ -9,7 +9,14 @@ venv/
 .venv/
 .venv-win/
 .venv-hardware/
-paper/.journal-build/
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.synctex.gz
 env/
 .env
 .env.*
@@ -74,3 +81,6 @@ graphify-out/
 
 # independent files and info
 audit-report-20260616-1834.md
+
+# Local agent instructions (not part of the research repository)
+CLAUDE.md

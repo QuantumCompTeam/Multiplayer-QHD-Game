@@ -103,8 +103,7 @@ def test_anchor_resolves(doc: Path, cite: tuple[str, str, str]) -> None:
     target_rel, literal, repr_ = cite
     targets = _candidates(target_rel)
     if not targets:
-        # Citations into gitignored paths (e.g. VERIFIED-FACTS.md's records of
-        # .venv-win/pyvenv.cfg) are machine-local facts: correct where written,
+        # Citations into gitignored paths are machine-local facts: correct where written,
         # absent in other checkouts and on CI. Skip visibly rather than fail.
         ignored = subprocess.run(
             ["git", "check-ignore", "-q", target_rel], cwd=REPO
@@ -134,8 +133,7 @@ def test_anchor_resolves(doc: Path, cite: tuple[str, str, str]) -> None:
 def test_conventions_are_present() -> None:
     """Guard the extractor itself: if the regexes rot and extract nothing, that
     must fail rather than green-wash an empty run."""
-    assert len(_CASES) >= 100, (
+    assert len(_CASES) >= 2, (
         f"only {len(_CASES)} anchored citations extracted from docs/ — the "
-        "extractor or the docs changed shape; expected 100+ (VERIFIED-FACTS.md "
-        "alone carries ~104)"
+        "extractor or the docs changed shape; the findings notes carry 2"
     )

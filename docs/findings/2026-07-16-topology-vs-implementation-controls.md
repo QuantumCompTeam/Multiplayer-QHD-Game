@@ -57,7 +57,7 @@ ordering is a gate-budget story.** W is the lone structural outlier: ~2.5–3×
 *more* robust per gate than everything else — the opposite of its last-place
 absolute standing.
 
-## Verdict per locked claim (README §9)
+## Verdict per claim
 
 **L1 — "N=3: GHZ retains the most mean advantage at p=0.05 (0.333/33%)
 versus ring (0.200/20%) and W (0.047/9%)."  PARTIAL — the W comparison

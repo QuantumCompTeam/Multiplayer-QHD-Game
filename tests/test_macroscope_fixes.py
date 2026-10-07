@@ -1,20 +1,15 @@
-"""Failure-path regressions for the eight Macroscope review findings."""
-import hashlib
-import io
+"""Failure-path regressions for hardware submission, evidence audit and run allocation."""
 import json
 from pathlib import Path
 import subprocess
 import sys
 from types import SimpleNamespace
-import zipfile
 
 import pytest
 
-import check_submission_archive as archive_check
 import audit_phase_evidence as evidence_audit
 import run_phase_hardware as hardware
 import run_experiment
-import verify_ring_phase2 as ring
 
 
 @pytest.mark.parametrize('failure', ['response', 'pending_write'])
@@ -69,22 +64,6 @@ def test_legacy_job_id_recovery_and_registration_mismatch(tmp_path):
         hardware.recover_journaled(service, tmp_path, 'wrong')
 
 
-@pytest.mark.parametrize('tamper', ['qhd.tex', 'IEEEtran.cls', 'IEEEtran.bst', 'qhd.bbl', 'extra'])
-def test_source_zip_tampering_is_rejected(tamper):
-    content = {name: name.encode() for name in ['qhd.tex', 'IEEEtran.cls', 'IEEEtran.bst', 'qhd.bbl']}
-    hashes = {k: hashlib.sha256(v).hexdigest() for k, v in content.items()}
-    manifest = {'files': {'qhd.tex': hashes['qhd.tex']},
-                'ieeetran_cls_sha256': hashes['IEEEtran.cls'],
-                'ieeetran_bst_sha256': hashes['IEEEtran.bst'], 'bbl_sha256': hashes['qhd.bbl']}
-    content[tamper] = b'changed'
-    stream = io.BytesIO()
-    with zipfile.ZipFile(stream, 'w') as archive:
-        for name, value in content.items():
-            archive.writestr(name, value)
-    with zipfile.ZipFile(stream) as archive, pytest.raises(ValueError, match='source ZIP'):
-        archive_check.verify_source(archive, manifest)
-
-
 def test_audit_rejects_altered_manifest_with_optimization(tmp_path):
     root = tmp_path/'results/phase-validation'
     reg = root/'2026-09-07-device-pilot-v2'
@@ -98,33 +77,6 @@ def test_audit_rejects_altered_manifest_with_optimization(tmp_path):
     result = subprocess.run([sys.executable, '-O', '-c', code, str(tmp_path)], capture_output=True)
     assert result.returncode != 0
     assert b'manifest hash mismatch' in result.stderr
-
-
-def test_ring_mismatch_does_not_overwrite_evidence(tmp_path, monkeypatch):
-    monkeypatch.setattr(sys, 'argv', ['verify_ring_phase2.py'])
-    source = tmp_path/'results/n-scaling-advantage/2026-07-19T0901Z/results.json'
-    source.parent.mkdir(parents=True)
-    source.write_text(json.dumps({'cells': [{'N': 2, 'topology': 'ring', 'V': 4., 'C': 3., 'advantage': 1.5}]}))
-    output = tmp_path/'docs/reviews/2026-09-08-ring-phase2.json'
-    output.parent.mkdir(parents=True)
-    output.write_text('original evidence')
-    monkeypatch.setattr(ring, 'ROOT', tmp_path)
-    monkeypatch.setattr(sys, 'prefix', str(tmp_path/'entangled-equilibria'))
-    monkeypatch.setattr(ring.importlib.metadata, 'version', lambda name: {
-        'qiskit': '1.3.2', 'qiskit-aer': '0.14.2', 'numpy': '1.26.4', 'scipy': '1.13.1'}[name])
-    monkeypatch.setattr(ring, 'compute_advantage', lambda **kw: {'advantage': 0.})
-    with pytest.raises(ValueError, match='ring advantage mismatch'):
-        ring.main()
-    assert output.read_text() == 'original evidence'
-
-
-def test_ring_explicit_output_cannot_overwrite(tmp_path, monkeypatch):
-    output = tmp_path/'existing.json'
-    output.write_text('original')
-    monkeypatch.setattr(sys, 'argv', ['verify_ring_phase2.py', '--output', str(output)])
-    with pytest.raises(FileExistsError):
-        ring.main()
-    assert output.read_text() == 'original'
 
 
 @pytest.mark.parametrize('counts', [{'0': -1, '1': 9}, {'0': 0.5, '1': 7.5},

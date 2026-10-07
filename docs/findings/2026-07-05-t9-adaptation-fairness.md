@@ -3,8 +3,7 @@
 **Status: EXPLORATORY PILOT — PROVISIONAL.** The adaptation rule below
 (independent round-robin best response) is a modeling choice pending Aasa's
 game-theory sign-off. Treat the numbers as a directional pilot, not a locked
-result. This finding is deliberately kept **out of the README §9 results table**
-(which holds validated results) until the rule is reviewed.
+result.
 
 ## Question
 
@@ -12,7 +11,7 @@ The Month-4 noise analysis established a *noise-induced per-player asymmetry*:
 under gate-level depolarizing noise the fixed cooperative profile (Q_N,…,Q_N)
 pays players unequally, and the ring N=5 case has that disadvantage
 **position-locked** to the entangler's circuit position (see
-`scripts/asymmetry_diagnostics.py` and README §9). T9 asks the natural
+`scripts/asymmetry_diagnostics.py`). T9 asks the natural
 follow-up:
 
 > If each player is allowed to **adapt** their own strategy under the same noisy
@@ -21,7 +20,7 @@ follow-up:
 > or **neither**?
 
 This rescopes the original T9 line ("noise-aware strategy optimization", still
-deferred as a *symmetric-Q* config-harness feature — see `TODOS.md`) into a
+deferred as a *symmetric-Q* config-harness feature) into a
 concrete, testable dynamics question.
 
 ## Method
@@ -111,8 +110,8 @@ worse off — a quantum-game analogue of a price-of-anarchy effect under noise.
 2. **Scope.** Only W, N=4 is covered. The headline asymmetry (W N=5, two players
    negative; ring N=5) is *not* tested here. Extending to N=5 is the obvious next
    step but was left out of the pilot deliberately to keep cost bounded.
-3. **Relation to the deferred TODO.** The `TODOS.md` "noise-aware strategy
-   optimization" item (make `strategy_mode = cooperative|nash` run under noise
+3. **Relation to noise-aware strategy optimization.** The deferred "noise-aware
+   strategy optimization" feature (make `strategy_mode = cooperative|nash` run under noise
    for the *symmetric* Q) is a different, still-open feature; this pilot does not
    close it.
 

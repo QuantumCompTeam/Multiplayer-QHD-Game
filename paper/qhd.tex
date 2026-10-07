@@ -239,7 +239,7 @@ this pipeline is specified in Sec.~\ref{sec:hardware}.
 
 \subsection{Notation and the Classical \texorpdfstring{$N$}{N}-Player Payoff Tensor}
 \label{sec:notation}
-% payoff matrix + financial mapping: README §3.1; payoff tensor: docs/formulae.md §5
+% payoff tensor: docs/formulae.md §5
 Before quantizing the game, we need a payoff rule that assigns a value to every
 one of the $2^N$ classical outcomes and preserves each player's identity.
 
@@ -856,7 +856,6 @@ can move the deviation incentives characterized in Sec.~\ref{sec:incentive-bound
 while leaving the cooperative payoff exactly unchanged.
 
 \input{incentive-boundary.tex}
-% market interpretation: README §10
 
 % =============================================================================
 \input{validation-methods.tex}
@@ -973,7 +972,7 @@ is zero.}
 \end{figure}
 
 \subsubsection{Noise Robustness: Two Criteria Disagree}\label{sec:noise}
-% ported from README §9 (Month-4, corrected 2026-07-17); data results/noise-robustness/2026-07-03T0213Z
+% data: results/noise-robustness/2026-07-03T0213Z
 Sweeping the depolarizing strength $p$ from $0$ to $0.05$ on the gate-level
 noisy path, two natural ``robustness'' criteria give different orderings, so
 we state which we mean.
@@ -1027,7 +1026,7 @@ $N$ & GHZ & W & ring & star & fully conn.\\
 % source: docs/findings/2026-07-16-topology-vs-implementation-controls.md (control C)
 
 \subsubsection{Position-Locked Unfairness}
-% wiring-permutation: README §9 Month-4 findings
+% wiring-permutation: scripts/asymmetry_diagnostics.py
 The noise-induced per-player asymmetry is not a property of the player labels
 or the ideal state. A wiring-permutation test on the ring at $N=5$
 cyclically shifts the

@@ -18,8 +18,7 @@ so the parity rotation uses RZ(-gamma).
 
 W is built exactly by conjugation: J_W = T . MCU . T-dagger, where T is the
 CRy+CNOT W-prep cascade (fixes |0...0>) and MCU is an anti-controlled
-exp(i*gamma/2 * X) on qubit 0 — see
-docs/superpowers/specs/2026-07-02-w-entangler-gate-level-design.md.
+exp(i*gamma/2 * X) on qubit 0.
 """
 
 from __future__ import annotations

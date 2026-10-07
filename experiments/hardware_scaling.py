@@ -1,7 +1,5 @@
 """N-scaling hardware pipeline (Month 5->6): N=3,4,5 GHZ EWL on one pinned chain.
 
-Design: docs/superpowers/specs/2026-07-16-hardware-scaling-mitigation-design.md
-
 Modes (default = offline gates only):
 
   (default)      Gates only, no network: per-N circuit-identity assertion vs the
@@ -680,7 +678,7 @@ def save_run(analysis: dict, predictions: dict, plan: dict, job_info: dict,
     os.makedirs(out_dir, exist_ok=True)
     payload = {
         # Reflects the ns actually run. Was hardcoded "hardware-scaling-n345",
-        # which mislabelled the N=3..7 extension (see VERIFIED-FACTS B3.1).
+        # which mislabelled the N=3..7 extension.
         "experiment": ("hardware-scaling-n"
                        + "".join(str(N) for N in plan_ns(plan))),
         "created_utc": datetime.now(timezone.utc).isoformat(),

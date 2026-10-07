@@ -3,7 +3,7 @@
 #
 #   conda run -n entangled-equilibria python scripts/run_experiment.py --config experiments/noise-sweep.yaml
 #
-# Sweeps noise p over the README §5.1 grid (0.0 → 0.05) for the RQ3 comparison
+# Sweeps noise p over the grid 0.0 → 0.05 for the noise-robustness comparison
 # set — GHZ vs W (the headline) plus ring (the cheapest pairwise topology) — at
 # N = 2..5. Deliverables: per-topology 3D advantage surfaces (plots/noise/), a
 # per-(topology, N) noise-threshold p* table, and the measured GHZ-vs-W ordering
@@ -33,13 +33,13 @@ sweep:
   strategy_mode: "fixed"
 
 game:
-  # Canonical paper parameters (README §9 headline results use V=4, C=3).
+  # Paper parameters (V=4, C=3).
   V: 4.0
   C: 3.0
   gamma: "pi/2"
 
 noise:
-  # README §5.1: p swept 0.0 → 0.05; 11 points, step 0.005.
+  # p swept 0.0 → 0.05; 11 points, step 0.005.
   p: [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035, 0.040, 0.045, 0.050]
 
 output:

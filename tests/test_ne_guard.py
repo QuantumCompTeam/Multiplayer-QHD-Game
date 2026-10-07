@@ -1,9 +1,9 @@
-"""N=4/N=5 NE regression guard (item 18, resolves G9).
+"""N=4/N=5 NE regression guard.
 
 Pins the equilibrium boundary of the default game (GHZ entangler, V=4, C=3):
 (Q,...,Q) is a pure NE at N=2,3 and NOT at N=4,5, where the unilateral Hawk
-deviation beats it. Reference values are the registered ones in
-docs/VERIFIED-FACTS.md D2/D5, reproduced within 1e-12.
+deviation beats it. Reference values are the analytic ones of the paper
+(Hawk payoff 2+2cos(2pi/N)), reproduced within 1e-12.
 
 The paper's hardware runs sit at N=3,4,5 on this exact boundary. A code change
 that moves any of these numbers changes the game the paper measures — this
@@ -21,9 +21,9 @@ import pytest
 
 from game.nash import compute_advantage
 
-# docs/VERIFIED-FACTS.md D5 (raw sweep under the pinned env; defaults:
+# Reference sweep under the pinned env (defaults:
 # GHZ, V=4, C=3). hawk_dev is the (player, "H") deviation_payoff entry —
-# identical for every player (GHZ is vertex-transitive, D2).
+# identical for every player (GHZ is permutation invariant).
 D5 = {
     2: dict(q_is_nash=True, q_payoff=2.0, classical=0.5,
             advantage=1.5, hawk_dev=1.6872297554945904e-32),
@@ -35,7 +35,7 @@ D5 = {
             classical=0.20000000000000001, advantage=0.60000000000000009,
             hawk_dev=2.6180339887498949),
 }
-TOL = 1e-12  # the tolerance VERIFIED-FACTS D5 records the identities holding at
+TOL = 1e-12  # the tolerance at which the identities hold
 
 
 @lru_cache(maxsize=None)

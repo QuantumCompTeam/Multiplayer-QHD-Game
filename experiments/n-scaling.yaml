@@ -1,0 +1,19 @@
+# Zero-noise landscape of the paper (Figs. 1, 2, 4): fixed (Q_N,...,Q_N)
+# profile, N = 2..6, five entangler families, V=4, C=3, gamma=pi/2.
+# Reproduces results/n-scaling-advantage/2026-07-19T0901Z.
+experiment:
+  name: "n-scaling-advantage"
+  description: "Quantum advantage across N and entanglement topologies (RQ1/RQ2)"
+sweep:
+  N: [2, 3, 4, 5, 6]
+  topologies: ["ghz", "ring", "star", "fully-connected", "w"]
+  strategy_names: ["D", "H", "Q"]
+  strategy_mode: "fixed"
+game:
+  V: 4
+  C: 3
+  gamma: "pi/2"
+noise:
+  p: 0.0
+output:
+  formats: ["md", "json", "csv", "plots"]
