@@ -27,14 +27,17 @@ therefore refers to the specified decomposition and compilation settings.
 Matched-count and varied-compilation controls test that dependency rather
 than treating a circuit's gate count as an intrinsic topology invariant.
 
-\subsection{Uncertainty and registered decisions}
+\subsection{Uncertainty and preregistered decisions}
 Raw payoff estimates are linear functions of outcome frequencies; their
 multinomial covariance captures shot noise within the sampled circuit
-distribution. The new all-player hardware tests use simultaneous one-sided
-Hoeffding bounds over the registered deviation family. The exact rule and
-its observed outcomes appear in Sec.~\ref{sec:phase-hardware}. Historical
-readout correction and zero-noise extrapolation use their separately
-recorded protocols. Neither shot-noise intervals nor within-session
+distribution. Before every hardware submission, the predictions, pass
+criteria and qubit assignment were written down and committed to the code
+repository; we call these tests preregistered and report failures alongside
+passes. The alternative-phase all-player hardware tests use simultaneous
+one-sided Hoeffding bounds over the full deviation family. The exact rule and
+its observed outcomes appear in Sec.~\ref{sec:phase-hardware}. Readout
+correction and zero-noise extrapolation in the original-phase experiments
+use their separately recorded protocols. Neither shot-noise intervals nor within-session
 replication establish stability across independent calibration epochs.
 
 \input{hardware-setup.tex}

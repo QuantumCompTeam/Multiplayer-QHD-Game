@@ -36,10 +36,12 @@ INK = "#1b1f24"
 MUTED = "#8b949e"
 GRID = "#e6e8eb"
 
-TOPOLOGIES = ["ghz", "ring", "star", "fully-connected", "w"]
+TOPOLOGIES = ["ghz", "w", "ring", "star", "fully-connected"]  # paper order
 SHORT = {"ghz": "GHZ", "ring": "ring", "star": "star",
-         "fully-connected": "FC", "w": "W"}
+         "fully-connected": "full", "w": "W"}
 GAMMA = math.pi / 2
+WIRING_NAMES = {(0, 1, 2, 3): "identity wiring", (1, 2, 3, 0): "cyclic shift",
+                (3, 2, 1, 0): "reversed"}
 
 
 def load_run(argv):
@@ -119,7 +121,7 @@ def panel_b(ax, series):
                    and s["profile"] == prof
                    and abs(s["gamma"] - GAMMA) < 1e-12)
         gaps.append(v_c[k] - dev["folds"]["1"]["mitigated"]["per_player"][k])
-        labels.append(f"player {k}")
+        labels.append(f"player {k + 1}")  # paper numbers players from 1
     x = np.arange(3)
     ax.bar(x, gaps, color=DATA, width=0.6, zorder=3)
     ax.axhline(0.0, color=INK, lw=1.0, zorder=2)
@@ -132,7 +134,7 @@ def panel_b(ax, series):
     for xi, g in zip(x, gaps):
         ax.text(xi, g + 0.012, f"$+{g:.3f}$", ha="center", va="bottom",
                 fontsize=8, color=INK)
-    ax.text(0.02, 0.04, "gap $>0$ $\\Rightarrow$ equilibrium holds",
+    ax.text(0.02, 0.04, "gap $>0$: the Hawk deviation does not pay",
             transform=ax.transAxes, fontsize=7.8, color=MUTED)
 
 
@@ -148,12 +150,12 @@ def panel_c(ax, series):
             continue
         v = s["folds"]["1"]["mitigated"]["per_player"]
         ax.plot(range(4), v, marker=m, ms=5.5, lw=1.2, color=DATA,
-                alpha=0.9, label=f"wiring {''.join(map(str, w))}", zorder=3)
+                alpha=0.9, label=WIRING_NAMES[tuple(w)], zorder=3)
     ax.plot(range(4), [0.25, 1.25, 1.25, 1.25], ls="--", lw=1.0, color=IDEAL,
             marker="", label="noiseless ideal", zorder=2)
     ax.set_xticks(range(4))
-    ax.set_xticklabels(["hub\n(player 0)", "leaf 1", "leaf 2", "leaf 3"],
-                       fontsize=8.5)
+    ax.set_xticklabels(["hub\n(player 1)", "leaf\n(player 2)", "leaf\n(player 3)",
+                        "leaf\n(player 4)"], fontsize=8.5)
     ax.set_ylabel("per-player payoff")
     ax.set_ylim(0, 1.5)
     ax.legend(fontsize=7.4, frameon=False, loc="center right")
@@ -188,6 +190,9 @@ def main() -> None:
     png = os.path.join(out_dir, "hardware_topology.png")
     fig.savefig(png, dpi=300, bbox_inches="tight")
     fig.savefig(os.path.join(out_dir, "hardware_topology.pdf"),
+                bbox_inches="tight")
+    paper_figs = os.path.join(os.path.dirname(__file__), "..", "paper", "figs")
+    fig.savefig(os.path.join(paper_figs, "hardware_topology.pdf"),
                 bbox_inches="tight")
     print(f"wrote {png} and .pdf")
 

@@ -1,13 +1,13 @@
-% Journal extension: tests/test_journal_extensions.py and journal-strengthening artifacts.
-\subsection{Incentive-Compatibility Boundary}\label{sec:archinterp}
+% Checked by tests/test_journal_extensions.py; data in results/journal-strengthening/.
+\subsection{Incentive-Compatibility Boundary}
 \label{sec:incentive-boundary}
 The cooperative output does not determine whether a player benefits from
 departing from it. We characterize the original phase choice and then
 introduce a distinct branch that changes its restricted incentives.
 
 Let $Q_{N,m}=U(0,\alpha_m,\alpha_m)$, where
-$\alpha_m=m\pi/N$ and $m$ is an integer. The historical strategy $Q_N$
-remains $Q_{N,1}$. Both GHZ branches acquire the common phase $(-1)^m$, so
+$\alpha_m=m\pi/N$ and $m$ is an integer. The original strategy $Q_N$
+is $Q_{N,1}$. Both GHZ branches acquire the common phase $(-1)^m$, so
 the proof in Sec.~\ref{sec:ghz-benchmark} gives cooperative payoff $V/N$
 for every branch and every $\gamma$. The identity branch $m=0$ also
 cooperates in outcome; that observation alone establishes no incentive compatibility.
@@ -48,13 +48,15 @@ does not benefit exactly when $t\ge1-1/N$.
 
 For the original branch at $\gamma=\pi/2$, the Hawk payoff is
 $V\cos^2(\pi/N)$, equal to $2+2\cos(2\pi/N)$ at $V=4$.
-It exceeds $V/N$ for $N\ge4$, reproducing the previously reported
-fixed-profile boundary. Define a separate alternative strategy
+It exceeds $V/N$ for $N\ge4$, matching the fixed-profile simulations of
+Sec.~\ref{sec:sim}. Define a separate alternative strategy
 \begin{equation}
 Q_N^\star=Q_{N,\lfloor N/2\rfloor}.
 \label{eq:alternative-phase}
 \end{equation}
-This selects the cooperative phase closest to $\pi/2$ from below.
+This selects the largest branch phase $\alpha_m$ not exceeding $\pi/2$.
+For $N=2,3$, $\lfloor N/2\rfloor=1$, so $Q_N^\star=Q_N$; the two branches
+differ only for $N\ge4$.
 For even $N$ the Hawk payoff is zero at maximal entanglement; for odd
 $N\ge3$ it is $V\sin^2(\pi/(2N))<V/N$, since
 $\sin^2(\pi/(2N))<\pi^2/(4N^2)<1/N$.
@@ -62,7 +64,7 @@ The Dove inequality is also strict. Thus $Q_N^\star$ is a strict
 $\{D,H,Q_N^\star\}$ equilibrium for every $N\ge2$ in the ideal
 maximally entangled game. Mixtures over the same menu cannot improve on
 its best pure deviation. The old and alternative menus are explicitly
-different; no historical simulation or hardware result is relabeled.
+different; no original-phase simulation or hardware result is relabeled.
 
 The unrestricted boundary is explicit. Against $Q_{N,m}$,
 $U(\pi,0,-\alpha_m)$ yields the sole-Hawk outcome $e_j$ with certainty:
@@ -79,4 +81,4 @@ Eq.~\eqref{eq:phase-boundary} gives
 $\gamma_c=\arccos(1/\sqrt N)$ on $[0,\pi/2]$, so the permitted angle
 window narrows as $N$ grows, while absolute incentive margins decrease.
 The simulation section evaluates the alternative branch separately from
-the historical fixed-strategy landscape.
+the original fixed-strategy landscape.

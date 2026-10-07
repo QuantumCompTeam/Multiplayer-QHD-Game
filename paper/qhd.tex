@@ -5,15 +5,7 @@
 %   bibtex .qhd-build-check/qhd
 %   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
 %   pdflatex -interaction=nonstopmode -halt-on-error -output-directory=.qhd-build-check qhd.tex
-% For Overleaf, upload the submission source ZIP and select qhd.tex.
-% Layout follows the supplied FQCNN_journal.pdf: IEEEtran conference-style
-% letter paper, 10pt two-column body, author blocks and black headings.
-% Evidence policy: all numbers are real and trace to results/ artifacts named
-% in comments beside the corresponding claims and figures.
-%
-% STRUCTURE NOTE (2026-09-08): I Introduction / II Related Work /
-% III Evaluation / IV Framework / V Methods / VI Results / VII Discussion /
-% VIII Technical Differentiation / availability / IX Conclusion.
+% Comments beside claims and figures name the results/ files they come from.
 \documentclass[conference,letterpaper,10pt]{IEEEtran}
 \usepackage[nocompress]{cite} % give every citation number its own clickable target
 \usepackage{amsmath,amssymb,amsfonts}
@@ -21,7 +13,7 @@
 \newtheorem{proposition}{Proposition}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage[colorlinks=true,allcolors=black]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=blue,urlcolor=blue]{hyperref}
 \raggedbottom  % stop column-bottom stretching from opening gaps mid-column
 \setlength{\parskip}{0.35\baselineskip} % visible separation between paragraphs
 \graphicspath{{figs/}}
@@ -34,16 +26,32 @@
 Multiplayer Quantum Games: Theory and Hardware Evidence}
 
 \author{\IEEEauthorblockN{Prithvi Raghu}
-\IEEEauthorblockA{School of Computer Science and Engineering\\
+\IEEEauthorblockA{School of Computer Science\\
+and Engineering\\
 Vellore Institute of Technology\\
 Vellore, India\\
-prithviraghu080706@gmail.com}
+{\footnotesize prithvi.raghu2024@vitstudent.ac.in}}
 \and
 \IEEEauthorblockN{Aasa Singh Bhui}
-\IEEEauthorblockA{School of Computer Science and Engineering\\
+\IEEEauthorblockA{School of Computer Science\\
+and Engineering\\
 Vellore Institute of Technology\\
 Vellore, India\\
-aasasingh2005@gmail.com}}
+{\footnotesize aasasingh.bhui2023@vitstudent.ac.in}}
+\and
+\IEEEauthorblockN{J Vijayashree*}
+\IEEEauthorblockA{School of Computer Science\\
+and Engineering\\
+Vellore Institute of Technology\\
+Vellore, India\\
+{\footnotesize vijayashree.j@vit.ac.in}}
+\and
+\IEEEauthorblockN{J Jayashree}
+\IEEEauthorblockA{School of Computer Science\\
+and Engineering\\
+Vellore Institute of Technology\\
+Vellore, India\\
+{\footnotesize jayashree.j@vit.ac.in}}}
 
 \maketitle
 
@@ -54,23 +62,25 @@ payoff and incentives in an $N$-player Eisert--Wilkens--Lewenstein allocation
 game. Five families define an exact simulation landscape, with graph-role
 asymmetry distinguished from circuit-order and gate-budget effects. For the
 global GHZ operator, we derive a family of cooperative phase strategies and
-an exact restricted-menu incentive boundary. The original $\pi/N$ branch
-fails the Hawk-deviation test for $N\ge4$, whereas a separately defined
-branch is a strict restricted-menu equilibrium for every $N\ge2$ at maximal
-entanglement. Both admit an explicit profitable unrestricted SU(2) deviation.
-A four-product-state representation permits exact classical payoff evaluation
-through $N=128$ without dense state enumeration. Existing IBM Heron r2
-experiments evaluate the original branch through seven players, including
-registered Hawk-deviation tests at $N=3$ and failed out-of-sample noise-model
-predictions. Mean-payoff retention is intrinsically forgiving: uniform
-independent bits retain $99.22\%$ of the ideal analytic-baseline gap at $N=7$.
-A retrospective sensitivity analysis that charges for partial conflicts gives
-raw $N=7$ retention of $93.23\%$, against a $75\%$ uniform comparator.
-These results separate scalable welfare evaluation from incentive
-compatibility and physical implementation. Two new all-player hardware
-batches support the registered incentive criterion at $N=4,6$ in both
-runs, but fail the overall five-size test; $N=7$ remains unresolved.
-The trading interpretation is illustrative rather than an economic validation.
+an exact restricted-menu incentive boundary. The original branch $Q_N$, with phase $\pi/N$,
+fails the Hawk-deviation test for $N\ge4$, whereas an alternative branch
+$Q_N^\star$, which coincides with $Q_N$ for $N\le3$, is a strict
+restricted-menu equilibrium for every $N\ge2$ at maximal entanglement. Both
+admit an explicit profitable unrestricted SU(2) deviation. A
+four-product-state representation permits exact classical payoff evaluation
+through $N=128$ without dense state enumeration. IBM Heron r2 experiments
+evaluate $Q_N$ through seven players, including preregistered Hawk-deviation
+tests at $N=3$ and failed out-of-sample noise-model predictions. Two
+all-player hardware batches of $Q_N^\star$ support the preregistered incentive
+criterion at $N=4,6$ in both runs, but fail the overall five-size test;
+$N=7$ remains unresolved. Mean-payoff retention is intrinsically forgiving:
+uniformly random outcomes retain $99.22\%$ of the ideal analytic-baseline gap
+at $N=7$, and measured retention at $N=6,7$ falls below that comparator. A
+retrospective sensitivity analysis that charges for partial conflicts gives
+raw $N=7$ retention of $93.23\%$, against $75\%$ for uniformly random
+outcomes. These results separate scalable welfare evaluation from incentive
+compatibility and physical implementation; the trading interpretation is
+illustrative rather than an economic validation.
 \unboldmath
 \end{abstract}
 
@@ -84,11 +94,13 @@ error mitigation, quantum finance
 
 Financial markets are coordination problems with adversarial payoffs. When
 traders compete over a scarce asset, each chooses between an aggressive position (capturing the full value if unopposed) and a cooperative one
-that shares value reliably. The Hawk--Dove game formalizes this tension. Under
-the live convention used throughout this work, $V{=}4$ and $C{=}3$, Hawk
+that shares value reliably. The Hawk--Dove game formalizes this tension. With
+the parameters used throughout this work, $V=4$ and $C=3$, Hawk
 strictly dominates Dove in the two-player payoff matrix: it pays more against
 either opposing action, so mutual Hawk is the unique classical pure Nash
-equilibrium. Yet mutual Dove pays each player $V/2=2$, whereas mutual Hawk pays
+equilibrium. Because $V>C$, this is the dominance regime of the Hawk--Dove
+family, with Prisoner's-Dilemma structure rather than the mixed equilibrium of
+the textbook $V<C$ case. Yet mutual Dove pays each player $V/2=2$, whereas mutual Hawk pays
 only $(V-C)/2=0.5$. The resulting gap isolates the mechanism-design problem:
 individually rational aggression destroys value that cooperation would
 preserve. Classical remedies are external to the game, including trust between
@@ -104,10 +116,11 @@ protocol. Preparation, joint decoding, and strategy-menu enforcement remain
 mechanism assumptions. Carbon-trading and order-book architectures provide motivating analogies;
 we do not establish replacement of regulatory or trust mechanisms.
 
-Khan et al.~\cite{khan2025} developed quantum trading models and reported
-ion-trap experiments with three to six players in a Prisoner's-Dilemma variant.
+Khan et al.~\cite{khan2025} reported multiplayer ion-trap trading-game
+experiments with three to six players under a Prisoner's-Dilemma payoff rule.
 Our extension concerns a different allocation rule and controlled comparisons
-of entangler families, incentives, and implementation effects. Within our simple pairwise graph convention, two players admit only one edge. Real markets are networks: the
+of entangler families, incentives, and implementation effects. Real markets
+are networks: the
 \emph{topology} of who is correlated with whom is a design variable, and each
 topology induces a different interference structure, different equilibria, and
 a different response to decoherence. Varsamis et al.~\cite{varsamis2025}
@@ -115,13 +128,14 @@ studied $N$-player entanglement operators and scalability on IBM hardware;
 our contribution is orthogonal: we fix a financially interpreted game and
 chart how \emph{topology $\times$ player count $\times$ noise} determine both
 the magnitude and the equilibrium status of the quantum advantage, then test
-the resulting noise model against registered predictions on hardware.
+the resulting noise model against preregistered predictions on hardware.
 
 The main contributions of this work are as follows:
 \begin{enumerate}
   \item \textbf{Incentive boundary and scalable evaluation.} We derive the
   GHZ cooperative phase branches and their exact restricted-menu deviation
-  condition. A separate branch satisfies that condition for every $N\ge2$
+  condition. An alternative branch $Q_N^\star$, identical to the original
+  $Q_N$ for $N\le3$, satisfies that condition for every $N\ge2$
   at maximal entanglement, while an explicit unrestricted SU(2) deviation
   defeats it. A four-product-state representation enables exact classical
   payoff evaluation through $N=128$, distinct from physical player-count scaling.
@@ -138,28 +152,30 @@ The main contributions of this work are as follows:
   entangler's gate ordering (shown by a wiring-permutation experiment).
   Matched-gate-count and compilation controls reduce gate-budget confounding
   within the XX-product family (GHZ/ring/star/fully connected), whose
-  normalized decay is similar in the control table, while absolute GHZ--W
+  normalized decay is similar (Table~\ref{tab:controls}), while absolute GHZ--W
   ordering can remain because their zero-noise payoff gaps differ. W is the
   normalized-retention outlier at approximately $0.8$--$1.0$ per CX. In an
-  exploratory W $N{=}4$ finite-round pilot, no tested setting produced a
+  exploratory W $N=4$ finite-round pilot, no tested setting produced a
   beneficial converged fairness repair.
-  % docs/findings/2026-07-16-topology-vs-implementation-controls.md
-  \item \textbf{Predictive hardware validation.} An $N=3,4,5$ scaling
-  experiment on ibm\_fez (one pinned chain, one batch job) with tensored
-  readout mitigation and cz-fold zero-noise extrapolation retains
-  98--99\% of the ideal advantage $3/N$; the one-parameter depolarizing fit
-  misses the retrospective source-run mitigated-fold-1 endpoints at $N{=}4$
-  by $0.0043$ ($2.14\sigma$) and $N{=}5$ by $0.0101$ ($5.17\sigma$). In the
-  prospective repeat the conditional $N{=}4$ endpoint passes and the $N{=}5$
-  deficit repeats, observationally rather than as a registered sign test. The
-  CZ-exponential baseline scores lowest among the registered candidates but
-  still misses $N{=}5$ outside the shared ranking yardstick. We identify the mechanism that makes the advantage more noise-robust than the state: first-order insensitivity of the mean payoff to single bit-flips.
-  \item \textbf{Reproducible pipeline.} A versioned research harness with
-  circuit-identity gates, a mandatory device-model dress rehearsal before any
-  hardware submission, and crash-safe job recovery.
+  \item \textbf{Preregistered hardware tests.} On ibm\_fez, the original-phase
+  GHZ protocol at $N=3,4,5$, with tensored readout mitigation and CZ-fold
+  zero-noise extrapolation, retains 98--99\% of the ideal advantage $3/N$,
+  above the 87.5--96.9\% that uniformly random outcomes would retain. A
+  preregistered one-parameter depolarizing model fitted at $N=3$ misses the
+  $N=4,5$ endpoints; across three repeats the $N=4$ prediction passes once,
+  and the $N=5$ deficit recurs in every repeat. An $N=3$--$7$ extension
+  retains 96--99\% but falls below the random-outcome comparator at $N=6,7$.
+  Two all-player batches of $Q_N^\star$, testing every Hawk and Dove
+  deviation, support the preregistered incentive criterion at $N=4,6$ in both
+  batches but fail the overall five-size test. We identify why the mean
+  payoff decays more slowly than the target-state population: it is
+  first-order insensitive to single bit-flips.
+  \item \textbf{Reproducible pipeline.} Open simulation and hardware code
+  that checks every circuit against its dense reference and rehearses each
+  batch on a device noise model before submission.
 \end{enumerate}
 
-The rest of the paper is organised as follows. Section~\ref{sec:related}
+The rest of the paper is organized as follows. Section~\ref{sec:related}
 reviews related work, and Section~\ref{sec:evaluation} defines the evaluation
 questions and evidence boundaries. Section~\ref{sec:model} develops the
 mathematical framework, followed by computation and validation methods in
@@ -204,12 +220,12 @@ Prisoner's-Dilemma payoff rule. We distinguish our allocation game and
 entangler-family controls from that prior multiplayer hardware demonstration. Within the simple pairwise graph convention, two players admit only one edge: the question of which correlation graph a market designer should
 choose only appears at $N\ge3$, and that is the question this paper addresses.
 
-\subsection{$N$-player hardware scalability and error mitigation}
+\subsection{\texorpdfstring{$N$}{N}-player hardware scalability and error mitigation}
 Varsamis et al.~\cite{varsamis2025} study $N$-player entanglement operators
-and their scalability on IBM hardware generically, characterising the operators themselves across devices. We instead fix a single game (the
+and their scalability on IBM hardware generically, characterizing the operators themselves across devices. We instead fix a single game (the
 financial Hawk--Dove) and map its \emph{advantage landscape}: the
 topology-dependent equilibrium/payoff dichotomy, the noise-induced
-position-locked unfairness, and a registered predictive noise model whose
+position-locked unfairness, and a preregistered predictive noise model whose
 out-of-sample predictions we test on hardware. On the mitigation side we adopt
 two standard NISQ techniques rather than proposing new ones: tensored
 confusion-matrix inversion for readout errors~\cite{maciejewski2020,bravyi2021pra} and zero-noise
@@ -221,7 +237,7 @@ this pipeline is specified in Sec.~\ref{sec:hardware}.
 
 \section{Proposed $N$-Player Quantum Hawk--Dove Framework}\label{sec:model}
 
-\subsection{Notation and the Classical $N$-Player Payoff Tensor}
+\subsection{Notation and the Classical \texorpdfstring{$N$}{N}-Player Payoff Tensor}
 \label{sec:notation}
 % payoff matrix + financial mapping: README §3.1; payoff tensor: docs/formulae.md §5
 Before quantizing the game, we need a payoff rule that assigns a value to every
@@ -237,9 +253,8 @@ constants set the stakes: the contested resource is worth $V>0$, and
 a confrontation between Hawks costs $C>0$. This is the two-strategy
 value-and-cost structure of the classical Hawk--Dove
 game~\cite{maynardsmith1973}, carried to $N$ players inside the general
-framework of symmetric multi-player matrix games~\cite{broom1997}. We fix
-$V{=}4,\ C{=}3$ for every numerical statement in this paper (the repository's
-live convention, \texttt{src/config.py}), and keep $V$ and $C$ symbolic wherever
+framework of symmetric multiplayer matrix games~\cite{broom1997}. We fix
+$V=4,\ C=3$ for every numerical statement in this paper, and keep $V$ and $C$ symbolic wherever
 a result does not depend on their values.
 
 One statistic drives every classical payoff: the Hawk count
@@ -298,7 +313,7 @@ self-interested players reach, nor what the group holds in total once they get
 there; a quantum protocol can only be said to improve on the classical game
 once both are settled.
 
-Hawk strictly dominates Dove at the live parameters. Take player $j$ facing $m$
+Hawk strictly dominates Dove at the parameters used here. Take player $j$ facing $m$
 opponents who play Hawk, $0\le m\le N-1$, and read off the branches of the
 payoff tensor, Eq.~\eqref{eq:payoff-tensor}, that player $j$ can choose between.
 Playing Hawk raises the Hawk count to $m+1$ and pays $V/(m+1)$ when $m<N-1$, or
@@ -306,16 +321,16 @@ $(V-C)/N$ when $m=N-1$. Playing Dove leaves the Hawk count at $m$ and pays $V/N$
 when $m=0$, or $0$ otherwise. The three comparisons are $V$ against $V/N$ at
 $m=0$; $V/(m+1)>0$ against $0$ for $0<m<N-1$; and $(V-C)/N$ against $0$ at
 $m=N-1$. The first is strict for every $N\ge2$, the second always, and the third
-exactly when $V>C$. At $V{=}4,\ C{=}3$ all three are strict, so Hawk pays more
+exactly when $V>C$. At $V=4,\ C=3$ all three are strict, so Hawk pays more
 than Dove against every opponent configuration. The condition that produces
 dominance is $V>C$, not the Hawk--Dove structure itself, which is why we scope
-the statement to the live parameters.
+the statement to these parameters.
 
 Strict dominance fixes the classical benchmark. Since Hawk is the better reply
 to every opponent configuration, the all-Hawk outcome $x=1^N$ is the unique
 pure-strategy Nash equilibrium of the classical game~\cite{nash1951}: no player
 gains by unilaterally switching to Dove, and no other profile survives one round
-of best replies. At $V{=}4,\ C{=}3$ it pays $(V-C)/N=1/N$ per player. That $1/N$
+of best replies. At $V=4,\ C=3$ it pays $(V-C)/N=1/N$ per player. That $1/N$
 is the classical baseline against which this paper measures every advantage.
 
 All-Dove pays $V/N=4/N$ per player and Pareto-dominates that equilibrium, so the
@@ -325,9 +340,10 @@ cooperation~\cite{dawes1980}. At $N=2$ the payoff tensor specializes to the
 familiar two-player conflict matrix, paying $V/2$ to each player under mutual
 Dove, $(V,0)$ under one-sided aggression, and $(V-C)/2$ to each under mutual
 Hawk. The interior mixed equilibrium usually associated with the Hawk--Dove
-game~\cite{maynardsmith1973} is unavailable at these parameters: indifference
-between the two actions requires a Hawk probability of $V/C$, and $V/C=4/3$
-falls outside the probability simplex whenever $V>C$. The all-Hawk pure
+game~\cite{maynardsmith1973} is unavailable at these parameters. At $N=2$,
+indifference between the two actions requires an opponent Hawk probability of
+$V/C$, and $V/C=4/3$ falls outside the probability simplex whenever $V>C$; for
+general $N$, strict dominance excludes every interior mixed equilibrium. The all-Hawk pure
 equilibrium is therefore the only classical baseline this paper needs.
 
 Individual payoffs move sharply between outcomes, but total value does not.
@@ -351,8 +367,8 @@ destroyed rather than redistributed.
 
 The welfare identity, Eq.~\eqref{eq:outcome-welfare}, controls mean payoff under
 any outcome distribution. Let $p$ be the distribution over the $2^N$ outcomes
-produced by whatever procedure the players follow — classical randomization now,
-a quantum circuit from the next subsection onward — and let $\bar\pi$ be the
+produced by whatever procedure the players follow---classical randomization now,
+a quantum circuit from the next subsection onward---and let $\bar\pi$ be the
 resulting mean payoff per player, the average of the per-player expected payoffs
 defined with the metrics later in this section. Averaging the welfare identity
 over $p$ gives
@@ -365,7 +381,7 @@ In plain terms, mean payoff depends on the outcome distribution through one
 number: the probability of the all-Hawk outcome. Every other outcome, however
 unequal its per-player split, redistributes the same total value $V$. A protocol
 can therefore raise mean welfare only by suppressing $p(1^N)$, and it can do so
-while leaving individual players very unequally paid — a gap between mean and
+while leaving individual players very unequally paid---a gap between mean and
 fairness that Sec.~\ref{sec:sim} measures directly. What such a protocol looks
 like is the subject of the next subsection.
 
@@ -376,8 +392,6 @@ Classical play reaches all-Hawk and destroys $C$ of the contested value, so the
 question is what changes when the players' actions are carried by qubits rather
 than by coins.
 
-% FIGURE F1 ANCHOR --- protocol schematic (spec Section 8.2) is placed here by
-% the figure-redesign plan; not created during the Section III phase.
 The Eisert--Wilkens--Lewenstein (EWL) protocol answers it in three
 steps~\cite{eisert1999}. One qubit is issued to each player and the register is
 entangled by a shared operation agreed before play. Each player then acts
@@ -415,8 +429,8 @@ Here $D$ is the identity and leaves a player's qubit in the Dove state, $H$
 equals $i\sigma_x$ and flips it to Hawk (the leading factor $i$ is a global
 phase and is unobservable), and $Q_N$ is the phase-only strategy
 $\mathrm{diag}(e^{i\pi/N},e^{-i\pi/N})$, which has no classical counterpart at
-all. The $\pi/N$ scaling makes $Q_N$ GHZ-derived: it is the phase that the GHZ
-entangler's two branches require, so the familiar two-player $Q=U(0,\pi/2,\pi/2)$
+all. The $\pi/N$ scaling makes $Q_N$ GHZ-derived: it is one choice of phase that gives the GHZ
+entangler's two branches a common sign (Sec.~\ref{sec:incentive-boundary}), so the familiar two-player $Q=U(0,\pi/2,\pi/2)$
 is the $N=2$ case of one family rather than a universal quantum strategy. We
 hold $Q_N$ fixed when we change entangler family, so that a family comparison
 changes the correlation structure and nothing else.
@@ -475,14 +489,10 @@ $J_T(\gamma)$ inside it, so the five families that $T$ ranges over must be
 written down before any result can be attributed to correlation structure rather
 than to strategy.
 
-% FIGURE F2 ANCHOR --- entangler-family gallery (spec Section 8.2): the five
-% families drawn side by side with qubit labels, the graph topologies visually
-% separated from the global constructions, the star hub highlighted, and the
-% per-family two-qubit gate counts. Placed here by the figure-redesign plan; not
-% created during the Section III phase.
-We compare five entangler families: GHZ, W, ring, star, and complete. They are
-not all the same kind of object, and the paper keeps two levels of vocabulary
-apart because of it. Ring, star, and complete are \emph{graph topologies}: each
+We compare five entangler families: GHZ, W, ring, star, and fully connected.
+They are not all the same kind of object, and the paper keeps two levels of
+vocabulary apart because of it. Ring, star, and fully connected are \emph{graph
+topologies}: each
 is fixed by an edge set $E(G)$ on the players, and its entangler is a product of
 one two-qubit rotation per edge. GHZ and W carry no edge set at all. Each is a
 single $N$-body operator interpolating from the identity toward one designated
@@ -527,7 +537,7 @@ equals one exponential of their sum. The three edge sets are the cycle $C_N$,
 with $E=\{(j,j{+}1):1\le j<N\}\cup\{(N,1)\}$; the star $S_N$, with
 $E=\{(1,j):2\le j\le N\}$, whose distinguished player $1$ is the hub and whose
 remaining $N-1$ players are the leaves; and the complete graph $K_N$, with every
-pair. We index players $1,\ldots,N$ as in Sec.~\ref{sec:notation}, while the
+pair, which defines the fully connected family. We index players $1,\ldots,N$ as in Sec.~\ref{sec:notation}, while the
 implementation indexes qubits from zero and pins the hub at qubit $0$, which is
 player $1$ here.
 
@@ -538,8 +548,8 @@ $m_{K_N}=N(N-1)/2$.
 At $N=2$, $C_2$ degenerates to the single edge $(1,2)$, so $m_{C_2}=1$; the star and
 complete graph are the same single edge. Thus all three graph topologies are one
 operator and the distinction between them is empty. At $N=3$ the cycle $C_3$ is a triangle, which
-is $K_3$, so ring and complete are again the same operator and every
-ring-versus-complete statement in this paper is a claim about $N\ge4$. The star
+is $K_3$, so ring and fully connected are again the same operator and every
+ring-versus-fully-connected statement in this paper is a claim about $N\ge4$. The star
 is distinct from both at every $N\ge3$ and is the only graph topology whose
 players are not all structurally interchangeable. Because each edge is realized
 by one two-qubit rotation, $m_G$ is also the graph entangler's two-qubit gate
@@ -568,8 +578,8 @@ J_W(\gamma)=\cos\frac{\gamma}{2}\,I^{\otimes N}
 \label{eq:w-entangler}
 \end{equation}
 which equals $\exp(i\gamma S_W/2)$, is unitary at every $\gamma$, and satisfies
-$J_W(0)=I$ like the other four families. On the all-Dove input, the live-angle
-state is
+$J_W(0)=I$ like the other four families. On the all-Dove input, the state at angle $\gamma$
+is
 $J_W(\gamma)\ket{0^N}=\cos(\gamma/2)\ket{0^N}+i\sin(\gamma/2)\ket{W}$; hence at
 $\gamma=\pi/2$ the prepared state is $(\ket{0^N}+i\ket{W})/\sqrt{2}$, not
 $\ket{W}$ alone. We call $\ket{W}$ the exchanged target component. This
@@ -602,7 +612,7 @@ $m=1$.
 Every reported entangler-family comparison is computed under the unnormalized
 convention, with all five families evaluated at the same raw $\gamma$. We define
 Eq.~\eqref{eq:normalized-entangler} here so that the family comparison of
-Sec.~\ref{sec:sim} can state exactly what it does not control for: a star-versus-complete
+Sec.~\ref{sec:sim} can state exactly what it does not control for: a star-versus-fully-connected
 difference at equal raw $\gamma$ confounds correlation structure with coupling
 budget, and separating the two requires re-running the comparison under
 Eq.~\eqref{eq:normalized-entangler}. That sensitivity control is not among the
@@ -666,7 +676,7 @@ is the case $\sigma(G)=G$.
 \end{proof}
 
 The orbit structure of each family therefore fixes which payoff equalities must
-hold before any circuit is run. The ring and the complete graph are
+hold before any circuit is run. The ring and the fully connected graph are
 vertex-transitive, so their players form a single orbit and all $N$ expected
 payoffs coincide. The star has exactly two orbits, the hub alone and the $N-1$
 leaves: the leaves must be paid equally, while the hub is free to differ.
@@ -779,15 +789,14 @@ F_\pi=\min_j\pi_j.
 \end{equation}
 Here $S_\pi=0$ means equal expected payoffs and $F_\pi$ identifies the
 worst-paid player. These scalar fairness summaries do not replace the payoff
-vector, which remains the primary fairness evidence. With the reporting
-contracts fixed, the next subsection applies them to the exact GHZ cooperative
-benchmark.
+vector, which remains the primary fairness evidence. The next subsection
+applies these metrics to the exact GHZ cooperative benchmark.
 
 \subsection{GHZ Cooperative Benchmark}
 \label{sec:ghz-benchmark}
 
-With the reporting contracts fixed, we now derive the cooperative reference
-against which unilateral deviations are measured. For the GHZ entangler, the
+We now derive the cooperative reference against which unilateral deviations
+are measured. For the GHZ entangler, the
 phase structure of $Q_N$ makes this benchmark exact at every entanglement
 angle, not only at maximal entanglement.
 
@@ -826,13 +835,13 @@ The phase equalities show that both GHZ branches acquire exactly the same phase
 $-1$; the final steps show that disentangling recovers $-\ket{0^N}$.
 \end{proof}
 
-The payoff identities follow directly from the outcome-level contracts already
-fixed above. Since $p(0^N)=1$, Eq.~\eqref{eq:payoff-tensor} gives
+The payoff identities follow directly from the outcome-level identities
+above. Since $p(0^N)=1$, Eq.~\eqref{eq:payoff-tensor} gives
 $\pi_j=V/N$ for every player, and substituting the resulting mean payoff into
 Eq.~\eqref{eq:analytic-advantage} gives
 $\Delta_{\mathrm{ana}}=V/N-(V-C)/N=C/N$.
 
-\noindent\textit{Corollary (live parameters).} At the maximally entangled
+\noindent\textit{Corollary ($V=4$, $C=3$).} At the maximally entangled
 experimental benchmark, $\gamma=\pi/2$, with $V=4$ and $C=3$,
 \begin{equation}
 \pi_j=\frac{4}{N},\qquad
@@ -861,52 +870,52 @@ while leaving the cooperative payoff exactly unchanged.
 % 25 cells N=2..6 x five topologies; per-cell tables in report.md)
 For GHZ, the fixed profile $(Q_N,\dots,Q_N)$ pays exactly $V/N=4/N$ per
 player; its circuit-evaluated restricted $\{D,H\}$ comparator is $1/N$, giving
-a circuit-relative payoff gap of $3/N$ (Fig.~\ref{fig:advmap}). The other
+a circuit-relative payoff gap of $3/N$ (Figs.~\ref{fig:advmap}
+and~\ref{fig:heat}). The other
 topologies are evaluated cell by cell. Fully connected attains $V/N$ for all
-recorded $N=2$--$6$ cells; ring does so except at $N{=}4$; W attains $V/N$ but
+recorded $N=2$--$6$ cells; ring does so except at $N=4$; W attains $V/N$ but
 has a larger circuit comparator and therefore a smaller gap; and star attains
-$V/N$ through $N{=}5$ but deviates at $N{=}6$, with asymmetric player payoffs
-from $N{=}4$ onward. The restricted-menu equilibrium status is likewise
-cell-specific: GHZ passes the $\{D,H,Q_N\}$ deviation check at $N{=}2,3$, and
-ring and fully connected also pass at $N{=}3$ in the fixed-mode artifact.
+$V/N$ through $N=5$ but deviates at $N=6$, with asymmetric player payoffs
+from $N=4$ onward. The restricted-menu equilibrium status is likewise
+cell-specific: GHZ passes the $\{D,H,Q_N\}$ deviation check at $N=2,3$, and
+ring and fully connected also pass at $N=3$.
 
-For GHZ, a separate $N=2$--$8$ computation recorded in
-\texttt{docs/VERIFIED-FACTS.md} finds that a unilateral Hawk deviation pays
-$2+2\cos(2\pi/N)$ and that the restricted deviation result agrees with
-$2+2\cos(2\pi/N)\le V/N$ in every computed cell. Thus at $N{=}4$ the deviation
-pays $2.0$ against the cooperative $1.0$, and at $N{=}5$ it pays
+For GHZ, Eq.~\eqref{eq:phase-deviations} gives the unilateral Hawk payoff
+$V\cos^2(\pi/N)=2+2\cos(2\pi/N)$, and the enumerated restricted deviation
+check agrees with $2+2\cos(2\pi/N)\le V/N$ for every $N=2$--$8$. Thus at $N=4$ the deviation
+pays $2.0$ against the cooperative $1.0$, and at $N=5$ it pays
 $\varphi^2\approx2.618$ against $0.8$. For $N\ge4$ we therefore report the GHZ
 profile as a \emph{fixed cooperative protocol}, not as an equilibrium
-prediction. The landscape also contains an $N{=}4$ ring interference zero and
-a star $N{=}6$ deviation from $V/N$; for star the circuit-relative payoff gap
-is asymmetric across players: at $N{=}4$ the three leaves gain $1.0$ each
+prediction. The landscape also contains an $N=4$ ring interference zero and
+a star $N=6$ deviation from $V/N$; for star the circuit-relative payoff gap
+is asymmetric across players: at $N=4$ the three leaves gain $1.0$ each
 while the hub gains nothing.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{advantage_vs_N.png}
+\includegraphics[width=\linewidth]{advantage_vs_N.pdf}
 \caption{Zero-noise circuit-relative payoff gap of the fixed profile
 $(Q_N,\dots,Q_N)$, defined as its mean payoff minus the highest-mean
 circuit-evaluated restricted $\{D,H\}$ equilibrium payoff, at
-$\gamma=\pi/2$ and $V{=}4, C{=}3$. The $3/N$ gap (star markers) is attained by
+$\gamma=\pi/2$ and $V=4, C=3$. The $3/N$ gap is attained by
 GHZ and fully connected at every recorded $N$; the ring has zero gap at
-$N{=}4$; the star shows a weaker $N{=}6$ value ($0.463$ vs.\ $0.5$); and W
+$N=4$; the star shows a weaker $N=6$ value ($0.463$ vs.\ $0.5$); and W
 tracks below throughout. Filled markers indicate that the profile passes the
 restricted $\{D,H,Q_N\}$ deviation check, which depends on topology.}
 \label{fig:advmap}
-% source: results/n-scaling-advantage/2026-07-19T0901Z/plots/advantage_vs_N.png
+% source: results/n-scaling-advantage/2026-07-19T0901Z; scripts/plot_paper_simulation.py
 \end{figure}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{topology_heatmap.png}
+\includegraphics[width=\linewidth]{topology_heatmap.pdf}
 \caption{Circuit-relative payoff-gap heatmap across the
-$(N,\text{topology})$ grid at $V{=}4, C{=}3$ (mean per-player payoff of
+$(N,\text{topology})$ grid at $V=4, C=3$ (mean per-player payoff of
 $(Q_N,\dots,Q_N)$ minus the highest-mean circuit-evaluated restricted
 $\{D,H\}$ equilibrium payoff). GHZ and fully connected hold the $3/N$ gap
-everywhere; the single dark cell is the ring at $N{=}4$ (gap exactly $0$).}
+everywhere; the only zero cell is the ring at $N=4$.}
 \label{fig:heat}
-% source: results/n-scaling-advantage/2026-07-19T0901Z/plots/topology_heatmap.png
+% source: results/n-scaling-advantage/2026-07-19T0901Z; scripts/plot_paper_simulation.py
 \end{figure}
 
 \subsubsection{Entanglement-Angle Dependence}
@@ -919,45 +928,47 @@ the profile does not pass the restricted deviation check. At nonzero
 $\gamma$, the same sweep records when the fixed profile begins to pass that
 finite-menu check.
 
-At $N{=}2$ every topology's circuit-relative payoff gap is positive from
-$\gamma{=}0$, and $(Q,Q)$ begins to pass the restricted deviation check from
-$\gamma=0.3\pi$ (W excepted, which never passes in range). At $N{=}3$ GHZ,
-fully connected, and ring hold a gap of $1.0$ across the sweep and begin to
-pass at $\gamma=0.3\pi$--$0.4\pi$; star and W never pass. At $N{=}4$
+At $N=2$ every topology's circuit-relative payoff gap is positive from
+$\gamma=0$, and $(Q,Q)$ begins to pass the restricted deviation check from
+$\gamma=0.3\pi$, the first grid point above the analytic GHZ threshold
+$\gamma_c=\pi/4$ of Eq.~\eqref{eq:phase-boundary} (W excepted, which never
+passes in range). At $N=3$ GHZ, fully connected, and ring hold a gap of $1.0$
+across the sweep and begin to pass at $\gamma=0.3\pi$--$0.4\pi$; GHZ first
+passes at $0.4\pi$, consistent with its analytic threshold
+$\arcsin\sqrt{8/9}\approx0.392\pi$. Star and W never pass. At $N=4$
 (Fig.~\ref{fig:gamma}) GHZ and star hold $0.75$ at every $\gamma$, fully
 connected dips to $0.40$ mid-sweep and recovers, W decays monotonically to
 $0.375$, and ring reaches exactly zero at $\gamma=\pi/2$, the same
-$N{=}4$ interference zero. No series has a negative circuit-relative payoff
+$N=4$ interference zero. No series has a negative circuit-relative payoff
 gap; only that ring endpoint reaches zero.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{advantage_vs_gamma_N4.png}
+\includegraphics[width=\linewidth]{advantage_vs_gamma_N4.pdf}
 \caption{Circuit-relative payoff gap versus entanglement angle $\gamma$ at
-$N{=}4$ ($V{=}4, C{=}3$, noiseless). GHZ and star hold $0.75$ flat; fully
+$N=4$ ($V=4, C=3$, noiseless). GHZ and star hold $0.75$ flat; fully
 connected dips and recovers; W decays monotonically; and ring falls to zero at
-$\gamma=\pi/2$. Data:
-results/gamma-sweep/N4.}
+$\gamma=\pi/2$. Filled markers indicate a passed restricted deviation check.}
 \label{fig:gamma}
+% source: results/gamma-sweep/N4; scripts/plot_paper_simulation.py
 \end{figure}
 
 \subsubsection{Player Symmetry Breaking in the Star Topology}
-% star per-player data: results/n-scaling-advantage/2026-07-19T0901Z/plots/per_player_advantage_star.png
+% star per-player data: results/n-scaling-advantage/2026-07-19T0901Z; scripts/plot_paper_simulation.py
 The star is the only topology that breaks player symmetry at zero noise. For
 $N\ge4$ its per-player circuit-relative payoff gaps are uneven
-(Fig.~\ref{fig:star}): at $N{=}4$ the three leaves have gap $1.0$ each while
-the hub has $0.0$; by $N{=}6$ the hub has $0.952$ against the leaves' $0.366$.
-The mean circuit-relative payoff gap stays close to $3/N$ until $N{=}6$, where
+(Fig.~\ref{fig:star}): at $N=4$ the three leaves have gap $1.0$ each while
+the hub has $0.0$; by $N=6$ the hub has $0.952$ against the leaves' $0.366$.
+The mean circuit-relative payoff gap stays close to $3/N$ until $N=6$, where
 the hub--leaf split pulls it to $0.463$.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{per_player_advantage_star.png}
-\caption{Star-topology per-player circuit-relative payoff gap (hub player 0
-vs.\ each leaf) at $\gamma=\pi/2$, $V{=}4, C{=}3$, noiseless, for
-$N=4\ldots6$. Labels show gaps to two decimal places, including the
-numerically zero hub gap at $N{=}4$; green bars show the per-player mean. Data:
-results/n-scaling-advantage/2026-07-19T0901Z.}
+\includegraphics[width=\linewidth]{per_player_advantage_star.pdf}
+\caption{Star-topology per-player circuit-relative payoff gap (hub, player 1,
+vs.\ each leaf) at $\gamma=\pi/2$, $V=4, C=3$, noiseless, for
+$N=4\ldots6$. Hatched bars show the mean over players; the hub gap at $N=4$
+is zero.}
 \label{fig:star}
 \end{figure}
 
@@ -969,38 +980,56 @@ we state which we mean.
 
 \paragraph{Restricted-menu equilibrium criterion}
 Under this criterion, the GHZ cooperative profile passes at $p=0$ only for
-$N{=}2,3$, and at $N{=}3$ it loses that status between $p=0.04$ and $0.045$.
-For $N{=}4,5$ the GHZ thresholds $p^*\approx0.0197$ and $0.0098$ are
+$N=2,3$, and at $N=3$ it loses that status between $p=0.04$ and $0.045$.
+For $N=4,5$ the GHZ thresholds $p^*\approx0.0197$ and $0.0098$ are
 \emph{circuit-relative payoff-gap zero crossings}, not equilibrium losses:
 the profile does not pass the restricted deviation check there even at
-$p=0$. The fixed-mode zero-noise artifact records ring as passing at
-$N{=}2,3$, fully connected at $N{=}2,3$, star at $N{=}2$, and W at neither
-$N{=}2$ nor $N{=}3$.
+$p=0$. At zero noise, ring passes at
+$N=2,3$, fully connected at $N=2,3$, star at $N=2$, and W at neither
+$N=2$ nor $N=3$.
 
 \paragraph{Circuit-relative payoff-gap magnitude criterion}
-Under this criterion the picture flips: at $N{=}3$ GHZ retains the largest
+Under this criterion the picture flips: at $N=3$ GHZ retains the largest
 mean gap at $p=0.05$ ($0.333$, $33\%$ of its noiseless value) versus ring
 $0.200$ and W $0.047$. These are not crossings relative to the analytic $1/N$
 baseline: noise can change both the fixed-profile payoff and the highest-mean
 restricted $\{D,H\}$ circuit equilibrium, and comparator drift can drive a
 zero crossing. The natural-budget ordering therefore characterizes the
 production circuits. Matched-count controls reduce gate-budget confounding
-within the XX family, whose normalized per-$cx$ decay rates are similar in the
-control table at approximately 1.8--2.7; no statistical equivalence test was
-recorded. Absolute GHZ--W payoff-gap ordering can remain after those controls
+within the XX family, whose normalized per-CX decay rates are similar at
+approximately 1.8--2.7 (Table~\ref{tab:controls}); no statistical equivalence
+test was recorded. Absolute GHZ--W payoff-gap ordering can remain after those controls
 because their zero-noise gaps differ. W is the normalized-retention outlier at
 approximately $0.8$--$1.0$ per CX. It keeps a positive but small mean
 circuit-relative gap across the whole grid, while the mean hides per-player
-losses: at $N{=}5$ two of the five players have negative per-player gaps from
+losses: at $N=5$ two of the five players have negative per-player gaps from
 $p=0.01$ (worst $-0.077$ at $p=0.015$). All entanglers here are exact
-gate-level circuits; W uses the T8 construction (44 and 68 $cx$ per $J$ at
-$N{=}4,5$, versus $100$/$444$ for the retired transpiled-unitary fallback).
+gate-level circuits; W uses an exact gate-level construction (44 and 68 CX
+per $J$ at $N=4,5$, versus $100$/$444$ for the retired transpiled-unitary
+fallback).
+
+\begin{table}[t]
+\centering
+\caption{Initial advantage decay rate per two-qubit gate,
+$\lambda/\mathrm{CX}$ with $\lambda=-(dA/dp)/A(0)$ estimated at $p=0.005$,
+under gate-level depolarizing noise. Ring $N=4$ has $A(0)=0$.}
+\label{tab:controls}
+\begin{tabular}{@{}cccccc@{}}
+\toprule
+$N$ & GHZ & W & ring & star & fully conn.\\
+\midrule
+3 & 2.55 & 0.98 & 2.44 & 2.65 & 2.44\\
+4 & 2.25 & 0.79 & --- & 2.42 & 2.10\\
+5 & 2.09 & 0.79 & 2.13 & 2.25 & 1.82\\
+\bottomrule
+\end{tabular}
+\end{table}
+% source: docs/findings/2026-07-16-topology-vs-implementation-controls.md (control C)
 
 \subsubsection{Position-Locked Unfairness}
 % wiring-permutation: README §9 Month-4 findings
 The noise-induced per-player asymmetry is not a property of the player labels
-or the ideal state. A wiring-permutation test on the ring at $N{=}5$
-implemented in \texttt{scripts/}\allowbreak\texttt{asymmetry\_diagnostics.py}
+or the ideal state. A wiring-permutation test on the ring at $N=5$
 cyclically shifts the
 qubit-to-player wiring and the whole per-player payoff vector permutes
 rigidly with it (deviation $\sim10^{-16}$); and applying the same depolarizing
@@ -1009,18 +1038,18 @@ per-player spread to $\sim0$. The disadvantage therefore follows the
 entangler's \emph{circuit position} (gate ordering), not the ideal state or
 the player identity.
 
-A distinct graph-role asymmetry was tested on hardware. A registered wiring-permutation control on
-the star at $N{=}4$ (Sec.~\ref{sec:hwtopology},
+A distinct graph-role asymmetry was tested on hardware. A wiring-permutation control on
+the star at $N=4$ (Sec.~\ref{sec:hwtopology},
 Fig.~\ref{fig:hwtopology}C) reassigns players to different physical qubits and
 moves the measured per-player payoff vector by at most $0.035$, inside the
-registered threshold, while the hub--leaf split itself
+preregistered threshold, while the hub--leaf split itself
 ($\approx 0.34$ against $\approx 1.21$) is unchanged. The ring simulation identifies sensitivity to circuit ordering. The star
 hardware control supports persistence of its hub--leaf asymmetry under the
 tested physical assignments; it does not identify the cause of the ring effect.
 
 \subsubsection{The Finite-Round Adaptation Pilot}
 % T9 pilot: docs/findings/2026-07-05-t9-adaptation-fairness.md
-An exploratory W-state pilot at $N{=}4$ tested one provisional independent
+An exploratory W-state pilot at $N=4$ tested one provisional independent
 round-robin best-response rule. No tested setting produced a beneficial
 converged fairness repair: at $p=0$ the dynamics reached the 50-round cap
 near mean $0.51$ without converging; at $p=0.02$ they entered a payoff limit
@@ -1029,10 +1058,10 @@ little change. Two robustness checks were then run on this pilot, both
 simulation-only. Replacing round-robin with \emph{simultaneous} best response,
 which removes move order entirely, reproduces all three verdicts, so the
 $p=0.02$ non-convergence is a property of the noisy best-response map rather
-than of the update order. Extending to $N{=}5$, W $N{=}5$ reproduces the
-$N{=}4$ verdicts, while ring $N{=}5$ fails to converge at every noise level
+than of the update order. Extending to $N=5$, W $N=5$ reproduces the
+$N=4$ verdicts, while ring $N=5$ fails to converge at every noise level
 tested and does so in the opposite direction: it drives a perfectly fair
-$p{=}0$ baseline apart while leaving mean welfare unchanged, i.e.\ it
+$p=0$ baseline apart while leaving mean welfare unchanged, i.e.\ it
 redistributes rather than shrinks. Because those ring endpoints are snapshots of
 non-convergent trajectories we report the direction only and not the magnitudes.
 Belief-based rules such as fictitious play remain untested, and the pilot
@@ -1043,9 +1072,9 @@ remains exploratory pending game-theory sign-off.
 
 \subsection{Hardware Validation on IBM Heron r2}\label{sec:hardware}
 
-\subsubsection{Single-Point Validation at $N=3$}
+\subsubsection{Single-Point Validation at \texorpdfstring{$N=3$}{N=3}}
 % results/hardware-n3/2026-07-16T013912Z/ (job d9br6l66hjac73fg3g7g)
-We ran the validated $Q_3$ circuit (entangler decomposed to 6 native cz gates)
+We ran the validated $Q_3$ circuit (entangler decomposed to 6 native CZ gates)
 with 4096 shots on ibm\_fez; $3911/4096$ shots landed in $\ket{000}$
 (Fig.~\ref{fig:n3}). The measured mean payoff is $1.3311$, or
 $99.835\%$ of the ideal payoff $4/3$; subtracting the analytic all-Hawk
@@ -1054,7 +1083,7 @@ advantage $1.0$.
 
 A product of the recorded readout fidelities ($0.9960$, $0.9961$, $0.9962$)
 and two-qubit fidelities (edge errors $0.17\%$ and $0.23\%$, applied in the
-recorded four-plus-two \textsc{cz} split) gives a heuristic ground-state
+recorded four-plus-two CZ split) gives a heuristic ground-state
 probability of about $0.977$, whereas the measured value is
 $3911/4096=0.955$. Under a fixed binomial interpretation the difference is
 about $9.5$ standard deviations, so the product has the right order of
@@ -1076,16 +1105,18 @@ $0.9978$.
 % counts: k=0:3911, k=1:53, k=2:123, k=3:9 (result.json counts block)
 The mean-payoff observable is therefore first-order insensitive to single
 bit-flips from the ideal outcome: errors that flip one qubit redistribute
-payoff between players without lowering its mean. This is the structural
-mechanism behind the scaling section's central observation, that the advantage decays several times slower than the all-zero target-state population, and it is why the
-$N{=}3$ advantage survives at $99.780\%$ of its ideal while
+payoff between players without lowering the mean payoff. This is the
+structural mechanism behind the scaling section's central observation, that
+the advantage decays several times slower than the all-zero target-state
+population, and it is why the
+$N=3$ advantage survives at $99.780\%$ of its ideal while
 $P(\ket{000})$ has already lost $4.5\%$.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{hardware_n3_validation.pdf}
-  \caption{Hardware validation of the $N{=}3$ GHZ EWL quantum advantage on
-  ibm\_fez (IBM Heron r2). The validated $(Q,Q,Q)$ circuit, with entangler $J$ decomposed to 6 native cz gates, was executed with 4096 shots.
+  \caption{Hardware validation of the $N=3$ GHZ EWL quantum advantage on
+  ibm\_fez (IBM Heron r2). The validated $(Q,Q,Q)$ circuit, with entangler $J$ decomposed to 6 native CZ gates, was executed with 4096 shots.
   \textbf{(A)} Measured output distribution over the eight
   computational-basis states (blue) versus the noiseless ideal (grey); error
   bars are binomial shot noise. $3911/4096$ shots (95.5\%) fall in
@@ -1094,20 +1125,20 @@ $P(\ket{000})$ has already lost $4.5\%$.
   ($0.333$, noiseless) and the quantum ideal $V/N=1.333$; error bars
   propagate shot noise. The measured mean payoff $1.331$ gives advantage
   $0.9978$ vs the ideal $1.0$. Physical qubits $\{136,143,142\}$ (calibration
-  2026-07-15): readout error 0.38--0.40\%, cz error 136--143: 0.17\%,
+  2026-07-15): readout error 0.38--0.40\%, CZ error 136--143: 0.17\%,
   143--142: 0.23\%.}
   \label{fig:n3}
 \end{figure}
 
-\subsubsection{Scaling at $N=3,4,5$ with Error Mitigation}
+\subsubsection{Scaling at \texorpdfstring{$N=3,4,5$}{N=3,4,5} with Error Mitigation}
 % results/hardware-scaling/2026-07-16T074134Z/ (job d9c8fpn550hc73dl1tcg)
 All three $N$ ran on prefixes of one pinned 5-qubit chain
-$[59,75,74,73,79]$ (chosen by calibration error) in a single 11-pub batch:
-two readout-calibration circuits plus $N\in\{3,4,5\}\times$ cz-fold
+$[59,75,74,73,79]$ (chosen by calibration error) in a single 11-circuit batch:
+two readout-calibration circuits plus $N\in\{3,4,5\}\times$ CZ-fold
 $\lambda\in\{1,3,5\}$. Readout errors are corrected by tensored confusion-matrix
 inversion (constrained least squares)~\cite{maciejewski2020,bravyi2021pra}; zero-noise
-extrapolation folds each cz locally ($\mathrm{cz}\to\mathrm{cz}^\lambda$,
-unitary-preserving since cz is self-inverse) and extrapolates the
+extrapolation folds each CZ locally ($\mathrm{CZ}\to\mathrm{CZ}^\lambda$,
+unitary-preserving since CZ is self-inverse) and extrapolates the
 readout-mitigated payoff linearly to $\lambda=0$~\cite{temme2017,kandala2019}.
 
 \emph{Calibration grouping and inclusion.}
@@ -1119,20 +1150,19 @@ Executions sharing a stamp are averaged before computing the spread so that
 one calibration is not counted twice. A fourth execution on
 $[20,21,22,23,24]$ is excluded because pooling it would confound calibration
 drift with a change of physical qubits. Table~\ref{tab:scaling} and
-Fig.~\ref{fig:scaling-zne} show the registration-source execution alone.
+Fig.~\ref{fig:scaling-zne} show the first execution alone.
 
 \emph{Models and uncertainty.}
-The ideal, device-model and depolarizing curves come from the registration
-anchor, not averages of refitted models. The depolarizing parameter
+The ideal, device-model and depolarizing curves come from the first
+execution, not averages of refitted models. The depolarizing parameter
 $p_{\mathrm{eff}}=0.0018$ is fitted only at $N=3$; its $N=4,5$ values are
 predictions. In Figs.~\ref{fig:scaling} and~\ref{fig:scaling-population},
 error bars are the sample standard deviation across the two calibration
-epochs. They exclude within-run multinomial and weighted-fit standard errors,
-and are a lower bound on total uncertainty. Figure~\ref{fig:scaling-zne}
-instead shows within-run payoff standard errors for the registration-source
-fit. Among the plotted multiplayer cases, $(Q,\ldots,Q)$ passes the restricted
-pure-Nash check only at $N=3$; $N=4,5$ measure a cooperative protocol,
-not an equilibrium.
+epochs, a coarse between-epoch spread from $n=2$. They exclude within-run
+multinomial and weighted-fit standard errors. Figure~\ref{fig:scaling-zne}
+instead shows within-run payoff standard errors for the first execution.
+Among the plotted cases, $(Q,\ldots,Q)$ passes the restricted pure-Nash check
+only at $N=3$; $N=4,5$ measure a cooperative protocol, not an equilibrium.
 
 The all-zero target population in Fig.~\ref{fig:scaling-population} decays
 faster than the advantage: the mean-payoff observable is first-order
@@ -1142,10 +1172,11 @@ in Sec.~\ref{sec:outlives}.
 
 \begin{table}[t]
 \centering
-\caption{Measured advantage on ibm\_fez for the registration-source execution
+\caption{Measured advantage on ibm\_fez for the first execution
 (4096 shots). Repeat executions are discussed separately; the cross-calibration
 aggregate over both epochs is Fig.~\ref{fig:scaling}. Ideal advantage is $3/N$;
-retention is ZNE/ideal.}
+retention is ZNE/ideal. Uniformly random outcomes would retain $1-2^{-N}$:
+87.5\%, 93.8\%, and 96.9\%.}
 \label{tab:scaling}
 \begin{tabular}{@{}ccccc c@{}}
 \toprule
@@ -1164,11 +1195,9 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
   \caption{Cooperative-profile payoff advantage on ibm\_fez at $N=3,4,5$,
   relative to the analytic noiseless classical-Nash baseline, comparing raw
   and mitigated-plus-ZNE measurements with ideal and noise-model curves.
-  Error bars show the sample standard deviation across two calibration epochs
-  and are a lower bound on total uncertainty; depolarizing values at $N=4,5$
-  are predictions from the $N=3$ fit.
-  The fixed profile passes the restricted pure-Nash check only at $N=3$;
-  $N=4,5$ measure a cooperative protocol, not an equilibrium.}
+  Error bars show the between-epoch sample standard deviation ($n=2$
+  calibration epochs) and exclude within-run errors; depolarizing values at $N=4,5$
+  are predictions from the $N=3$ fit.}
   \label{fig:scaling}
 \end{figure}
 
@@ -1176,11 +1205,9 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
   \centering
   \includegraphics[width=\linewidth]{hardware_scaling_zne.pdf}
   \caption{Zero-noise extrapolation of the readout-mitigated mean payoff in
-  the registration-source execution at $N=3,4,5$.
+  the first execution at $N=3,4,5$.
   Points at CZ fold factors $1,3,5$ carry within-run payoff standard errors;
-  weighted linear fits extrapolate to zero fold factor (stars).
-  The $N=4,5$ profiles are cooperative protocols, not restricted pure-Nash
-  equilibria.}
+  weighted linear fits extrapolate to zero fold factor (stars).}
   \label{fig:scaling-zne}
 \end{figure}
 
@@ -1190,9 +1217,7 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
   \caption{All-zero output probability on ibm\_fez at $N=3,4,5$, compared
   with the device noise-model prediction and ideal target.
   Measured points average calibration epochs; error bars are the cross-epoch
-  sample standard deviation and a lower bound on total uncertainty.
-  These are fixed-profile measurements, with the restricted pure-Nash property
-  holding only at $N=3$.}
+  sample standard deviation ($n=2$) and exclude within-run errors.}
   \label{fig:scaling-population}
 \end{figure}
 % aggregate source: results/hardware-scaling/2026-07-26T090122Z/plots/hardware_scaling.pdf
@@ -1202,76 +1227,88 @@ $N$ & ideal & raw & mitig.+ZNE & retention & $P(\ket{0\ldots0})$\\
 %   2026-07-26 13:29:01  N=3 0.9944  N=4 0.7357  N=5 0.5811
 % aggregate: N=3 0.9941+-0.0004, N=4 0.7389+-0.0046, N=5 0.5852+-0.0057
 
-Two model predictions frame Table~\ref{tab:scaling}: the reduced device noise
-model (\texttt{NoiseModel.from\_backend}) and a \emph{fit-one-predict-two}
-test in the paper's own depolarizing model, with a single
-$p_{\mathrm{eff}}=0.0018$ fitted to the $N{=}3$ mitigated-fold-1 point.
-For the registration-source execution, the registered primary
-mitigated-fold-1 endpoint misses at $N=4$ by $0.0043$ ($2.14\sigma$) and at
-$N=5$ by $0.0101$ ($5.17\sigma$). These source-run residuals are
-retrospective because the registration was written after that execution.
+Two model predictions frame Table~\ref{tab:scaling}: the provider-calibrated
+device noise model reduced to the executed qubits, and a fit-one-predict-two
+test in our depolarizing model, with a single
+$p_{\mathrm{eff}}=0.0018$ fitted to the $N=3$ mitigated-fold-1 point.
+For the first execution, the primary mitigated fold-1 endpoint misses at
+$N=4$ by $0.0043$ ($2.14\sigma$) and at $N=5$ by $0.0101$ ($5.17\sigma$).
+These residuals are retrospective, because the predictions were fixed after
+that execution.
 For the displayed ZNE endpoint, the corresponding misses are $0.0041$
-($2.07\sigma$) and $0.0060$ ($3.05\sigma$). The second execution is the
-prospective registered repeat: its conditional $N=4$ endpoint passes and
-its $N=5$ endpoint misses by $0.0092$ ($4.74\sigma$). The repeated deficit
-sign is observational, not a registered sign test.
+($2.07\sigma$) and $0.0060$ ($3.05\sigma$). Three preregistered repeats
+followed. In the first, under the same provider calibration, the conditional $N=4$ endpoint passes ($z=-0.93$) and
+the $N=5$ endpoint misses by $0.0092$ ($4.74\sigma$). The other two, under new
+calibrations, miss at both sizes: on the different chain $[20,\ldots,24]$ by
+$0.0046$ ($2.31\sigma$) at $N=4$ and $0.0094$ ($4.83\sigma$) at $N=5$, and at
+the 2026-07-26 epoch by $0.0113$ ($5.68\sigma$) and $0.0186$ ($9.55\sigma$).
+The $N=4$ endpoint therefore passes in one of three repeats. The repeated
+$N=5$ deficit sign is observational, not a preregistered sign test.
+% per-run conditional_primary blocks: results/hardware-scaling/repeat-judgments.json
 
-The CZ-exponential baseline carries the smallest mean $|z|$ (the best score) of the five registered candidates in all four executions, including both
+Of five preregistered baseline models, the CZ-exponential law has the
+smallest summed $z^2$ in all four executions, including both
 cross-calibration repeats. It nevertheless
 misses $N=5$ outside the shared 95\% comparison yardstick in every run; that
 yardstick is for ranking, not a model-specific calibrated interval.
-That ranking is specific to $N\le 5$: in the registered $N=6,7$
-extension (Sec.~\ref{sec:n67}) the CZ-exponential law loses to the depolarizing
-model at $N{=}7$ and both fail their registered tests, so the ranking is not a
-physical scaling law and does not extrapolate.
-The registered target of three to five distinct calibrations is now met at
-three, and the $N=5$ deficit reproduces with the same sign in all three
-repeats. The deficit magnitude is not stable across epochs, however: it ranges
-from $0.0092$ to $0.0186$, so the epoch-to-epoch variation is itself of order
-the effect. Model-specific predictive uncertainties remain needed, and the
-cross-calibration sample that is chain-matched is two epochs rather than three.
+That ranking is specific to $N\le 5$: in the $N=6,7$ extension
+(Sec.~\ref{sec:n67}) the CZ-exponential law loses to the depolarizing model at
+$N=7$ and both fail their tests, so the ranking is not a physical scaling law.
+The four executions span three distinct provider calibrations, the minimum
+of the planned three to five, but one of those calibrations is
+represented only by the $[20,\ldots,24]$ execution that the aggregate
+excludes; the chain-matched sample covers two calibrations. The $N=5$ deficit
+has the same sign in all three repeats. Its magnitude is not stable, however:
+it is $0.0092$ under the source run's calibration, $0.0094$ on the other
+chain, and $0.0186$ at the 2026-07-26 epoch, so the variation across
+calibrations is itself of order the effect. Model-specific predictive
+uncertainties remain needed.
 % registered: results/hardware-scaling/preregistration.json and
 % preregistration-baselines.json; outcomes:
 % results/hardware-scaling/repeat-judgments.json
 % (run 1: cz 10.0 vs p_eff 31.3; run 2: cz 7.4 vs p_eff 23.4)
 
-\subsubsection{Extension to $N=6,7$}\label{sec:n67}
+\subsubsection{Extension to \texorpdfstring{$N=6,7$}{N=6,7}}\label{sec:n67}
 % results/hardware-scaling/2026-07-25T180549Z/ (job d9if010gk0ls73f4avkg)
 % registered: results/hardware-scaling/preregistration-n67.json (commit 8d1e5d1)
 % judged: results/hardware-scaling/2026-07-25T180549Z/judgments-n67.json
 % finding: docs/findings/2026-07-25-scaling-n67-run1.md
 A later execution extends the curve to $N=3,\ldots,7$ on one pinned seven-qubit
-chain $[97,107,108,109,110,111,98]$ (17 pubs, 20 QPU-seconds). The chain was
-written into the registration and held at submission, so the executed qubits
-provably match the ones the predictions describe. Measured mitigated fold-1
+chain $[97,107,108,109,110,111,98]$ (17 circuits, 20 QPU-seconds). The chain
+was fixed with the predictions before submission, so the executed qubits match
+the ones the predictions describe. Measured mitigated fold-1
 advantage retains $99.2\%$, $97.5\%$, $97.3\%$, $96.3\%$ and $98.1\%$ of the
 ideal $3/N$ at $N=3,\ldots,7$ while $P(\ket{0\ldots0})$ falls from $0.943$ to
-$0.784$: the advantage survives to seven players at $98\%$ of ideal
-with the all-zero target-state population already down to $0.78$, which is the
-first-order-insensitivity mechanism operating across the full curve.
+$0.784$. Uniformly random outcomes would retain $1-2^{-N}$, that is
+$87.5\%$, $93.8\%$, $96.9\%$, $98.4\%$ and $99.2\%$. The measured values
+exceed that comparator through $N=5$ but fall below it at $N=6,7$, where the
+device places more weight on the all-Hawk outcome than independent fair coins
+would. High retention at $N=6,7$ is therefore not evidence of coherent
+cooperation.
 
-Two competing one-parameter models were registered before submission, both
-fitted on the same $N{=}3$ point and extrapolated with no $N>3$ information: the
+Two competing one-parameter models were preregistered, both
+fitted on the same $N=3$ point and extrapolated with no $N>3$ information: the
 depolarizing $p_{\mathrm{eff}}$ model and the CZ-exponential retention law
-$A_N = A^{\mathrm{ideal}}_N r^{\,\mathrm{cz}_N}$. \emph{Both failed the
-registered $1.96\sigma$ test at $N=6,7$}, and they failed differently: the
+$A_N = A^{\mathrm{ideal}}_N r^{\,\mathrm{CZ}_N}$. \emph{Both failed the
+preregistered $1.96\sigma$ test at $N=6,7$}, and they failed differently: the
 depolarizing model over-predicts at every $N$, while the CZ-exponential model
 over-predicts at $N=4,5,6$ and then under-predicts at $N=7$. A one-parameter
-retention law fitted at $N{=}3$ cannot reproduce that curvature.
+retention law fitted at $N=3$ cannot reproduce that curvature.
 
-The registered model race also split: the CZ-exponential law is closer at
-$N=4,5,6$ but the depolarizing model is closer at $N=7$. The
-CZ-exponential ranking reported below therefore does not extrapolate past
-$N{=}5$, and we scope it accordingly. Finally, measured advantage is strictly
-decreasing in $N$ (the registered monotonicity check), but \emph{retention} is
-not: $N{=}7$ keeps more of its ideal advantage than $N=4,5,6$ despite carrying
-the most gates and the lowest target-state population, and its ZNE estimate overshoots the
-noiseless ideal ($0.4437$ against $0.4286$), which no physical noise model can
-produce. We report this as an unexplained observation rather than a result.
+The comparison also split: the CZ-exponential law is closer at $N=4,5,6$
+but the depolarizing model is closer at $N=7$. Measured advantage is strictly
+decreasing in $N$, as predicted, but \emph{retention} is
+not: $N=7$ keeps more of its ideal advantage than $N=4,5,6$ despite carrying
+the most gates and the lowest target-state population. Part of this is built
+into the metric: retention equals $1-p(1^N)$, and even uniformly random outputs
+land on the single all-Hawk outcome less often as $N$ grows. The $N=7$ ZNE
+estimate, however, overshoots the noiseless ideal ($0.4437$ against
+$0.4286$), which no physical noise model can produce. We report that overshoot
+as an unexplained observation rather than a result.
 Distinguishing payoff geometry at odd $N$ from an end-of-chain qubit effect or
 an extrapolation artefact requires a repeat \emph{of this $N=3\ldots7$ batch
 specifically}: the cross-calibration repeats aggregated in
-Fig.~\ref{fig:scaling} re-execute the registered $N=3,4,5$ batch and so cannot
+Fig.~\ref{fig:scaling} re-execute the $N=3,4,5$ batch and so cannot
 address it, and no such $N=6,7$ repeat has been run.
 
 \subsubsection{Topology, Equilibrium and Fairness on Device}\label{sec:hwtopology}
@@ -1279,29 +1316,30 @@ address it, and no such $N=6,7$ repeat has been run.
 % registered: results/hardware-topology/preregistration.json (commit 46f43d4)
 % judged: .../judgments.json; finding: docs/findings/2026-07-25-topology-hardware-run1.md
 The experiments above are all GHZ. To put the paper's topology, equilibrium and
-fairness claims on device data we ran a single 49-pub batch (4096 shots,
+fairness claims on device data we ran a single 49-circuit batch (4096 shots,
 55 QPU-seconds) spanning five entangler topologies, unilateral strategy
 deviations, wiring permutations and an entanglement-angle sweep, with all
-predictions registered before submission. Cells were selected from
-\emph{measured} routed \textsc{cz} counts on the real coupling map rather than
+predictions preregistered. Cells were selected from
+\emph{measured} routed CZ counts on the real coupling map rather than
 from pre-routing gate counts: on heavy-hex hardware the two differ sharply, and
-fully-connected $N{=}5$ ($67$ \textsc{cz}) and W $N{=}4,5$ ($107$, $219$) were
+fully connected $N=5$ ($67$ CZ) and W $N=4,5$ ($107$, $219$) were
 excluded on that basis.
 
 \begin{table}[t]
 \centering
-\caption{Multi-topology batch on ibm\_fez (job \texttt{d9ia1pd0k0jc738jaqgg},
-4096 shots, one pinned qubit set). Retention is measured mitigated fold-1
-advantage as a fraction of \emph{that cell's own} noiseless advantage, which is
+\caption{Multi-topology batch on ibm\_fez (4096 shots, one pinned qubit
+set). Retention is measured mitigated fold-1
+advantage as a fraction of that cell's own noiseless advantage, which is
 not $3/N$ for every topology.}
 \label{tab:topology}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
-topology & $N$ & cz & ideal adv & measured & retention\\
+topology & $N$ & CZ & ideal adv & measured & retention\\
 \midrule
 GHZ             & 3 &  6 & 1.0000 & 0.9886 & 98.9\%\\
 GHZ             & 4 &  9 & 0.7500 & 0.7425 & 99.0\%\\
 GHZ             & 5 & 14 & 0.6000 & 0.5921 & 98.7\%\\
+W               & 3 & 42 & 1.0000 & 0.9792 & 97.9\%\\
 ring            & 3 & 10 & 1.0000 & 0.9899 & 99.0\%\\
 ring            & 4 & 20 & 0.0000 & 0.0894 & n/a\\
 ring            & 5 & 28 & 0.6000 & 0.5960 & 99.3\%\\
@@ -1309,8 +1347,7 @@ star            & 3 &  5 & 1.0000 & 0.9934 & 99.3\%\\
 star            & 4 &  9 & 0.7500 & 0.7423 & 99.0\%\\
 star            & 5 & 17 & 0.6000 & 0.5977 & 99.6\%\\
 fully-conn.     & 3 & 10 & 1.0000 & 0.9887 & 98.9\%\\
-fully-conn.     & 4 & 31 & 0.7500 & 0.7389 & 98.5\%\\
-W               & 3 & 42 & 1.0000 & 0.9792 & 97.9\%\\
+fully conn.     & 4 & 31 & 0.7500 & 0.7389 & 98.5\%\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1318,75 +1355,82 @@ W               & 3 & 42 & 1.0000 & 0.9792 & 97.9\%\\
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{hardware_topology.pdf}
-  \caption{Multi-topology EWL batch on ibm\_fez (job
-  \texttt{d9ia1pd0k0jc738jaqgg}), 49 pubs $\times$ 4096 shots on one pinned
-  qubit set, all predictions registered before submission.
+  \caption{Multi-topology EWL batch on ibm\_fez: 49 circuits $\times$ 4096
+  shots on one pinned qubit set, with all predictions preregistered.
   \textbf{(A)} Measured mitigated fold-1 advantage as a percentage of each
   cell's \emph{own} noiseless advantage; the eleven nonzero-baseline cells retain $97.9$--$99.6\%$.
-  ring $N{=}4$ carries no percentage because its noiseless advantage is exactly zero: its ideal circuit is deterministic on $\ket{1\ldots1}$, so the
+  ring $N=4$ carries no percentage because its noiseless advantage is exactly zero: its ideal circuit is deterministic on $\ket{1\ldots1}$, so the
   $+0.089$ it measures is created by decoherence, and zero-noise extrapolation
-  correctly pulls it back toward zero ($+0.037$).
+  reduces it to $+0.037$.
   \textbf{(B)} Unilateral Hawk deviation gaps
-  $\pi_k(Q,Q,Q)-\pi_k(H\text{ at }k)$ at GHZ $N{=}3$: all three are positive,
+  $\pi_k(Q,Q,Q)-\pi_k(H\text{ at }k)$ at GHZ $N=3$: all three are positive,
   so no measured Hawk deviation pays; Dove deviations were not measured.
-  \textbf{(C)} star $N{=}4$ per-player payoffs under three wirings. The hub
+  \textbf{(C)} star $N=4$ per-player payoffs under three wirings. The hub
   earns $\approx 0.34$ while each leaf earns $\approx 1.21$, and permuting
   players across physical qubits does not move the pattern: the disadvantage is
   locked to the graph position, not to the qubit.}
   \label{fig:hwtopology}
 \end{figure*}
 
-The eleven cells with nonzero ideal advantage retain $97.9$--$99.6\%$ of that value
-(Table~\ref{tab:topology}, Fig.~\ref{fig:hwtopology}A), including W $N{=}3$ at $42$ \textsc{cz}, seven times the gate count of GHZ $N{=}3$. The
-mechanism therefore is not a GHZ artefact: ring $N{=}5$ and star $N{=}5$ sit at
-$P(\ket{0\ldots0}) \approx 0.10$--$0.11$, while retaining over $99\%$ of their analytic-baseline advantage.
-Their ideal outputs are not generally all-zero, so these populations alone
-do not measure preparation error or fidelity to their own ideal states. The
+The eleven cells with nonzero ideal advantage retain $97.9$--$99.6\%$ of that
+value (Table~\ref{tab:topology}, Fig.~\ref{fig:hwtopology}A), above the
+$87.5$--$96.9\%$ that uniformly random outcomes would retain at $N=3$--$5$.
+They include W $N=3$ at $42$ CZ, seven times the gate count of GHZ $N=3$.
+High retention is therefore not specific to GHZ: ring $N=5$ and star $N=5$
+sit at $P(\ket{0\ldots0})\approx0.10$--$0.11$ while retaining over $99\%$ of
+their analytic-baseline advantage. Their ideal outputs are not generally
+all-zero, so these populations alone do not measure preparation error or
+fidelity to their own ideal states, and these cells do not test the
+single-flip mechanism of Sec.~\ref{sec:outlives}. The
 topology axis does not separate these systems by how much advantage they retain;
 it separates them by \emph{structure}, as the next two results show.
 
-\paragraph{Registered Hawk-deviation tests on hardware}
-At GHZ $N{=}3$ the three unilateral Hawk deviation gaps measure $+0.2895$,
+\paragraph{Hawk-deviation tests on hardware}
+At GHZ $N=3$ the three unilateral Hawk deviation gaps measure $+0.2895$,
 $+0.2726$ and $+0.3512$ (Fig.~\ref{fig:hwtopology}B), all positive and many
-standard errors clear of zero. This was a registered test and it passed at every
-deviating position: the $(Q,Q,Q)$ profile resists the three measured Hawk deviations.
-The hardware experiment does not include Dove deviations, so it does not
-certify the complete $\{D,H,Q_N\}$ menu under noise. It remains
-\emph{not} a full-SU(2) equilibrium claim.
+standard errors clear of zero. This preregistered test passed at every
+deviating position: the $(Q,Q,Q)$ profile resists the three measured Hawk
+deviations. Dove deviations were not part of this batch; the all-player tests
+of Sec.~\ref{sec:phase-hardware} include them.
 
-A registered sweep of the same gap in the entanglement angle changes sign as
-predicted: $-0.6877$ at $\gamma=0.30\pi$ and $+0.2467$ at $\gamma=0.45\pi$. The
-intermediate point $\gamma=0.40\pi$ was registered in advance as marginal and
+A preregistered sweep of the same gap in the entanglement angle changes sign
+as predicted: $-0.6877$ at $\gamma=0.30\pi$ and $+0.2467$ at $\gamma=0.45\pi$. The
+intermediate point $\gamma=0.40\pi$ was declared marginal in advance and
 excluded from the pass criterion; it returned $+0.0067$, statistically
 indistinguishable from zero. The measured Hawk-deviation incentive therefore changes sign with entanglement strength, with the
-transition bracketed near $\gamma=0.4\pi$ at $N{=}3$.
+transition bracketed near $\gamma=0.4\pi$ at $N=3$.
 
 \paragraph{Position-locked unfairness is a property of the topology}
-star $N{=}4$ is maximally unequal even noiselessly: the analytic per-player
+star $N=4$ is maximally unequal even noiselessly: the analytic per-player
 vector is $(0.25,1.25,1.25,1.25)$, the hub being the loser. On device the
 measured vector is $(0.353,1.202,1.212,1.202)$, and under two wiring
 permutations that reassign players to different physical qubits it moves by at
-most $0.035$ (Fig.~\ref{fig:hwtopology}C), inside the registered threshold.
-The registered null therefore holds: the disadvantaged position is
+most $0.035$ (Fig.~\ref{fig:hwtopology}C), inside the preregistered threshold.
+The null hypothesis of wiring invariance is therefore not rejected: the disadvantaged position is
 determined by the entanglement topology, not by which physical qubit a player
 was allocated. This supports the star graph-role effect under the tested assignments, separately from noise-induced ring circuit-order asymmetry.
 
 \paragraph{A cell whose advantage is made of noise}
-ring $N{=}4$ is the one cell whose noiseless circuit is deterministic on $\ket{1\ldots1}$, the all-Hawk outcome, so its ideal advantage is exactly
+ring $N=4$ is the one cell whose noiseless circuit is deterministic on $\ket{1\ldots1}$, the all-Hawk outcome, so its ideal advantage is exactly
 zero. It measured $+0.089$, the smallest of the twelve cells but clearly
-positive, and zero-noise extrapolation pulled it back to $+0.037$. All three
-parts of that were registered in advance. A pipeline that merely inflated
-whatever it touched could not produce a cell where decoherence \emph{creates}
-apparent advantage and the extrapolation correctly removes it.
+positive, and zero-noise extrapolation reduced it to $+0.037$; no uncertainty
+was recorded for that extrapolated value. All three parts of that outcome
+were predicted in advance. A pipeline that merely inflated whatever it touched
+could not produce a cell where decoherence \emph{creates} apparent advantage
+and the extrapolation reduces it.
 
 \paragraph{What did not work}
-The registered per-cell predictions of \emph{absolute} advantage failed, in
+The preregistered per-cell predictions of \emph{absolute} advantage failed, in
 both the raw device-noise-model form and a CZ-linear bias-corrected form, and
 that comparison is additionally confounded: the provider recalibrated between
-registration and submission and the qubit selector moved the pinned set, so
-those $z$-scores mix model error with a change of qubits. The five results
-above are unaffected because each is a within-job differential: a payoff difference between two profiles measured on the same qubits in the same job, a
-permutation against its own twin, or one cell ranked against the other eleven.
+the predictions and submission and the qubit selector moved the pinned set, so
+those $z$-scores mix model error with a change of qubits. The structural
+results above do not depend on those predictions. The deviation, sweep, and
+wiring results are within-job differentials: a payoff difference between two
+profiles measured on the same qubits in the same job, or a permutation against
+its own twin. The ring cell is ranked against the other eleven in the same
+job, and retention compares each measurement with its own noiseless ideal
+rather than with a model prediction.
 Absolute-magnitude prediction of NISQ payoffs from a device noise model remains
 out of reach here; the structural claims do not depend on it.
 
@@ -1403,8 +1447,13 @@ flips. Readout mitigation consequently moves the mean very little; its
 per-player effects are mixed and remain diagnostic analyses rather than
 preregistered acceptance tests. The displayed ZNE estimates are higher for
 every series, but no recorded population analysis attributes that shift
-specifically to suppression of CZ-created all-Hawk weight. The structural
-robustness is a property of the game's payoff geometry, not of the device.
+specifically to suppression of CZ-created all-Hawk weight. The same identity
+limits what retention can show: uniformly random outcomes retain $1-2^{-N}$
+(Sec.~\ref{sec:payoff-sensitivity}), and the $N=6,7$ extension falls below
+that comparator (Sec.~\ref{sec:n67}). First-order insensitivity explains why
+retention degrades slowly; it does not make high retention evidence of
+coherent cooperation. The structural robustness is a property of the game's
+payoff geometry, not of the device.
 
 The same single-flip terms that leave the mean invariant are what create
 winners and losers. Under the all-Dove branch each one-Hawk outcome transfers
@@ -1422,14 +1471,14 @@ coordination failure (Sec.~\ref{sec:noise}).
 %   results/t9-pilot/precise-2026-07-26T0916Z-ring5-p0 (mean conserved 0.800000,
 %     spread 0.0000 -> 1.3329 at the 50-round cap; snapshot, not a fixed point)
 %   results/t9-pilot/precise-2026-07-26T09{27Z-ring5-p0.02,28Z-ring5-p0.05}
-In the single exploratory W-state $N{=}4$ finite-round pilot, the provisional
+In the single exploratory W-state $N=4$ finite-round pilot, the provisional
 independent round-robin best-response rule produced no beneficial converged
-fairness repair in any tested setting. At $p{=}0$ the dynamics reached the
-50-round cap near mean $0.51$ without converging; at $p{=}0.02$ they entered a
-payoff limit cycle with lower mean and larger spread; and at $p{=}0.05$ they
+fairness repair in any tested setting. At $p=0$ the dynamics reached the
+50-round cap near mean $0.51$ without converging; at $p=0.02$ they entered a
+payoff limit cycle with lower mean and larger spread; and at $p=0.05$ they
 converged with little change. The verdict survives both checks we applied to it:
 it is unchanged under simultaneous rather than round-robin updates, and W
-$N{=}5$ reproduces it. Ring $N{=}5$ does not converge at any noise level tested
+$N=5$ reproduces it. Ring $N=5$ does not converge at any noise level tested
 and fails in the opposite direction, spreading a perfectly fair baseline apart
 at unchanged mean welfare, reported as a direction rather than a magnitude, since those endpoints are non-convergent snapshots. No belief-based rule has been
 tested. The advantage we
@@ -1444,48 +1493,42 @@ Prior multiplayer EWL studies and trading experiments establish the setting
 in which this work belongs~\cite{benjamin2001,chappell2012,khan2025,varsamis2025}.
 Our contribution is the joint accounting of restricted incentives, payoff
 geometry, and implementation-dependent fairness in a specified allocation
-game. The phase-branch boundary explains why the historical cooperative
+game. The phase-branch boundary explains why the original cooperative
 strategy fails beyond three players and provides a different ideal
 restricted-menu profile, accompanied by an unrestricted counterexample.
 
 Matched compilation controls restrict how much of a measured family ordering
 can be attributed to ideal correlation structure. The payoff sensitivity
 analysis likewise restricts how much high mean retention establishes about
-cooperation. The registered hardware record contains both positive differential
-tests and unsuccessful quantitative predictions. These components support
+cooperation. The hardware results include both positive differential tests
+and unsuccessful quantitative predictions. These components support
 a study of incentive and observable robustness; they do not establish
 computational quantum speedup or an operational quantum market.
 
 \section*{Data and Code Availability}
-Source code and recorded evidence are maintained in the public
-\href{https://github.com/QuantumCompTeam/Multiplayer-QHD-Game}{Multiplayer-QHD-Game}
-repository. A supplementary code-and-data archive accompanies the submission
-materials as a fixed, hashed snapshot for review.
-The results/phase-validation directories contain the
-committed manifests, serialized circuits, raw counts, calibration snapshots,
-and provider metrics for the new runs. The results/journal-strengthening
-directory records compact-evaluation and retrospective-sensitivity outputs.
-The claim ledger and revision log map manuscript statements to their evidence.
-Historical simulation dependencies and the current hardware environment are
-recorded separately; replay of a frozen execution uses its recorded code
-revision as well as its dependency versions.
+The simulation code, hardware-execution code, serialized circuits, raw
+hardware counts, calibration records and all analysis outputs are available
+at \url{https://github.com/QuantumCompTeam/Multiplayer-QHD-Game}.
 
 \section{Conclusion}\label{sec:conclusion}
 We studied how entangler family, implementation noise, and player count
 affect welfare and incentives in a multiplayer EWL allocation game. The
-original GHZ cooperative phase has a restricted-menu equilibrium only at
-$N=2,3$, while a separately defined phase branch satisfies the ideal
-restricted condition for every $N\ge2$ at maximal entanglement. Both
+original GHZ cooperative phase $Q_N$ has a restricted-menu equilibrium only
+at $N=2,3$, while the alternative branch $Q_N^\star$, which coincides with
+$Q_N$ at $N=2,3$, satisfies the ideal restricted condition for every $N\ge2$
+at maximal entanglement. Both
 profiles admit an explicit profitable unrestricted SU(2) deviation.
 An all-$N$ restricted existence statement therefore coexists with an
 exact strategy-access limitation.
 
-Historical hardware experiments validate the original cooperative protocol
-through seven players and its resistance to measured Hawk deviations at
-$N=3$. Two new complete alternative-phase batches support the registered
-incentive criterion at $N=4,6$ in both runs. The $N=3,5$ criterion passes
-only in the first batch, and $N=7$ remains unresolved despite high mean
-retention. Both batches fail the overall registered five-size test.
+Original-phase hardware experiments evaluate the cooperative protocol
+through seven players; at $N=3$ the multi-topology batch finds no profitable
+measured Hawk deviation. Two complete alternative-phase batches, which also
+test Dove deviations, support the preregistered incentive criterion at $N=4,6$
+in both runs. The $N=3$ criterion, where $Q_3^\star=Q_3$, and the $N=5$
+criterion pass only in the first batch, and $N=7$ remains unresolved despite
+high mean retention, which at $N=6,7$ falls below the uniformly random
+comparator. Both batches fail the overall five-size test.
 High mean retention is partly built into the
 all-Hawk-only conflict penalty; the uniform comparator and retrospective
 partial-conflict sensitivity make that dependence explicit. At $N=7$,
@@ -1497,6 +1540,13 @@ tool, while compilation controls and calibration records delimit the
 physical evidence. Repetition across independent calibration epochs and
 explicit resource assumptions remain necessary to connect ideal incentive
 compatibility with a reliable implementation.
+
+\section*{Acknowledgment}
+OpenAI Codex assisted with drafts of the incentive-boundary derivation, the
+compact-evaluation and payoff-sensitivity analyses, hardware-test code, and
+associated manuscript text. All analytic identities were checked against
+independent dense-circuit calculations, and all hardware claims rest on saved
+provider counts.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

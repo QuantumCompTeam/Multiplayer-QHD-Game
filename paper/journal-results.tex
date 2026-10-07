@@ -5,7 +5,7 @@ phase-choice limitation from a player-count limitation. At $N=4,5,6,7$,
 the alternative profile's minimum ideal Hawk/Dove gaps are respectively
 $0.7500$, $0.4180$, $0.5000$, and $0.3734$, whereas the original profile
 has a profitable Hawk deviation at each size. These are ideal results;
-the historical device experiments used the original phase. New tests of
+the earlier device experiments used the original phase. Hardware tests of
 the alternative strategy are reported in Sec.~\ref{sec:phase-hardware}.
 The unrestricted witness remains
 profitable for both branches.
@@ -56,17 +56,16 @@ $q^TM_jq$ for a real symmetric $4\times4$ matrix. Four coordinate
 evaluations and six normalized pair sums determine $M_j$; its largest
 eigenvalue is the best-response payoff and its eigenvector supplies a
 witness. Independent evaluations check the reconstruction and witness.
-This certifies a response to fixed opponents in the specified circuit,
-not convergence of a search for an equilibrium. Strategy-dependent noisy
-compilation requires separate validation of the quadratic assumption.
+This certifies a best response to fixed opponents in the specified
+circuit; noisy compilations that depend on the strategy would need the
+quadratic form validated separately.
 
 \subsubsection{Sensitivity to Partial Conflict Costs}\label{sec:payoff-sensitivity}
 The mean-welfare identity implies that analytic-baseline retention equals
 $1-p(1^N)$. Uniform independent classical bits therefore retain
-$1-2^{-N}$, or $99.21875\%$ at $N=7$. This randomization is not an
-equilibrium of the underlying dominance game; it demonstrates why high
-retention alone does not establish coherent cooperation or useful
-incentive compatibility. All output patterns with between one and
+$1-2^{-N}$, or $99.21875\%$ at $N=7$. Such randomization is not an
+equilibrium of the dominance game, so high retention alone cannot establish
+coherent cooperation or incentive compatibility. All output patterns with between one and
 $N-1$ Hawks preserve the original total welfare.
 
 We test the dependence on that payoff rule with a separate sensitivity
@@ -89,21 +88,20 @@ equilibrium tests. For the $N=3,\ldots,7$ extension run, retention at
 $\ell=1$ is respectively $98.17\%$, $96.00\%$, $94.91\%$, $92.46\%$,
 and $93.23\%$, compared with $75\%$ for uniform independent outcomes
 at every size. At $N=7$ the corresponding raw player floor is $0.4993$.
-Sampling intervals come from the same count distributions; they exclude
-calibration drift. This sensitivity model is not an empirically fitted
-economic model, and reweighting cooperative counts does not establish
-its noisy equilibria.
+Sampling intervals come from the same count distributions and exclude
+calibration drift.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{journal_extensions.pdf}
-\caption{Journal-extension analyses. Left: minimum ideal Hawk/Dove deviation
-gap for the original and alternative cooperative phase branches, each in its
-stated restricted menu. Middle: retrospective raw fold-1 retention under the
-original and partial-conflict payoff rules for the recorded $N=3$--$7$ run;
-error bars are $1.96$ multinomial standard errors and exclude calibration drift.
-Uniform independent-outcome comparators are diagnostic, not equilibria.
-Right: exact compact GHZ payoff evaluation through $N=128$; instrumented CPU
-time is a classical resource measurement, not hardware player-count scaling.}
+\caption{Phase-branch, payoff-sensitivity, and compact-evaluation analyses.
+(a) Minimum ideal Hawk/Dove deviation gap for the original and alternative
+cooperative phase branches, each in its own restricted menu. (b) Retrospective
+raw fold-1 retention of the $N=3$--$7$ hardware run under the original
+($\ell=0$) and partial-conflict ($\ell=1$) payoff rules, with the values that
+uniformly random outcomes would give; error bars are $1.96$ multinomial
+standard errors and exclude calibration drift. (c) CPU time of exact compact
+GHZ payoff evaluation through $N=128$, a classical resource measurement.}
+% source: results/journal-strengthening/2026-09-07-offline; scripts/plot_phase_sensitivity.py
 \label{fig:journal-extensions}
 \end{figure*}

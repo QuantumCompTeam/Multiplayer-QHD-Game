@@ -124,7 +124,7 @@ def _assert_ghz_cooperative_benchmark_contract(text):
     assert r"p(0^N)=1" in compact
     assert r"\pi_j=V/N" in compact
     assert r"\Delta_{\mathrm{ana}}=C/N" in compact
-    assert r"\textit{Corollary (live parameters).}" in block
+    assert r"\textit{Corollary ($V=4$, $C=3$).}" in block
     assert r"\pi_j=\frac{4}{N},\qquad\Delta_{\mathrm{ana}}=\frac{3}{N}" in compact
     assert (
         "For the cooperative benchmark, $\\gamma$ is therefore a pure incentive dial: "
@@ -215,7 +215,7 @@ def test_star_entangler_invariant_under_leaf_swap():
     hub-leaf SWAP should yield "the star with the relocated hub") cannot be
     built from this constructor alone. Per the task-6 brief, only the
     leaf-exchange invariance is verified here; the limitation is recorded in
-    paper/CLAIM-SOURCE-MAP.md.
+    docs/paper/CLAIM-SOURCE-MAP.md.
     """
     N = 4
     gamma = math.pi / 2
